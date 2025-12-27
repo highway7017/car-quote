@@ -36,29 +36,38 @@
     *{ box-sizing:border-box; }
     html,body{ height:100%; }
     body{
-      margin:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, "Apple SD Gothic Neo", "Noto Sans KR", Segoe UI, Roboto, Arial, sans-serif;
-      color:var(--text);
+  margin:0;
+  font-family: ui-sans-serif, system-ui, -apple-system, "Apple SD Gothic Neo", "Noto Sans KR", Segoe UI, Roboto, Arial, sans-serif;
+  color:var(--text);
+  background:#fff; /* ✅ 바탕은 단색으로만 */
+}
 
-      /* ✅ 바디 전체 핑크 베이스 그라: 아래로 갈수록 옅어지게 */
-      background:
-        linear-gradient(to bottom,
-          rgba(255,150,210,.52) 0%,
-          rgba(255,195,230,.35) 32%,
-          rgba(255,225,242,.20) 62%,
-          rgba(255,255,255,.00) 100%
-        ),
-        linear-gradient(to bottom, #ffe3f0 0%, #fff 100%);
-    }
+/* ✅ 전체 페이지 핑크 베이스 그라 (항상 보이게, hero 뒤에서도 보이게) */
+.page-bg{
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
 
-    /* ==========================
-       ✅ 상단 배경(이미지+그라로 자연 연결)
-       ========================== */
-    .hero{
-      position:relative;
-      width:100%;
-      min-height: 360px;
-      padding: 44px 16px 22px;
+  /* 아래로 갈수록 옅어지는 핑크 베이스 */
+  background:
+    radial-gradient(1200px 700px at 50% 15%,
+      rgba(255, 120, 190, .28) 0%,
+      rgba(255, 170, 220, .16) 40%,
+      rgba(255, 255, 255, 0) 75%
+    ),
+    linear-gradient(to bottom,
+      rgba(255, 150, 210, .30) 0%,
+      rgba(255, 195, 230, .18) 35%,
+      rgba(255, 225, 242, .10) 65%,
+      rgba(255, 255, 255, 0) 100%
+    ),
+    #fff;
+}
+
+/* ✅ hero/컨텐츠는 page-bg 위로 올라오게 */
+.hero{ position: relative; z-index: 1; }
+.wrap{ position: relative; z-index: 2; }
 
       /* ✅ bg.png는 index.html과 같은 폴더 */
       background-image: url("./bg.png?v=20251227");
@@ -79,6 +88,20 @@
         rgba(0,0,0,.55) 72%,
         rgba(0,0,0,0) 100%
       );
+    }
+
+    .hero::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  /* 아래쪽으로 갈수록 핑크/화이트 쪽으로 스르륵 */
+  background: linear-gradient(to bottom,
+    rgba(255,255,255,0) 0%,
+    rgba(255,205,235,.10) 55%,
+    rgba(255,210,238,.22) 78%,
+    rgba(255,255,255,0) 100%
+  );
     }
 
     /* ✅ 핵심 2: 일부 폰/브라우저에서 mask가 약하면 보정용 오버레이 */
@@ -330,6 +353,7 @@
 </head>
 
 <body>
+  <div class="page-bg" aria-hidden="true"></div>
   <!-- ✅ 배경 위에 타이틀 바로 -->
   <section class="hero">
     <div class="title">
