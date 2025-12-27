@@ -7,30 +7,27 @@
 
   <style>
     :root{
-      /* ✅ 너의 Apps Script 웹앱 URL로 바꿔줘 (catalog / submit 엔드포인트 쓰는 버전) */
       --api-url: "https://script.google.com/macros/s/AKfycbxxxxxxxxxxxxxxxxxxxxxxxxxxxx/exec";
 
-      /* 배경 */
-      --bg-pink-top: rgba(255, 164, 212, .42);
-      --bg-pink-mid: rgba(255, 164, 212, .22);
-      --bg-pink-bottom: rgba(255, 255, 255, .00);
+      --text:#221a22;
+      --muted: rgba(34,26,34,.62);
 
-      /* UI 컬러 */
-      --text: #221a22;
-      --muted: rgba(34,26,34,.64);
-      --card: rgba(255,255,255,.78);
-      --stroke: rgba(255,255,255,.55);
+      /* ✅ "핑크 베이스도 아래로 옅어지게" */
+      --page-grad-top: rgba(255, 156, 210, .35);
+      --page-grad-mid: rgba(255, 156, 210, .18);
+      --page-grad-btm: rgba(255, 255, 255, .00);
+
+      --card:#ffffff;
+      --stroke: rgba(0,0,0,.08);
       --shadow: 0 18px 45px rgba(0,0,0,.10);
 
-      --primaryA: #ff6fb1;
-      --primaryB: #9b7cff;
+      --primaryA:#ff6fb1;
+      --primaryB:#9b7cff;
 
-      --radius-xl: 28px;
-      --radius-lg: 20px;
-      --radius-md: 14px;
-
-      --gap: 14px;
       --max: 980px;
+      --radius-xl: 28px;
+      --radius-lg: 22px;
+      --radius-md: 16px;
     }
 
     *{ box-sizing:border-box; }
@@ -40,84 +37,93 @@
       font-family: system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans KR", Apple SD Gothic Neo, sans-serif;
       color: var(--text);
 
-      /* ✅ "이미지 너비 딱 맞게" 느낌: 상단에 배경이미지를 1번만 깔고(cover)
-         아래로 갈수록 핑크→투명으로 빠지는 그라 오버레이 */
-      background:
-        linear-gradient(180deg,
-          var(--bg-pink-top) 0%,
-          var(--bg-pink-mid) 38%,
-          rgba(255,164,212,.10) 62%,
-          var(--bg-pink-bottom) 100%
-        ),
-        url("bg.png");
-      background-repeat: no-repeat;
-      background-position: center top;
-      background-size: 1100px auto; /* ✅ "화면 전체 cover" 말고 이미지 폭을 고정해서 더 목업처럼 */
-      background-attachment: scroll;
-
-      /* 아래로 내려갈수록 자연스럽게 밝아지게 */
+      /* ✅ 본문은 "핑크 베이스 그라"만 */
+      background: linear-gradient(180deg,
+        var(--page-grad-top) 0%,
+        var(--page-grad-mid) 35%,
+        rgba(255,156,210,.08) 60%,
+        var(--page-grad-btm) 100%
+      );
       min-height: 100vh;
     }
 
-    /* ✅ 상단 배경이 너무 커서 밑까지 계속 보이면 여기서 페이드 한 번 더 */
-    body::before{
-      content:"";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      background: linear-gradient(180deg, rgba(255,255,255,.00) 0%, rgba(255,255,255,.20) 45%, rgba(255,255,255,.85) 100%);
-      mix-blend-mode: normal;
-      opacity: .55;
-    }
-
     .wrap{
-      position: relative;
       max-width: var(--max);
       margin: 0 auto;
-      padding: 28px 16px 36px;
+      padding: 0 16px 36px;
+      position: relative;
     }
 
-    /* ✅ 타이틀은 배경 위에 바로(별도 div로 감싸지 않고) */
+    /* ✅ 상단 배경(hero)만 bg.png를 깜 */
+    .hero{
+      position: relative;
+      height: 340px;               /* 모바일 기준 목업 느낌 */
+      border-bottom-left-radius: 24px;
+      border-bottom-right-radius: 24px;
+      overflow: hidden;
+      margin: 0 -16px;             /* 화면 폭에 꽉 차게 */
+    }
+    .hero::before{
+      content:"";
+      position:absolute; inset:0;
+      background: url("bg.png") center top / cover no-repeat;
+      opacity: .82;                /* ✅ 배경 농도 낮추기 */
+      transform: scale(1.02);
+    }
+    /* ✅ bg가 아래로 갈수록 자연스럽게 사라지고(투명) -> 아래 핑크 베이스랑 연결 */
+    .hero::after{
+      content:"";
+      position:absolute; inset:0;
+      background: linear-gradient(180deg,
+        rgba(255,255,255,0) 0%,
+        rgba(255,156,210,.10) 55%,
+        rgba(255,156,210,.32) 78%,
+        rgba(255,156,210,.52) 100%
+      );
+    }
+
     header{
+      position: relative;
       text-align:center;
-      padding: 38px 14px 22px;
+      padding: 44px 14px 22px;     /* ✅ 배경 위에 바로 타이틀 */
+      z-index: 2;
     }
     h1{
       margin:0;
       font-size: 30px;
       letter-spacing: -0.6px;
       font-weight: 900;
-      text-shadow: 0 1px 0 rgba(255,255,255,.35);
+      text-shadow: 0 2px 10px rgba(0,0,0,.10), 0 1px 0 rgba(255,255,255,.35);
     }
     .sub{
       margin: 10px 0 0;
       font-size: 14px;
-      font-weight: 700;
-      color: rgba(34,26,34,.62);
+      font-weight: 800;
+      color: rgba(34,26,34,.64);
+      text-shadow: 0 1px 0 rgba(255,255,255,.40);
     }
 
-    /* 전체 카드(내용 영역) */
+    /* ✅ 카드 영역을 hero 아래로 살짝 겹치게(목업 느낌) */
     .shell{
-      background: rgba(255,255,255,.32);
-      border: 1px solid rgba(255,255,255,.42);
+      position: relative;
+      margin-top: -54px;
       border-radius: var(--radius-xl);
+      background: rgba(255,255,255,.55);
+      border: 1px solid rgba(255,255,255,.60);
       box-shadow: var(--shadow);
       backdrop-filter: blur(10px);
-      overflow:hidden;
+      overflow: hidden;
+      z-index: 3;
     }
 
-    .content{
-      padding: 16px;
-    }
+    .content{ padding: 16px; }
 
-    /* 섹션 카드 */
     .section{
       background: var(--card);
-      border: 1px solid rgba(255,255,255,.60);
-      border-radius: 22px;
+      border: 1px solid var(--stroke);
+      border-radius: var(--radius-lg);
       padding: 16px;
-      box-shadow: 0 12px 30px rgba(0,0,0,.06);
-      backdrop-filter: blur(12px);
+      box-shadow: 0 10px 28px rgba(0,0,0,.06);
     }
     .section + .section{ margin-top: 14px; }
 
@@ -138,7 +144,7 @@
       font-size: 12px;
       font-weight: 900;
       color: #a0186e;
-      background: rgba(255,111,177,.15);
+      background: rgba(255,111,177,.14);
       border: 1px solid rgba(255,111,177,.18);
     }
 
@@ -156,23 +162,23 @@
       padding: 12px 12px;
       border-radius: 16px;
       border: 1px solid rgba(0,0,0,.10);
-      background: rgba(255,255,255,.72);
+      background: rgba(255,255,255,.96);
       outline: none;
       font-size: 14px;
     }
-    select:disabled, input:disabled{
-      opacity: .6;
-    }
+    select:disabled, input:disabled{ opacity: .6; }
     input::placeholder{ color: rgba(34,26,34,.40); }
 
     .help{
-      margin-top: 8px;
+      margin-top: 10px;
       font-size: 12px;
       color: rgba(34,26,34,.55);
-      font-weight: 700;
+      font-weight: 800;
     }
 
-    /* 라디오: 한 줄로 정돈 */
+    /* ✅ 반 갈라 입력 지양: 항상 1열 */
+    .single{ display:block; }
+
     .radio-row{
       display:flex;
       gap:10px;
@@ -180,23 +186,22 @@
       margin-top: 8px;
     }
     .chip{
-      flex: 0 0 auto;
       display:flex;
       align-items:center;
       gap:8px;
       padding: 10px 12px;
       border-radius: 999px;
       border: 1px solid rgba(0,0,0,.10);
-      background: rgba(255,255,255,.70);
+      background: rgba(255,255,255,.96);
       font-weight: 900;
       font-size: 13px;
     }
     .chip input{ width:auto; margin:0; }
 
-    /* ✅ 개인정보 동의: 체크박스-텍스트 간격 문제 해결 */
+    /* ✅ 개인정보 동의: 체크박스-텍스트 붙이기 */
     .consent{
       margin-top: 14px;
-      background: rgba(255,255,255,.72);
+      background: rgba(255,255,255,.96);
       border: 1px solid rgba(0,0,0,.08);
       border-radius: 18px;
       padding: 14px;
@@ -204,12 +209,12 @@
     .consent-row{
       display:flex;
       align-items:flex-start;
-      gap: 10px;          /* ✅ 여기! 간격 */
+      gap: 10px;      /* ✅ 간격 해결 */
     }
     .consent-row input{
       width: 18px;
       height: 18px;
-      margin-top: 2px;    /* ✅ 텍스트 베이스라인 맞추기 */
+      margin-top: 2px;
       flex: 0 0 auto;
     }
     .consent strong{
@@ -221,17 +226,17 @@
     .consent small{
       display:block;
       color: rgba(34,26,34,.62);
-      font-weight: 700;
+      font-weight: 800;
       line-height: 1.45;
     }
 
-    /* CTA 버튼: 눈에 띄지만 고상하게 */
     .cta{
-      margin-top: 14px;
       padding: 16px;
-      background: rgba(255,255,255,.62);
-      border-top: 1px solid rgba(255,255,255,.55);
+      background: rgba(255,255,255,.70);
+      border-top: 1px solid rgba(0,0,0,.06);
     }
+
+    /* ✅ 버튼: 눈에 띄지만 단정하게(목업 느낌) */
     .btn{
       width: 100%;
       border: 0;
@@ -243,46 +248,55 @@
       color: #fff;
       letter-spacing: -0.3px;
 
-      /* ✅ 단정한 그라 (목업 느낌) */
-      background: linear-gradient(90deg, rgba(255,111,177,.95), rgba(155,124,255,.95));
-      box-shadow: 0 14px 30px rgba(155,124,255,.24), 0 10px 22px rgba(255,111,177,.18);
+      background: linear-gradient(90deg,
+        rgba(255,111,177,.92),
+        rgba(185,120,245,.92),
+        rgba(155,124,255,.92)
+      );
+      box-shadow:
+        0 16px 34px rgba(155,124,255,.20),
+        0 12px 26px rgba(255,111,177,.16);
     }
     .btn:disabled{
       opacity: .55;
       cursor: not-allowed;
       box-shadow: none;
+      filter: grayscale(.25);
     }
+
     .foot{
       margin-top: 12px;
       text-align:center;
       font-size: 12px;
       color: rgba(34,26,34,.58);
-      font-weight: 800;
+      font-weight: 900;
     }
 
-    /* ✅ "반 갈라 입력" 지양: 기본은 항상 1열 */
-    .single{ display:block; }
-
-    /* 데스크탑에서만 약간 넓게 보여도 '반 갈라'는 금지라 1열 유지 */
     @media (min-width: 860px){
-      .wrap{ padding-top: 36px; }
-      header{ padding-top: 52px; }
+      .hero{ height: 420px; }
       h1{ font-size: 34px; }
+      header{ padding-top: 62px; }
+      .shell{ margin-top: -78px; }
     }
   </style>
 </head>
 
 <body>
-  <div class="wrap">
-    <header>
-      <h1>비대면 차량 견적 상담</h1>
-      <p class="sub">간단한 조건 입력으로 비대면 안내드립니다</p>
-    </header>
+  <!-- ✅ hero(bg.png) 영역 -->
+  <div class="hero">
+    <div class="wrap">
+      <header>
+        <h1>비대면 차량 견적 상담</h1>
+        <p class="sub">간단한 조건 입력으로 비대면 안내드립니다</p>
+      </header>
+    </div>
+  </div>
 
+  <div class="wrap">
     <div class="shell">
       <div class="content">
 
-        <!-- ✅ 1) 차량 선택 파트 -->
+        <!-- 1) 차량 선택 -->
         <section class="section" id="secCar">
           <div class="sec-title">차량 선택 <span class="badge">필수</span></div>
 
@@ -311,7 +325,7 @@
           </div>
         </section>
 
-        <!-- ✅ 2) 신청 정보 파트 -->
+        <!-- 2) 신청 정보 -->
         <section class="section" id="secApp">
           <div class="sec-title">신청 정보 <span class="badge">필수</span></div>
 
@@ -334,7 +348,6 @@
           <label for="kakao">카카오톡 아이디 (선택)</label>
           <input id="kakao" placeholder="예) melody7017" />
 
-          <!-- 개인정보 동의 -->
           <div class="consent">
             <div class="consent-row">
               <input id="agree" type="checkbox" />
@@ -374,12 +387,14 @@
       submitBtn: document.getElementById('submitBtn')
     };
 
-    let catalog = []; // {maker, model, trim, option, ...}
+    let catalog = [];
 
     function valRadio(name){
       const el = document.querySelector(`input[name="${name}"]:checked`);
       return el ? el.value : '';
     }
+
+    const uniq = (arr)=> Array.from(new Set(arr)).filter(Boolean).sort((a,b)=>a.localeCompare(b,'ko'));
 
     function setOptions(select, arr, placeholder){
       select.innerHTML = '';
@@ -387,16 +402,13 @@
       ph.value = '';
       ph.textContent = placeholder;
       select.appendChild(ph);
-
-      arr.forEach(v => {
+      arr.forEach(v=>{
         const opt = document.createElement('option');
         opt.value = v;
         opt.textContent = v;
         select.appendChild(opt);
       });
     }
-
-    function uniq(arr){ return Array.from(new Set(arr)).filter(Boolean).sort((a,b)=>a.localeCompare(b,'ko')); }
 
     function resetDown(from){
       if(from === 'maker'){
@@ -416,19 +428,16 @@
 
     function validate(){
       const okCar = !!els.maker.value && !!els.model.value && !!els.trim.value && !!els.option.value;
-      const okApp = els.name.value.trim().length > 1 && els.phone.value.trim().length >= 8 && els.needAt.value.trim().length >= 1;
-      const ok = okCar && okApp && els.agree.checked;
-      els.submitBtn.disabled = !ok;
+      const okApp = els.name.value.trim().length > 1
+                 && els.phone.value.trim().length >= 8
+                 && els.needAt.value.trim().length >= 1;
+      els.submitBtn.disabled = !(okCar && okApp && els.agree.checked);
     }
 
     async function fetchCatalog(){
-      // action=catalog 는 너가 이미 쓰던 방식 그대로
-      const url = `${API_URL}?action=catalog`;
-      const res = await fetch(url, { method:'GET' });
+      const res = await fetch(`${API_URL}?action=catalog`);
       if(!res.ok) throw new Error('카탈로그 불러오기 실패');
       const data = await res.json();
-
-      // data가 배열이든 {items:[]}든 둘 다 처리
       catalog = Array.isArray(data) ? data : (data.items || []);
     }
 
@@ -442,10 +451,11 @@
       const maker = els.maker.value;
       if(!maker) return;
 
-      const models = uniq(catalog
-        .filter(r => (r.maker || r.제조사) === maker)
-        .map(r => r.model || r.차종 || r.모델));
-
+      const models = uniq(
+        catalog
+          .filter(r => (r.maker || r.제조사) === maker)
+          .map(r => r.model || r.차종 || r.모델)
+      );
       els.model.disabled = false;
       setOptions(els.model, models, '차종을 선택해주세요');
     }
@@ -456,10 +466,11 @@
       const model = els.model.value;
       if(!maker || !model) return;
 
-      const trims = uniq(catalog
-        .filter(r => (r.maker || r.제조사) === maker && (r.model || r.차종 || r.모델) === model)
-        .map(r => r.trim || r.차량등급 || r.트림 || r.등급));
-
+      const trims = uniq(
+        catalog
+          .filter(r => (r.maker || r.제조사) === maker && (r.model || r.차종 || r.모델) === model)
+          .map(r => r.trim || r.차량등급 || r.트림 || r.등급)
+      );
       els.trim.disabled = false;
       setOptions(els.trim, trims, '차량 등급을 선택해주세요');
     }
@@ -471,20 +482,22 @@
       const trim  = els.trim.value;
       if(!maker || !model || !trim) return;
 
-      const options = uniq(catalog
-        .filter(r =>
-          (r.maker || r.제조사) === maker &&
-          (r.model || r.차종 || r.모델) === model &&
-          (r.trim  || r.차량등급 || r.트림 || r.등급) === trim
-        )
-        .map(r => r.option || r.옵션));
-
+      const options = uniq(
+        catalog
+          .filter(r =>
+            (r.maker || r.제조사) === maker &&
+            (r.model || r.차종 || r.모델) === model &&
+            (r.trim  || r.차량등급 || r.트림 || r.등급) === trim
+          )
+          .map(r => r.option || r.옵션)
+      );
       els.option.disabled = false;
       setOptions(els.option, options, '옵션을 선택해주세요');
     }
 
     async function submit(){
       els.submitBtn.disabled = true;
+      const oldText = els.submitBtn.textContent;
       els.submitBtn.textContent = '전송 중...';
 
       const payload = {
@@ -502,35 +515,29 @@
 
       try{
         const res = await fetch(API_URL, {
-          method: 'POST',
-          headers: {'Content-Type':'application/json'},
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
           body: JSON.stringify({ action:'submit', payload })
         });
         const data = await res.json().catch(()=>({ok:false}));
 
-        if(!res.ok || data.ok === false){
-          throw new Error(data.message || '접수 실패');
-        }
+        if(!res.ok || data.ok === false) throw new Error(data.message || '접수 실패');
 
         alert('접수 완료! 곧 안내드릴게요 😊');
-
-        // 폼 리셋(차량 선택은 남기고 싶으면 이 부분 바꿔도 됨)
         els.name.value = '';
         els.phone.value = '';
         els.needAt.value = '';
         els.kakao.value = '';
         els.agree.checked = false;
         validate();
-
       }catch(e){
         alert('전송 중 오류: ' + e.message);
       }finally{
-        els.submitBtn.textContent = '간단 견적 요청하기';
+        els.submitBtn.textContent = oldText;
         validate();
       }
     }
 
-    // 이벤트
     els.maker.addEventListener('change', onMaker);
     els.model.addEventListener('change', onModel);
     els.trim.addEventListener('change', onTrim);
@@ -547,13 +554,12 @@
 
     els.submitBtn.addEventListener('click', submit);
 
-    // 시작
     (async function(){
       try{
         await fetchCatalog();
         initMaker();
       }catch(e){
-        alert('초기 로딩 실패: ' + e.message + '\n(웹앱 URL / action=catalog 응답을 확인해줘)');
+        alert('초기 로딩 실패: ' + e.message + '\n(웹앱 URL / action=catalog 응답 확인)');
       }
     })();
   </script>
