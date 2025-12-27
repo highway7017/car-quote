@@ -70,7 +70,25 @@
       padding: 22px 16px 16px;
       overflow:hidden;
     }
-    
+    .hero::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        url("bg.png") center / cover no-repeat;
+      filter:saturate(1.03) contrast(1.02);
+      transform: translateZ(0);
+    }
+    /* 이미지 아래쪽이 점점 투명해지며 핑크 베이스로 연결 */
+    .hero::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+
+  
+    }
+
     /* ✅ 타이틀: 배경 위에 바로 올라가게(별도 div로 감싸지 않음) */
     .hero-title{
       position:relative;
