@@ -210,22 +210,23 @@
 
     .radio-row{
       display:flex;
-      gap:10px;
+      gap:6px;
       margin-top: 10px;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
+      font-size: 7pt;
     }
     .radio-pill{
       flex: 1 1 auto;
-      min-width: 110px;
+      min-width: 50px;
       display:flex;
       align-items:center;
       justify-content:center;
-      gap:8px;
-      padding: 12px 12px;
+      gap:6px;
+      padding: 8px 8px;
       border-radius: 999px;
       border: 1px solid rgba(0,0,0,.10);
       background: rgba(255,255,255,.92);
-      font-weight: 900;
+      font-weight: 700;
       letter-spacing: -.2px;
       cursor:pointer;
       user-select:none;
@@ -281,28 +282,31 @@
       text-align:center;
     }
     .btn{
-      width:100%;
-      border: 0;
-      border-radius: 999px;
-      padding: 16px 18px;
-      font-size: 18px;
-      font-weight: 950;
-      letter-spacing: -0.4px;
-      color: rgba(255,255,255,.98);
-      cursor:pointer;
+  width:100%;
+  border:0;
+  border-radius:999px;
+  padding:18px 18px;
+  font-size:18px;
+  font-weight:950;
+  letter-spacing:-0.4px;
+  color:#fff;
+  cursor:pointer;
 
-      background:
-        linear-gradient(90deg,
-          rgba(255, 105, 175, .96) 0%,
-          rgba(207, 125, 255, .92) 52%,
-          rgba(255, 92, 162, .96) 100%
-        );
-      box-shadow:
-        0 16px 35px rgba(255, 92, 162, .18),
-        0 10px 26px rgba(176, 124, 255, .18);
-      position:relative;
-      overflow:hidden;
-    }
+  background: linear-gradient(
+    135deg,
+    #ff3d9a 10%,     /* 🔥 선명한 핫핑크 */
+    #ff5fb3 50%,
+    #c77dff 80%,
+    #9b5cff 100%   /* 🔥 딥 퍼플 */
+  );
+
+  box-shadow:
+    0 18px 40px rgba(255, 61, 154, .35),
+    0 12px 30px rgba(155, 92, 255, .35);
+
+  position:relative;
+  overflow:hidden;
+}
     .btn::after{
       content:"";
       position:absolute;
@@ -451,7 +455,7 @@
         </div>
 
       </div>
-  
+ 
   </div>
   </main>
 
