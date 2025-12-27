@@ -2,602 +2,442 @@
 <html lang="ko">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>비대면 차량 견적 상담</title>
 
   <style>
-    *{ box-sizing:border-box; }
-    html,body{ margin:0; padding:0; font-family:-apple-system,BlinkMacSystemFont,"Noto Sans KR",system-ui,sans-serif; color:#1f1f1f; }
+    :root{
+      /* ✅ 1) 페이지 배경 이미지: GitHub repo에 넣은 파일명(예: bg.jpg) 또는 https 이미지 URL */
+      --page-bg: url("bg.png");
 
-    /* ✅ 배경색(핑크 베이스)도 아래로 갈수록 옅어지게 */
+      /* 톤 */
+      --pink-1:#ffd7ef;
+      --pink-2:#ff9bd7;
+      --pink-3:#ff6fc5;
+      --ink:#2a2230;
+      --muted:#6b6472;
+      --card:#ffffffcc;
+      --line:#e8dfef;
+      --shadow: 0 20px 60px rgba(44,18,48,.18);
+      --radius: 22px;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
     body{
-      min-height:100vh;
-      background:
-        linear-gradient(
-          to bottom,
-          rgba(247,154,196,.85) 0%,
-          rgba(255,196,224,.55) 28%,
-          rgba(255,233,244,.40) 55%,
-          rgba(255,255,255,.95) 100%
-        );
-    }
-
-    /* ✅ HERO: 이미지 + 이미지용 그라를 한 레이어(::before)로 고정 => 모바일에서도 안 사라짐 */
-    .hero{
-      position:relative;
-      height:min(56vh,520px);
-      min-height:340px;
-      overflow:hidden;
-      display:flex;
-      align-items:flex-end;
-      justify-content:center;
-      padding: 22px 16px 18px;
-    }
-    .hero::before{
-      content:"";
-      position:absolute;
-      inset:0;
-      background-image:
-        /* 이미지 아래로 갈수록 자연스럽게 옅어지는(투명) 그라 */
-        linear-gradient(
-          to bottom,
-          rgba(255,255,255,0) 0%,
-          rgba(255,255,255,0) 52%,
-          rgba(255,208,232,.22) 66%,
-          rgba(255,208,232,.36) 76%,
-          rgba(255,255,255,.00) 100%
-        ),
-        url("bg.png");
-      background-repeat:no-repeat;
-      background-position:center, center;
-      background-size:100% 100%, cover;
-      filter:saturate(1.02) contrast(1.02);
-      transform: translateZ(0);
-    }
-
-    /* ✅ 타이틀: 불필요한 div 감싸기 없이 바로 */
-    .title{
-      position:relative;
-      text-align:center;
-      width:min(520px,100%);
-    }
-    .title h1{
       margin:0;
-      font-size:28px;
-      font-weight:900;
-      letter-spacing:-.6px;
-      color:#201b1e;
-      text-shadow: 0 1px 0 rgba(255,255,255,.35);
+      font-family: ui-sans-serif, system-ui, -apple-system, "Apple SD Gothic Neo", "Noto Sans KR", Segoe UI, Roboto, Arial, "맑은 고딕", sans-serif;
+      color:var(--ink);
+      background:
+        radial-gradient(1200px 800px at 20% 0%, rgba(255,255,255,.65), rgba(255,255,255,0) 55%),
+        linear-gradient(180deg, rgba(255,214,238,.85), rgba(255,255,255,.92) 45%, rgba(255,214,238,.75));
+      position:relative;
+      overflow-x:hidden;
     }
-    .title p{
-      margin:8px 0 0;
-      font-size:14px;
-      font-weight:700;
-      color:rgba(35,35,35,.75);
-      letter-spacing:-.2px;
+
+    /* ✅ “배경에 깔리는” 이미지 + 그라데이션 */
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      background-image: var(--page-bg);
+      background-size: cover;
+      background-position: center;
+      opacity:.40;
+      filter: saturate(1.05) contrast(1.02);
+      z-index:-2;
+      transform: scale(1.02);
+    }
+    body::after{
+      content:"";
+      position:fixed;
+      inset:0;
+      background:
+        radial-gradient(900px 700px at 70% 20%, rgba(255,255,255,.55), rgba(255,255,255,0) 60%),
+        linear-gradient(180deg, rgba(255,196,228,.70), rgba(255,255,255,.92) 45%, rgba(255,170,220,.65));
+      z-index:-1;
     }
 
     .wrap{
-      max-width:520px;
-      margin:-10px auto 44px;
-      padding:0 16px;
+      max-width: 1060px;
+      margin: 32px auto 80px;
+      padding: 0 16px;
     }
 
-    /* 카드 */
-    .card{
-      background: rgba(255,255,255,.92);
-      border: 1px solid rgba(255,255,255,.55);
-      border-radius: 24px;
-      padding: 18px 16px 20px;
-      margin: 14px 0;
-      box-shadow: 0 18px 40px rgba(0,0,0,.14);
+    .shell{
+      border-radius: 26px;
+      background: rgba(255,255,255,.55);
+      border: 1px solid rgba(255,255,255,.75);
+      box-shadow: var(--shadow);
+      overflow:hidden;
       backdrop-filter: blur(10px);
     }
-    .card-header{
+
+    /* 상단 배너 (배경이미지 위에 하단 핑크 그라데이션 “바퀴가 녹아드는 느낌”) */
+    .hero{
+      position:relative;
+      height: 220px;
+      background-image: var(--page-bg);
+      background-size: cover;
+      background-position: center;
+      filter: saturate(1.02);
+    }
+    .hero::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      /* ✅ 하단으로 갈수록 핑크가 진해지는 오버레이 */
+      background:
+        linear-gradient(180deg, rgba(255,120,200,.55) 100%, rgba(255,255,255,.05) 55%, rgba(255,255,255,.25) 0%);
+      pointer-events:none;
+    }
+    .heroInner{
+      position:absolute;
+      inset:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      padding: 0 16px;
+    }
+    .heroTitle{
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin:0;
+      text-shadow: 0 6px 24px rgba(255,255,255,.65);
+    }
+    .heroSub{
+      margin: 8px 0 0;
+      color: rgba(30,20,40,.75);
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .content{
+      padding: 22px 18px 26px;
+      background: linear-gradient(180deg, rgba(255,255,255,.82), rgba(255,255,255,.72));
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    @media (max-width: 860px){
+      .hero{height: 190px}
+      .grid{grid-template-columns: 1fr}
+    }
+
+    .card{
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,.85);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: 0 12px 30px rgba(55,20,66,.10);
+    }
+
+    .sectionTitle{
       display:flex;
       align-items:center;
       gap:10px;
-      margin-bottom:12px;
+      margin: 0 0 12px;
+      font-weight: 900;
+      letter-spacing: -0.2px;
     }
-    .card-header h2{
-      margin:0;
-      font-size:18px;
-      font-weight:900;
-      letter-spacing:-.3px;
+    .pill{
+      font-size: 12px;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(255,111,197,.16);
+      border: 1px solid rgba(255,111,197,.28);
+      color: #a01463;
     }
-    .badge{
-      font-size:12px;
-      font-weight:900;
-      padding:4px 10px;
-      border-radius:999px;
-      background: rgba(255,95,179,.14);
-      border: 1px solid rgba(255,95,179,.18);
-      color:#b53a86;
+
+    .row{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 520px){
+      .row{grid-template-columns: 1fr}
     }
 
     label{
       display:block;
-      margin: 14px 0 6px;
-      font-size:14px;
-      font-weight:900;
-      letter-spacing:-.2px;
+      font-size: 13px;
+      font-weight: 800;
+      color: rgba(30,20,40,.80);
+      margin: 10px 0 7px;
     }
-    select, input{
-      width:100%;
-      padding: 14px 14px;
-      border-radius: 14px;
-      border: 1px solid rgba(0,0,0,.12);
-      background:#fff;
-      font-size:15px;
-      outline:none;
-    }
-    select:disabled, input:disabled{
-      background: rgba(245,245,245,.9);
-      color:#aaa;
-    }
-
-    .helper{
-      margin-top:10px;
-      font-size:12.5px;
-      color:rgba(0,0,0,.55);
-      font-weight:700;
-    }
-
-    /* 라디오 */
-    .radio-row{
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-      margin-top:8px;
-    }
-    .radio-pill{
-      display:flex;
-      gap:10px;
-    }
-    .pill{
-      flex:1;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      gap:8px;
-      padding: 12px 12px;
-      border-radius: 999px;
-      border: 1px solid rgba(0,0,0,.14);
-      background: rgba(255,255,255,.85);
-      font-weight:900;
-      letter-spacing:-.2px;
-    }
-    .pill input{ accent-color:#ff5fb3; }
-
-    /* 개인정보 체크박스: ✅ 체크박스-텍스트 간격 붙이기 */
-    .consent{
-      margin-top:14px;
-      padding: 14px 14px;
-      border-radius: 16px;
-      border: 1px solid rgba(0,0,0,.10);
-      background: rgba(255,255,255,.80);
-    }
-    .consent-row{
-      display:flex;
-      align-items:flex-start;
-      gap:8px; /* ✅ 여기서 간격 제어 */
-      font-size:13px;
-      line-height:1.45;
-      font-weight:700;
-      color:rgba(0,0,0,.82);
-    }
-    .consent-row input{
-      width:auto;
-      margin: 2px 0 0;
-      transform: scale(1.1);
-    }
-    .consent small{
-      display:block;
+    .hint{
       margin-top:6px;
-      color:rgba(0,0,0,.55);
-      font-weight:700;
+      font-size: 12px;
+      color: rgba(40,30,60,.60);
+      font-weight: 700;
     }
 
-    /* 버튼: ✅ 눈에 띄지만 단정한 고급 그라 */
-    .btn{
+    input[type="text"], input[type="tel"], select{
       width:100%;
-      border:none;
-      margin-top:18px;
-      padding: 16px 0;
-      border-radius: 999px;
-      font-size:17px;
-      font-weight:900;
-      letter-spacing:-.2px;
-      color:#fff;
-      background: linear-gradient(135deg,#ff6fb1 0%, #ff5a95 45%, #c97cff 100%);
-      box-shadow: 0 14px 28px rgba(255,90,160,.40);
-      cursor:pointer;
-      transition: transform .08s ease, filter .15s ease, opacity .15s ease;
-    }
-    .btn:active{ transform: scale(.99); }
-    .btn:disabled{ opacity:.45; cursor:not-allowed; filter:saturate(.6); }
-
-    .foot{
-      margin-top:10px;
-      text-align:center;
-      font-size:13px;
-      font-weight:700;
-      color:rgba(0,0,0,.55);
-    }
-
-    /* 토스트 */
-    .toast{
-      position:fixed;
-      left:50%;
-      bottom:22px;
-      transform:translateX(-50%);
-      background: rgba(25,25,25,.92);
-      color:#fff;
       padding: 12px 14px;
       border-radius: 14px;
-      font-size:14px;
-      font-weight:800;
-      letter-spacing:-.2px;
-      opacity:0;
-      pointer-events:none;
-      transition: opacity .18s ease, transform .18s ease;
-      z-index:9999;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.92);
+      outline:none;
+      font-weight: 700;
+      color: var(--ink);
     }
-    .toast.show{
-      opacity:1;
-      transform:translateX(-50%) translateY(-6px);
+    input::placeholder{color: rgba(40,30,60,.38); font-weight:700}
+    input:focus, select:focus{
+      border-color: rgba(255,111,197,.55);
+      box-shadow: 0 0 0 4px rgba(255,111,197,.12);
     }
 
-    /* 모바일 상단 safe area */
-    @supports (padding: max(0px)){
-      .hero{ padding-top: max(22px, env(safe-area-inset-top)); }
+    .radioGroup{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      padding-top:4px;
+    }
+    .chip{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255,255,255,.82);
+      cursor:pointer;
+      user-select:none;
+      font-weight: 800;
+      color: rgba(30,20,40,.78);
+    }
+    .chip input{accent-color: var(--pink-3)}
+    .chip strong{font-weight:900}
+
+    .searchWrap{position:relative}
+    .suggest{
+      position:absolute;
+      left:0; right:0;
+      top: 100%;
+      margin-top:8px;
+      background: rgba(255,255,255,.98);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      box-shadow: 0 16px 40px rgba(45,20,60,.18);
+      overflow:hidden;
+      z-index: 10;
+      display:none;
+      max-height: 240px;
+      overflow-y:auto;
+    }
+    .suggest button{
+      width:100%;
+      text-align:left;
+      border:0;
+      background: transparent;
+      padding: 12px 14px;
+      cursor:pointer;
+      font-weight: 800;
+      color: rgba(30,20,40,.88);
+    }
+    .suggest button:hover{
+      background: rgba(255,111,197,.10);
+    }
+    .mini{
+      font-size: 12px;
+      color: rgba(40,30,60,.55);
+      font-weight: 800;
+      margin-left: 8px;
+    }
+
+    .selectedBox{
+      margin-top: 10px;
+      border: 1px dashed rgba(255,111,197,.45);
+      background: rgba(255,255,255,.75);
+      border-radius: 14px;
+      padding: 12px 14px;
+      font-weight: 900;
+      color: rgba(35,18,45,.78);
+    }
+
+    .options{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 8px;
+    }
+    @media (max-width: 520px){
+      .options{grid-template-columns: 1fr}
+    }
+    .opt{
+      display:flex;
+      align-items:flex-start;
+      gap: 10px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(255,255,255,.84);
+    }
+    .opt input{accent-color: var(--pink-3); margin-top:2px}
+    .opt .name{font-weight:900}
+    .opt .price{font-size: 12px; font-weight:900; color: rgba(40,30,60,.55); margin-top:2px}
+
+    .prices{
+      display:grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+      margin-top: 14px;
+    }
+    @media (max-width: 520px){
+      .prices{grid-template-columns: 1fr}
+    }
+    .priceBox{
+      background: rgba(255,255,255,.88);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px 14px;
+    }
+    .priceBox .k{font-size:12px; font-weight:900; color: rgba(40,30,60,.55)}
+    .priceBox .v{margin-top:6px; font-weight:1000; font-size:18px}
+
+    .submitArea{
+      margin-top: 16px;
+      display:flex;
+      justify-content:center;
+      flex-direction: column;
+      align-items:center;
+      gap: 10px;
+    }
+    .btn{
+      width: min(520px, 100%);
+      padding: 15px 18px;
+      border:0;
+      border-radius: 999px;
+      color: white;
+      font-weight: 1000;
+      font-size: 16px;
+      cursor:pointer;
+      background: linear-gradient(90deg, var(--pink-2), var(--pink-3));
+      box-shadow: 0 16px 40px rgba(255,111,197,.35);
+    }
+    .btn:disabled{
+      opacity:.55;
+      cursor:not-allowed;
+      box-shadow:none;
+    }
+    .footerNote{
+      font-size: 12px;
+      font-weight: 800;
+      color: rgba(40,30,60,.55);
+    }
+
+    .toast{
+      width:min(720px, 100%);
+      border-radius: 16px;
+      padding: 14px 16px;
+      border: 1px solid rgba(20,15,30,.10);
+      background: rgba(255,255,255,.92);
+      color: rgba(30,20,40,.86);
+      font-weight: 900;
+      display:none;
+    }
+    .toast.ok{border-color: rgba(74,190,128,.28)}
+    .toast.bad{border-color: rgba(255,90,120,.30)}
+    .small{font-size:12px; font-weight:800; color: rgba(40,30,60,.55)}
+
+    .consentBox{
+      margin-top: 12px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.80);
+      border-radius: 14px;
+      padding: 12px 12px;
+    }
+    .consentRow{
+      display:flex;
+      gap: 10px;
+      align-items:flex-start;
+    }
+    .consentRow input{accent-color: var(--pink-3); margin-top:2px}
+    .consentText{
+      font-weight: 900;
+      color: rgba(30,20,40,.85);
+    }
+    .consentDesc{
+      margin-top: 6px;
+      font-size: 12px;
+      line-height: 1.5;
+      color: rgba(40,30,60,.62);
+      font-weight: 800;
     }
   </style>
 </head>
 
 <body>
-  <section class="hero">
-    <div class="title">
-      <h1>비대면 차량 견적 상담</h1>
-      <p>간단한 조건 입력으로 비대면 안내드립니다</p>
-    </div>
-  </section>
-
-  <main class="wrap">
-
-    <!-- 차량 선택 -->
-    <section class="card">
-      <div class="card-header">
-        <h2>차량 선택</h2>
-        <span class="badge">필수</span>
-      </div>
-
-      <label for="maker">제조사</label>
-      <select id="maker">
-        <option value="">불러오는 중…</option>
-      </select>
-
-      <label for="model">차종</label>
-      <select id="model" disabled>
-        <option value="">차종을 선택해주세요</option>
-      </select>
-
-      <label for="grade">차량 등급</label>
-      <select id="grade" disabled>
-        <option value="">차량 등급을 선택해주세요</option>
-      </select>
-
-      <label for="option">옵션</label>
-      <select id="option" disabled>
-        <option value="">옵션을 선택해주세요</option>
-      </select>
-
-      <div class="helper">※ 제조사 → 차종 → 등급 → 옵션 순서로 선택됩니다.</div>
-    </section>
-
-    <!-- 신청 정보 -->
-    <section class="card">
-      <div class="card-header">
-        <h2>신청 정보</h2>
-        <span class="badge">필수</span>
-      </div>
-
-      <label>개인/개인사업자/법인</label>
-      <div class="radio-row">
-        <div class="radio-pill">
-          <label class="pill"><input type="radio" name="customerType" value="개인" checked>개인</label>
-          <label class="pill"><input type="radio" name="customerType" value="개인사업자">개인사업자</label>
-          <label class="pill"><input type="radio" name="customerType" value="법인">법인</label>
-        </div>
-      </div>
-
-      <label for="name">성명</label>
-      <input id="name" autocomplete="name" placeholder="예) 홍길동" />
-
-      <label for="phone">연락처</label>
-      <input id="phone" inputmode="tel" autocomplete="tel" placeholder="예) 010-1234-5678" />
-
-      <label for="delivery">차량 인도 시기</label>
-      <input id="delivery" placeholder="예) 가능한 빨리 / 2월 중순 / 미정" />
-
-      <label for="kakao">카카오톡 아이디(선택)</label>
-      <input id="kakao" placeholder="예) melody7017" />
-
-      <div class="consent">
-        <div class="consent-row">
-          <input id="consent" type="checkbox" />
+  <div class="wrap">
+    <div class="shell">
+      <div class="hero">
+        <div class="heroInner">
           <div>
-            <strong>[필수]</strong> 개인정보 수집·이용에 동의합니다.
-            <small>
-              수집: 성명, 연락처, 카카오톡 ID(선택), 차량 선택 정보<br>
-              목적: 견적·상담 안내 / 보유: 상담 완료 후 1년
-            </small>
+            <h1 class="heroTitle">비대면 차량 견적 상담</h1>
+            <p class="heroSub">간단한 조건 입력으로 비대면 안내드립니다</p>
           </div>
         </div>
       </div>
 
-      <button id="submitBtn" class="btn" disabled>간단 견적 요청하기</button>
-      <div class="foot">방문 없이 모두 비대면으로 안내드립니다.</div>
+      <div class="content">
+        <div class="grid">
+          <!-- 좌측: 차량 선택 -->
+          <div class="card">
+            <div class="sectionTitle">
+              차량 선택 <span class="pill">필수</span>
+            </div>
 
-      <!-- fetch 실패 시 자동 fallback용 hidden form/iframe -->
-      <iframe id="fallbackFrame" name="fallbackFrame" style="display:none"></iframe>
-      <form id="fallbackForm" target="fallbackFrame" method="POST" style="display:none"></form>
-    </section>
+            <label>상담 유형</label>
+            <div class="radioGroup" id="dealTypeGroup">
+              <label class="chip"><input type="radio" name="dealType" value="렌트" checked> <strong>장기렌트</strong></label>
+              <label class="chip"><input type="radio" name="dealType" value="리스"> <strong>리스</strong></label>
+            </div>
 
-  </main>
+            <label>차량명 검색</label>
+            <div class="searchWrap">
+              <input id="carSearch" type="text" placeholder="예) 쏘렌토 / 셀토스 / 카니발 (부분검색 가능)" autocomplete="off" />
+              <div class="suggest" id="suggest"></div>
+            </div>
 
-  <div id="toast" class="toast">처리 중…</div>
+            <div class="selectedBox" id="selectedCar">선택된 차량: 아직 선택 전</div>
 
-<script>
-/** =========================
- *  설정
- * ========================= */
-const WEBAPP = "https://script.google.com/macros/s/AKfycbyc1TZg4YplZx91lmam-RbpugEWEWKUw3SCAX0-PWUbWfrDDJczIWlOi36CkJQ4VE6A/exec";
+            <label style="margin-top:14px;">트림 선택</label>
+            <select id="trimSelect" disabled>
+              <option value="">차량을 먼저 선택해주세요</option>
+            </select>
 
-/** =========================
- *  DOM
- * ========================= */
-const makerEl = document.getElementById('maker');
-const modelEl = document.getElementById('model');
-const gradeEl = document.getElementById('grade');
-const optionEl = document.getElementById('option');
-const nameEl = document.getElementById('name');
-const phoneEl = document.getElementById('phone');
-const deliveryEl = document.getElementById('delivery');
-const kakaoEl = document.getElementById('kakao');
-const consentEl = document.getElementById('consent');
-const submitBtn = document.getElementById('submitBtn');
-const toastEl = document.getElementById('toast');
-const fallbackForm = document.getElementById('fallbackForm');
+            <label style="margin-top:14px;">옵션 선택</label>
+            <div class="options" id="optionsWrap">
+              <div class="small">트림 선택 후 옵션이 표시됩니다.</div>
+            </div>
 
-/** =========================
- *  상태
- * ========================= */
-let catalog = []; // [{maker, model, grade, option, ...}]
-let makers = [];
-let models = [];
-let grades = [];
-let options = [];
+            <div class="prices" aria-label="price summary">
+              <div class="priceBox">
+                <div class="k">차량가</div>
+                <div class="v" id="basePriceView">0원</div>
+              </div>
+              <div class="priceBox">
+                <div class="k">옵션가</div>
+                <div class="v" id="optionPriceView">0원</div>
+              </div>
+              <div class="priceBox">
+                <div class="k">총 차량가</div>
+                <div class="v" id="totalPriceView">0원</div>
+              </div>
+            </div>
 
-/** =========================
- *  유틸
- * ========================= */
-function toast(msg, ms=1800){
-  toastEl.textContent = msg;
-  toastEl.classList.add('show');
-  clearTimeout(toast._t);
-  toast._t = setTimeout(()=>toastEl.classList.remove('show'), ms);
-}
-function setOptions(selectEl, list, placeholder){
-  selectEl.innerHTML = "";
-  const opt0 = document.createElement('option');
-  opt0.value = "";
-  opt0.textContent = placeholder;
-  selectEl.appendChild(opt0);
-  for (const v of list){
-    const o = document.createElement('option');
-    o.value = v;
-    o.textContent = v;
-    selectEl.appendChild(o);
-  }
-}
-function normalizePhone(v){
-  return (v||"").replace(/[^\d]/g,"")
-    .replace(/^(\d{3})(\d{3,4})(\d{4}).*$/, "$1-$2-$3");
-}
-phoneEl.addEventListener('blur', ()=>{ phoneEl.value = normalizePhone(phoneEl.value); });
+            <div class="hint">※ 상담 유형(렌트/리스)에 따라 가능한 차량만 표시됩니다.</div>
+          </div>
 
-function getCustomerType(){
-  const checked = document.querySelector('input[name="customerType"]:checked');
-  return checked ? checked.value : "";
-}
-function validate(){
-  const okVehicle = makerEl.value && modelEl.value && gradeEl.value && optionEl.value;
-  const okInfo = nameEl.value.trim() && phoneEl.value.trim() && deliveryEl.value.trim();
-  const okConsent = consentEl.checked;
-  submitBtn.disabled = !(okVehicle && okInfo && okConsent);
-}
-
-/** =========================
- *  Catalog JSONP 로드 (CORS 회피)
- * ========================= */
-function loadCatalog(){
-  return new Promise((resolve,reject)=>{
-    const cb = "cb_" + Math.random().toString(16).slice(2);
-    window[cb] = (data)=>{
-      try{
-        delete window[cb];
-        script.remove();
-      }catch(e){}
-      resolve(data);
-    };
-    const script = document.createElement('script');
-    script.src = WEBAPP + "?action=catalog&callback=" + cb + "&_=" + Date.now();
-    script.onerror = ()=>reject(new Error("catalog load failed"));
-    document.head.appendChild(script);
-  });
-}
-
-/** =========================
- *  드롭다운 연동 로직
- * ========================= */
-function buildMaker(){
-  makers = [...new Set(catalog.map(x=>x.maker).filter(Boolean))].sort();
-  setOptions(makerEl, makers, "제조사를 선택해주세요");
-  makerEl.disabled = false;
-}
-function onMaker(){
-  const maker = makerEl.value;
-  modelEl.disabled = !maker;
-  gradeEl.disabled = true;
-  optionEl.disabled = true;
-  setOptions(modelEl, [], "차종을 선택해주세요");
-  setOptions(gradeEl, [], "차량 등급을 선택해주세요");
-  setOptions(optionEl, [], "옵션을 선택해주세요");
-
-  if(!maker){ validate(); return; }
-
-  models = [...new Set(catalog.filter(x=>x.maker===maker).map(x=>x.model).filter(Boolean))].sort();
-  setOptions(modelEl, models, "차종을 선택해주세요");
-  validate();
-}
-function onModel(){
-  const maker = makerEl.value;
-  const model = modelEl.value;
-  gradeEl.disabled = !(maker && model);
-  optionEl.disabled = true;
-  setOptions(gradeEl, [], "차량 등급을 선택해주세요");
-  setOptions(optionEl, [], "옵션을 선택해주세요");
-
-  if(!(maker && model)){ validate(); return; }
-
-  grades = [...new Set(catalog.filter(x=>x.maker===maker && x.model===model).map(x=>x.grade).filter(Boolean))].sort();
-  setOptions(gradeEl, grades, "차량 등급을 선택해주세요");
-  validate();
-}
-function onGrade(){
-  const maker = makerEl.value;
-  const model = modelEl.value;
-  const grade = gradeEl.value;
-  optionEl.disabled = !(maker && model && grade);
-  setOptions(optionEl, [], "옵션을 선택해주세요");
-
-  if(!(maker && model && grade)){ validate(); return; }
-
-  options = [...new Set(catalog.filter(x=>x.maker===maker && x.model===model && x.grade===grade).map(x=>x.option).filter(Boolean))].sort();
-  setOptions(optionEl, options, "옵션을 선택해주세요");
-  validate();
-}
-
-makerEl.addEventListener('change', onMaker);
-modelEl.addEventListener('change', onModel);
-gradeEl.addEventListener('change', onGrade);
-optionEl.addEventListener('change', validate);
-[nameEl, phoneEl, deliveryEl, kakaoEl, consentEl].forEach(el=>el.addEventListener('input', validate));
-document.querySelectorAll('input[name="customerType"]').forEach(el=>el.addEventListener('change', validate));
-
-/** =========================
- *  제출: fetch 시도 -> 실패 시 iframe 폼 fallback
- * ========================= */
-async function submit(){
-  validate();
-  if(submitBtn.disabled) return;
-
-  const payload = {
-    maker: makerEl.value,
-    model: modelEl.value,
-    grade: gradeEl.value,
-    option: optionEl.value,
-    customerType: getCustomerType(),
-    name: nameEl.value.trim(),
-    phone: phoneEl.value.trim(),
-    delivery: deliveryEl.value.trim(),
-    kakao: kakaoEl.value.trim(),
-    consent: consentEl.checked,
-    source: "github-pages",
-    ts: new Date().toISOString()
-  };
-
-  submitBtn.disabled = true;
-  toast("접수 중…", 2000);
-
-  // 1) fetch (되면 가장 깔끔)
-  try{
-    const res = await fetch(WEBAPP + "?action=submit", {
-      method:"POST",
-      headers:{ "Content-Type":"application/json" },
-      body: JSON.stringify(payload)
-    });
-    const data = await res.json();
-    if(!data || !data.ok) throw new Error("submit failed");
-    toast("접수 완료! 곧 안내드릴게요 🙂", 2200);
-    resetForm();
-    return;
-  }catch(e){
-    // 2) fallback: CORS 막히면 iframe 폼 POST로 보내고 성공 토스트만 보여주기
-    toast("접수 완료! 곧 안내드릴게요 🙂", 2200);
-    try{
-      fallbackForm.action = WEBAPP + "?action=submit";
-      fallbackForm.innerHTML = "";
-      const add = (k,v)=>{
-        const input = document.createElement('input');
-        input.type = "hidden";
-        input.name = k;
-        input.value = (v ?? "");
-        fallbackForm.appendChild(input);
-      };
-      for (const [k,v] of Object.entries(payload)) add(k, typeof v === "boolean" ? (v ? "true" : "false") : v);
-      fallbackForm.submit();
-    }catch(_){}
-    resetForm();
-  }
-}
-
-function resetForm(){
-  // 차량 선택 초기화
-  makerEl.value = "";
-  onMaker();
-  modelEl.value = "";
-  gradeEl.value = "";
-  optionEl.value = "";
-  modelEl.disabled = true;
-  gradeEl.disabled = true;
-  optionEl.disabled = true;
-
-  // 신청 정보 초기화
-  nameEl.value = "";
-  phoneEl.value = "";
-  deliveryEl.value = "";
-  kakaoEl.value = "";
-  consentEl.checked = false;
-
-  // 라디오 기본값(개인)
-  const personal = document.querySelector('input[name="customerType"][value="개인"]');
-  if(personal) personal.checked = true;
-
-  validate();
-}
-
-submitBtn.addEventListener('click', submit);
-
-/** =========================
- *  초기 로딩
- * ========================= */
-(async function init(){
-  makerEl.disabled = true;
-  try{
-    const data = await loadCatalog();
-    if(!data || !data.ok || !Array.isArray(data.items)) throw new Error("bad catalog");
-    catalog = data.items;
-    buildMaker();
-    toast("모델 데이터를 불러왔어요", 1200);
-  }catch(e){
-    makerEl.innerHTML = `<option value="">모델 불러오기 실패</option>`;
-    toast("모델 데이터를 못 불러왔어요. 웹앱 배포/권한 확인해주세요", 2600);
-  }finally{
-    validate();
-  }
-})();
-</script>
-</body>
-</html>
+          <!-- 우측: 상담 조건 + 신청자 정보 -->
+          <div class="card">
+            <div class="sectionTitle">
+              상담 조건 <span class="pill">필수</span>
+            </div>
