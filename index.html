@@ -59,41 +59,50 @@
 
     /* ✅ 상단 배경 이미지: 화면 너비 딱 맞게 + 아래로 투명 그라(핑크 베이스와 자연 연결) */
     .hero{
-      position:relative;
-      z-index:1;
-      width:100%;
-      height:min(46vh, 420px);
-      min-height: 280px;
-      display:flex;
-      align-items:flex-end;
-      justify-content:center;
-      padding: 22px 16px 16px;
-      overflow:hidden;
-    }
-    .hero::before{
-      content:"";
-      position:absolute;
-      inset:0;
-      background:
-        url("bg.png") center / cover no-repeat;
-      filter:saturate(1.03) contrast(1.02);
-      transform: translateZ(0);
-    }
-    /* 이미지 아래쪽이 점점 투명해지며 핑크 베이스로 연결 */
-    .hero::after{
-      content:"";
-      position:absolute;
-      inset:-2px;
-      background:
-        linear-gradient(to bottom,
-          rgba(255,255,255,0) 0%,
-          rgba(255,255,255,0) 45%,
-          rgba(255,205,235,.15) 70%,
-          rgba(255,205,235,.28) 82%,
-          rgba(255,255,255,0) 100%
-        );
-      pointer-events:none;
-    }
+    /* ✅ 상단 배경 이미지: 화면 너비 딱 맞게 + 아래로 투명 그라(핑크 베이스와 자연 연결) */
+.hero{
+  position:relative;
+  z-index:1;
+  width:100%;
+  height:min(54vh, 480px);   /* ← 살짝 키워서 그라가 "보일 공간" 확보 */
+  min-height: 320px;
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+  padding: 22px 16px 18px;
+  overflow:hidden;
+}
+
+/* ✅ 그라데이션을 이미지 레이어와 "같은 배경"으로 합쳐서 렌더링 버그 제거 */
+.hero::before{
+  content:"";
+  position:absolute;
+  inset:0;
+
+  /* 1) 위는 투명, 아래로 갈수록 핑크 기운 → 마지막엔 거의 투명(페이지 핑크 베이스로 자연 연결) */
+  background-image:
+    linear-gradient(
+      to bottom,
+      rgba(255,255,255,0) 0%,
+      rgba(255,255,255,0) 52%,
+      rgba(255,190,228,.22) 70%,
+      rgba(255,190,228,.34) 82%,
+      rgba(255,255,255,0) 100%
+    ),
+    url("bg.png");
+
+  background-size: 100% 100%, cover;     /* 첫 레이어는 전체, 두번째는 cover */
+  background-position: center, center;
+  background-repeat: no-repeat, no-repeat;
+
+  /* 살짝 톤만 정리 */
+  filter:saturate(1.03) contrast(1.02);
+  transform: translateZ(0);
+}
+
+/* ✅ ::after는 이제 필요 없음 (사라져도 문제 없음)
+.hero::after{ display:none; }
+*/
 
     /* ✅ 타이틀: 배경 위에 바로 올라가게(별도 div로 감싸지 않음) */
     .hero-title{
