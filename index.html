@@ -7,31 +7,30 @@
 
 <style>
 :root{
-  --bg-url: url("./bg.png");
-  --page-pink: #ffd1e6; /* 페이지 바탕 핑크 */
+  --bg-url: url("./bg.png");     /* ✅ index.html과 같은 폴더에 bg.png */
+  --page-pink: #ffd1e6;          /* ✅ 아래쪽 바탕 핑크 */
   --card-bg: rgba(255,255,255,0.92);
   --text: #111827;
   --muted: rgba(17,24,39,.6);
   --stroke: rgba(255,255,255,.55);
 }
 
-/* 리셋 */
 *{ box-sizing:border-box; }
 html,body{ margin:0; padding:0; }
 body{
   font-family: -apple-system, BlinkMacSystemFont, "Noto Sans KR", sans-serif;
   color: var(--text);
-  background: var(--page-pink);  /* ✅ 아래는 핑크로 연결 */
+  background: var(--page-pink);         /* ✅ 배경은 핑크로 */
   min-height:100vh;
   overflow-x:hidden;
 }
 
-/* ✅ 배경 영역(이미지 높이 제한) */
+/* ✅ 배너(배경) 영역: 화면 전체가 아니라 "배너 높이만" */
 .bg{
   position: fixed;
   top:0; left:0;
   width:100%;
-  height: 380px;             /* ✅ bg는 여기까지만 보이게 */
+  height: 340px;                 /* ✅ 배너가 보이는 높이 */
   z-index:-2;
 
   background-image: var(--bg-url);
@@ -40,47 +39,46 @@ body{
   background-size: min(1200px, 100%) auto;
 }
 
-/* ✅ 배경 영역 그라데이션(아래로 갈수록 투명 → 페이지 핑크에 자연스럽게 연결) */
+/* ✅ 핑크 오버레이(너무 진하면 스샷처럼 다 핑크가 됨) → 약하게 */
 .bg::after{
   content:"";
   position:absolute;
   inset:0;
   background: linear-gradient(
     180deg,
-    rgba(255, 90, 175, 0.65) 0%,
-    rgba(255, 140, 205, 0.45) 25%,
-    rgba(255, 190, 225, 0.25) 55%,
-    rgba(255, 209, 230, 0.08) 80%,
+    rgba(255, 80, 165, 0.28) 0%,
+    rgba(255, 160, 210, 0.18) 45%,
+    rgba(255, 209, 230, 0.06) 75%,
     rgba(255, 209, 230, 0.00) 100%
   );
 }
 
-/* ✅ 이미지 아래쪽 “페이드아웃” 전용 마스크 (핵심!) */
+/* ✅ 배너 아래로 갈수록 "이미지가 사라지고" 바디 핑크로 연결되는 페이드 */
 .bg-fade{
   position: fixed;
-  top: 280px;     /* ✅ 이 지점부터 아래로 사라지는 느낌 */
+  top: 250px;      /* ✅ 여기부터 서서히 사라지게(배너 아래쪽) */
   left:0;
   width:100%;
-  height: 220px;
+  height: 240px;
   z-index:-1;
   pointer-events:none;
 
-  /* 위는 투명, 아래로 갈수록 페이지 핑크로 */
   background: linear-gradient(
     180deg,
     rgba(255, 209, 230, 0.00) 0%,
-    rgba(255, 209, 230, 0.65) 55%,
+    rgba(255, 209, 230, 0.55) 55%,
     rgba(255, 209, 230, 1.00) 100%
   );
 }
 
-/* 레이아웃 */
+/* ✅ 카드가 배너를 너무 덮지 않게 */
 .wrapper{
   max-width: 980px;
-  margin: 180px auto 90px; /* ✅ 배경 위에 떠있게 */
+  margin: 220px auto 90px;  /* ✅ 위로 올리면 배너가 덮여버림 */
   padding: 0 16px;
 }
 
+/* 바깥 유리 패널 */
 .shell{
   border-radius: 28px;
   background: rgba(255,255,255,0.18);
@@ -90,14 +88,14 @@ body{
   overflow:hidden;
 }
 
-/* 헤더 (상단 핑크 밴드 느낌) */
+/* 헤더 */
 .hero{
   padding: 26px 18px 22px;
   text-align:center;
   background: linear-gradient(
     180deg,
-    rgba(255,255,255,0.35) 0%,
-    rgba(255,255,255,0.06) 100%
+    rgba(255,255,255,0.40) 0%,
+    rgba(255,255,255,0.10) 100%
   );
 }
 
@@ -277,9 +275,7 @@ button{
 </head>
 
 <body>
-  <!-- ✅ 배경(이미지 + 상단 그라데이션) -->
   <div class="bg"></div>
-  <!-- ✅ 아래로 투명 그라데이션 + 페이지 핑크 연결 -->
   <div class="bg-fade"></div>
 
   <div class="wrapper">
@@ -293,95 +289,61 @@ button{
         <div class="card">
           <div class="grid">
 
-            <!-- 좌측: 차량 선택 -->
             <div class="sec">
               <div class="sec-title">차량 선택 <span class="badge">필수</span></div>
 
               <label>상담 유형</label>
               <div class="radio-row">
-                <label class="radio-pill">
-                  <input type="radio" name="dealType" value="렌트" checked>
-                  장기렌트
-                </label>
-                <label class="radio-pill">
-                  <input type="radio" name="dealType" value="리스">
-                  리스
-                </label>
+                <label class="radio-pill"><input type="radio" name="dealType" value="렌트" checked>장기렌트</label>
+                <label class="radio-pill"><input type="radio" name="dealType" value="리스">리스</label>
               </div>
 
               <label>차량명 검색</label>
-              <input id="carSearch" placeholder="예) 쏘렌토 / 셀토스 / 카니발 (부분검색 가능)" />
-              <small class="hint">검색어를 입력하면 목록이 뜹니다.</small>
+              <input placeholder="예) 쏘렌토 / 셀토스 / 카니발" />
 
-              <label>차량 선택</label>
-              <select id="carSelect">
-                <option value="">차량을 선택해주세요</option>
+              <label>트림</label>
+              <select>
+                <option>차량을 먼저 선택하세요</option>
               </select>
 
-              <label>트림 선택</label>
-              <select id="trimSelect" disabled>
-                <option value="">차량을 먼저 선택하세요</option>
-              </select>
-
-              <label>옵션 선택</label>
-              <select id="optionSelect" disabled>
-                <option value="">트림 선택 후 옵션이 표시됩니다.</option>
+              <label>옵션</label>
+              <select>
+                <option>트림 선택 후 옵션 표시</option>
               </select>
 
               <div class="price-grid">
-                <div class="price">
-                  <span>차량가</span>
-                  <strong id="basePrice">0원</strong>
-                </div>
-                <div class="price">
-                  <span>옵션가</span>
-                  <strong id="optPrice">0원</strong>
-                </div>
-                <div class="price">
-                  <span>총 차량가</span>
-                  <strong id="totalPrice">0원</strong>
-                </div>
+                <div class="price"><span>차량가</span><strong>0원</strong></div>
+                <div class="price"><span>옵션가</span><strong>0원</strong></div>
+                <div class="price"><span>총 차량가</span><strong>0원</strong></div>
               </div>
             </div>
 
-            <!-- 우측: 상담조건 + 신청자 -->
             <div style="display:grid; gap:14px;">
               <div class="sec">
                 <div class="sec-title">상담 조건 <span class="badge">필수</span></div>
 
                 <label>차량 인도 지역</label>
-                <input id="deliveryArea" placeholder="예) 경기 남부 / 서울 강남" />
+                <input placeholder="예) 서울 / 경기 남부" />
 
-                <label>고객 유형</label>
-                <div class="radio-row">
-                  <label class="radio-pill"><input type="radio" name="custType" value="개인" checked>개인</label>
-                  <label class="radio-pill"><input type="radio" name="custType" value="개인사업자">개인사업자</label>
-                  <label class="radio-pill"><input type="radio" name="custType" value="법인">법인</label>
-                </div>
-
-                <label>차량 필요 시기 (선택)</label>
-                <input id="needTime" placeholder="예) 가능한 빨리 / 2월 중순 / 미정" />
-                <small class="hint">* “미정”으로 입력해도 괜찮습니다.</small>
+                <label>차량 필요 시기(선택)</label>
+                <input placeholder="예) 가능한 빨리 / 미정" />
               </div>
 
               <div class="sec">
                 <div class="sec-title">신청자 정보 <span class="badge">필수</span></div>
 
                 <label>신청자명</label>
-                <input id="name" placeholder="예) 홍길동" />
+                <input placeholder="예) 홍길동" />
 
                 <label>연락처</label>
-                <input id="phone" placeholder="예) 010-1234-5678" />
-
-                <label>카카오톡 ID (선택)</label>
-                <input id="kakao" placeholder="예) melody7017" />
+                <input placeholder="예) 010-1234-5678" />
 
                 <div class="check">
-                  <input id="agree" type="checkbox" />
+                  <input type="checkbox" />
                   <div>
                     <b>[필수] 개인정보 수집·이용에 동의합니다.</b>
                     <div class="sub">
-                      수집: 성명, 연락처, 카카오톡 ID(선택) · 목적: 견적/상담 안내 · 보유: 상담 완료 후 1년
+                      수집: 성명, 연락처 · 목적: 견적/상담 안내 · 보유: 상담 완료 후 1년
                     </div>
                   </div>
                 </div>
@@ -391,90 +353,11 @@ button{
               </div>
             </div>
 
-          </div><!-- grid -->
-        </div><!-- card -->
-      </div><!-- content -->
-    </div><!-- shell -->
-  </div><!-- wrapper -->
+          </div>
+        </div>
+      </div>
 
-<script>
-  // ✅ 여기 JS는 “디자인 확인용” 기본값만.
-  // 나중에 Apps Script / Sheet 연동할 때 교체하면 됨.
-
-  const carSelect = document.getElementById("carSelect");
-  const trimSelect = document.getElementById("trimSelect");
-  const optionSelect = document.getElementById("optionSelect");
-
-  // 샘플 데이터(동작 확인용)
-  const cars = [
-    {name:"쏘렌토", trims:["프레스티지","노블레스"], base:35020000},
-    {name:"셀토스", trims:["트렌디","프레스티지"], base:24900000},
-    {name:"카니발", trims:["프레스티지","시그니처"], base:39200000},
-  ];
-
-  function money(n){
-    return (n||0).toLocaleString("ko-KR") + "원";
-  }
-
-  // 차량 목록
-  cars.forEach(c=>{
-    const op = document.createElement("option");
-    op.value = c.name;
-    op.textContent = c.name;
-    carSelect.appendChild(op);
-  });
-
-  carSelect.addEventListener("change", ()=>{
-    const selected = cars.find(x=>x.name===carSelect.value);
-    trimSelect.innerHTML = "";
-    optionSelect.innerHTML = "";
-    document.getElementById("optPrice").textContent = money(0);
-
-    if(!selected){
-      trimSelect.disabled = true;
-      optionSelect.disabled = true;
-      trimSelect.innerHTML = `<option value="">차량을 먼저 선택하세요</option>`;
-      optionSelect.innerHTML = `<option value="">트림 선택 후 옵션이 표시됩니다.</option>`;
-      document.getElementById("basePrice").textContent = money(0);
-      document.getElementById("totalPrice").textContent = money(0);
-      return;
-    }
-
-    trimSelect.disabled = false;
-    trimSelect.innerHTML = `<option value="">트림을 선택해주세요</option>`;
-    selected.trims.forEach(t=>{
-      const op = document.createElement("option");
-      op.value = t; op.textContent = t;
-      trimSelect.appendChild(op);
-    });
-
-    document.getElementById("basePrice").textContent = money(selected.base);
-    document.getElementById("totalPrice").textContent = money(selected.base);
-  });
-
-  trimSelect.addEventListener("change", ()=>{
-    optionSelect.disabled = !trimSelect.value;
-    optionSelect.innerHTML = `<option value="">옵션을 선택해주세요</option>`;
-    ["스타일(+700,000)","빌트인캠2(+450,000)","파노라마선루프(+1,090,000)"].forEach((o,i)=>{
-      const op = document.createElement("option");
-      op.value = o;
-      op.textContent = o;
-      optionSelect.appendChild(op);
-    });
-  });
-
-  optionSelect.addEventListener("change", ()=>{
-    const baseText = document.getElementById("basePrice").textContent.replace(/[^0-9]/g,"");
-    const base = Number(baseText||0);
-
-    let opt = 0;
-    if(optionSelect.value.includes("700,000")) opt = 700000;
-    else if(optionSelect.value.includes("450,000")) opt = 450000;
-    else if(optionSelect.value.includes("1,090,000")) opt = 1090000;
-
-    document.getElementById("optPrice").textContent = money(opt);
-    document.getElementById("totalPrice").textContent = money(base + opt);
-  });
-</script>
+    </div>
+  </div>
 </body>
 </html>
