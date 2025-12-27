@@ -6,1342 +6,132 @@
   <title>비대면 차량 견적 상담</title>
 
   <style>
+    /* =========================
+       0) 배경 이미지 파일명만 여기서 바꾸기
+       ========================= */
     :root{
-      --ink:#241a27;
-      --muted:rgba(36,26,39,.65);
-      --pink1:#ff9acb;
-      --pink2:#ff5fb3;
-
-      /* ✅ 리포에 올린 배경 이미지 파일명 정확히 */
-      --bg: url("./bg.jpg");
-
-      --card: rgba(255,255,255,.86);
-      --stroke: rgba(255,255,255,.55);
-      --shadow: 0 20px 55px rgba(0,0,0,.18);
+      --bg-url: url("bg.png"); /* ✅ 여기를 네 이미지 파일명으로 */
+      --pink-1: rgba(255, 214, 236, .95);
+      --pink-2: rgba(255, 170, 214, .72);
+      --pink-3: rgba(255, 120, 186, .72);
+      --text: #221a23;
+      --muted: rgba(34, 26, 35, .62);
+      --card: rgba(255,255,255,.78);
+      --stroke: rgba(255,255,255,.60);
+      --shadow: 0 18px 55px rgba(0,0,0,.18);
     }
 
-    *{box-sizing:border-box}
-    html,body{height:100%}
+    /* =========================
+       1) 페이지 전체 배경 레이어
+       - cover 금지
+       - 이미지 1회만 + 원본비율 유지 (contain)
+       - 아래로 투명 그라데이션 → 핑크 배경 연결
+       ========================= */
+    html, body { height: 100%; }
     body{
       margin:0;
-      font-family: system-ui, -apple-system, "Noto Sans KR", sans-serif;
-      color:var(--ink);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans KR", Arial, sans-serif;
+      color: var(--text);
+      position: relative;
+      overflow-x:hidden;
 
-      /* ✅ BG는 무조건 body 전체 */
+      /* ✅ 핑크톤 바탕 (이미지가 사라진 뒤 이어질 배경) */
+      background:
+        radial-gradient(1200px 700px at 50% 0%, rgba(255,255,255,.70), rgba(255,255,255,0) 60%),
+        linear-gradient(180deg, #ffe7f3 0%, #ffd4ee 40%, #ffc0e6 70%, #ffb2df 100%);
+    }
+
+    /* 배경 이미지(원본 비율 유지 / 1회만 / contain 느낌) */
+    body::before{
+      content:"";
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+
+      /* ✅ cover 아니라 contain */
+      background-image: var(--bg-url);
+      background-repeat: no-repeat;
+      background-position: center top;
+      background-size: min(1200px, 100%) auto; /* 화면 너비에 맞춰 “딱” 보이게 */
+      /* ↑ 1200px는 PC에서 너무 커지지 않게 제한. 원하면 숫자 조절 가능 */
+
+      /* 이미지가 너무 강하면 살짝 투명 */
+      opacity: .95;
+      transform: translateZ(0);
+    }
+
+    /* 이미지 아래를 투명으로 “녹여서” 핑크로 연결하는 레이어 */
+    body::after{
+      content:"";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+
+      /* ✅ 핵심: 위쪽은 투명, 아래로 갈수록 핑크가 올라오게 */
       background:
         linear-gradient(
-          to bottom,
-          rgba(255,255,255,.15) 0%,
-          rgba(255,205,235,.38) 35%,
-          rgba(255,150,215,.55) 70%,
-          rgba(255,95,179,.72) 100%
-        ),
-        var(--bg);
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-
-      /* ✅ 모바일에서 fixed가 깨질 수 있어 끔 */
-      background-attachment: scroll;
-      min-height:100vh;
-    }
-
-    @media (min-width: 900px){
-      body{ background-attachment: fixed; }
-    }
-
-    .wrap{
-      max-width: 980px;
-      margin: 28px auto 70px;
-      padding: 0 16px;
-    }
-
-    .shell{
-      border-radius: 26px;
-      background: rgba(255,255,255,.20);
-      border: 1px solid rgba(255,255,255,.28);
-      box-shadow: var(--shadow);
-      overflow:hidden;
-      backdrop-filter: blur(10px);
-    }
-
-    /* ✅ 상단 배너 영역 */
-    .banner{
-      height: 190px;
-      position: relative;
-      display:flex;
-      align-items:flex-end;
-      justify-content:center;
-      padding: 16px;
-      border-bottom: 1px solid rgba(255,255,255,.25);
-    }
-
-    /* 배너 위에 어두운 가독성 오버레이 */
-    .banner::before{
-      content:"";
-      position:absolute;
-      inset:0;
-      background:
-        linear-gradient(to bottom,
-          rgba(255,255,255,.10) 0%,
-          rgba(255,120,190,.35) 65%,
-          rgba(255,90,180,.55) 100%
+          180deg,
+          rgba(255, 232, 245, 0) 0%,
+          rgba(255, 232, 245, 0) 35%,
+          rgba(255, 232, 245, .35) 55%,
+          rgba(255, 214, 236, .75) 72%,
+          rgba(255, 170, 214, .86) 88%,
+          rgba(255, 120, 186, .92) 100%
         );
-      pointer-events:none;
+      transform: translateZ(0);
     }
 
-    .banner-inner{
-      position:relative;
-      text-align:center;
-      padding: 18px 18px 14px;
-      border-radius: 22px;
-      background: rgba(255,255,255,.55);
-      border: 1px solid rgba(255,255,255,.60);
-      backdrop-filter: blur(10px);
-      max-width: 720px;
-      width: 100%;
-    }
-
-    .banner h1{
-      margin:0;
-      font-size: 22px;
-      letter-spacing:-.6px;
-      font-weight: 950;
-    }
-    .banner p{
-      margin:8px 0 0;
-      font-size: 13px;
-      font-weight: 800;
-      color: var(--muted);
-    }
-
-    .content{ padding: 16px; }
-
-    .card{
-      background: var(--card);
-      border: 1px solid var(--stroke);
-      border-radius: 22px;
-      padding: 16px;
-      box-shadow: 0 10px 35px rgba(0,0,0,.08);
-      backdrop-filter: blur(12px);
-    }
-
-    .grid{
-      display:grid;
-      grid-template-columns: 1fr;
-      gap: 14px;
-    }
-
-    @media (min-width: 860px){
-      .grid{ grid-template-columns: 1.05fr .95fr; }
-    }
-
-    .sec{
-      background: rgba(255,255,255,.72);
-      border: 1px solid rgba(255,255,255,.62);
-      border-radius: 18px;
-      padding: 14px;
-    }
-
-    .sec-title{
-      display:flex;
-      gap:10px;
-      align-items:center;
-      margin:0 0 10px;
-      font-size: 15px;
-      font-weight: 950;
-    }
-
-    .badge{
-      font-size:12px;
-      font-weight:950;
-      padding:4px 10px;
-      border-radius:999px;
-      background: rgba(255,95,179,.14);
-      border: 1px solid rgba(255,95,179,.18);
-      color:#a20b5a;
-      white-space:nowrap;
-    }
-
-    label{
-      display:block;
-      font-weight: 900;
-      margin-top: 12px;
-      font-size: 13px;
-    }
-
-    input, select{
-      width:100%;
-      margin-top: 7px;
-      padding: 12px 12px;
-      border-radius: 14px;
-      border: 1px solid rgba(0,0,0,.10);
-      background: rgba(255,255,255,.92);
-      font-size: 14px;
-      outline:none;
-    }
-    input:focus, select:focus{
-      border-color: rgba(255,95,179,.45);
-      box-shadow: 0 0 0 3px rgba(255,95,179,.12);
-    }
-
-    .row{
-      display:grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
-    }
-    @media (min-width: 520px){
-      .row{grid-template-columns: 1fr 1fr}
-    }
-
-    /* ✅ 라디오를 절대 줄바꿈 안 되게 */
-    .radio-row{
-      display:flex;
-      gap: 10px;
-      flex-wrap: nowrap;
-      margin-top: 8px;
-    }
-    .pill{
-      flex: 1;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      gap:8px;
-      padding: 12px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(0,0,0,.10);
-      background: rgba(255,255,255,.92);
-      font-weight: 950;
-      font-size: 13px;
-      white-space: nowrap;
-    }
-    .pill input{width:auto; margin:0}
-
-    .hint{
-      font-size: 12px;
-      font-weight: 800;
-      color: var(--muted);
-      margin-top: 6px;
-      line-height: 1.4;
-    }
-
-    #suggest{
-      margin-top: 8px;
-      border-radius: 14px;
-      border: 1px solid rgba(0,0,0,.10);
-      background: rgba(255,255,255,.96);
-      overflow:hidden;
-      display:none;
-      max-height: 240px;
-      overflow-y:auto;
-    }
-    #suggest button{
-      width:100%;
-      border:0;
-      background:transparent;
-      padding: 12px 12px;
-      text-align:left;
-      cursor:pointer;
-      font-weight: 950;
-      color: var(--ink);
-    }
-    #suggest button:hover{ background: rgba(255,95,179,.10); }
-
-    #options{ margin-top: 8px; display:grid; gap:8px; }
-    .opt{
-      display:flex;
-      align-items:center;
-      gap: 10px;
-      padding: 10px 12px;
-      border-radius: 14px;
-      border: 1px solid rgba(0,0,0,.08);
-      background: rgba(255,255,255,.92);
-      font-weight: 900;
-      font-size: 13px;
-    }
-    .opt input{width:auto; margin:0}
-
-    .prices{
-      display:grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-top: 12px;
-    }
-    .price{
-      border-radius: 16px;
-      padding: 12px;
-      border: 1px solid rgba(0,0,0,.08);
-      background: rgba(255,255,255,.92);
-      text-align:center;
-      font-weight: 950;
-    }
-    .price span{
-      display:block;
-      margin-top:6px;
-      font-size: 15px;
-    }
-
-    .divider{ height:1px; background: rgba(0,0,0,.06); margin: 14px 0; }
-
-    .check{
-      display:flex;
-      gap:10px;
-      align-items:flex-start;
-      padding: 12px 12px;
-      border-radius: 14px;
-      border: 1px solid rgba(0,0,0,.08);
-      background: rgba(255,255,255,.92);
-      margin-top: 12px;
-    }
-    .check input{width:auto; margin-top:2px}
-    .check b{display:block; font-weight: 950;}
-    .check small{
-      display:block; margin-top:6px;
-      color: var(--muted); font-weight: 800; line-height:1.4;
-    }
-
-    .cta{
-      margin-top: 14px;
-      width:100%;
-      border:0;
-      padding: 16px;
-      border-radius: 999px;
-      background: linear-gradient(90deg, var(--pink1), var(--pink2));
-      color:#fff;
-      font-size: 15px;
-      font-weight: 950;
-      cursor:pointer;
-      box-shadow: 0 10px 28px rgba(255,95,179,.28);
-    }
-    .cta:disabled{ opacity:.55; cursor:not-allowed; box-shadow:none; }
-
-    .toast{
-      margin-top: 10px;
-      padding: 12px 14px;
-      border-radius: 14px;
-      border: 1px solid rgba(0,0,0,.08);
-      background: rgba(255,255,255,.92);
-      font-weight: 900;
-      display:none;
-    }
-  </style>
-</head>
-
-<body>
-  <div class="wrap">
-    <div class="shell">
-
-      <!-- ✅ 배너가 반드시 보여야 함 -->
-      <div class="banner">
-        <div class="banner-inner">
-          <h1>비대면 차량 견적 상담</h1>
-          <p>간단한 조건 입력으로 비대면 안내드립니다</p>
-        </div>
-      </div>
-
-      <div class="content">
-        <div class="card">
-          <div class="grid">
-
-            <!-- LEFT -->
-            <div class="sec">
-              <div class="sec-title">차량 선택 <span class="badge">필수</span></div>
-
-              <label>상담 유형</label>
-              <div class="radio-row">
-                <label class="pill"><input type="radio" name="dealType" value="렌트" checked> 장기렌트</label>
-                <label class="pill"><input type="radio" name="dealType" value="리스"> 리스</label>
-              </div>
-
-              <label>차량명 검색</label>
-              <input id="carSearch" placeholder="예) 쏘렌토 / 셀토스 / 카니발 (부분검색 가능)">
-              <div id="suggest"></div>
-
-              <label>선택된 차량</label>
-              <input id="pickedCar" disabled value="아직 선택 전">
-
-              <label>트림 선택</label>
-              <select id="trimSelect" disabled>
-                <option>차량을 먼저 선택해주세요</option>
-              </select>
-
-              <label>옵션 선택</label>
-              <div class="hint">트림 선택 후 옵션이 표시됩니다.</div>
-              <div id="options"></div>
-
-              <div class="prices">
-                <div class="price">차량가<span id="basePrice">0원</span></div>
-                <div class="price">옵션가<span id="optPrice">0원</span></div>
-                <div class="price">총 차량가<span id="totalPrice">0원</span></div>
-              </div>
-            </div>
-
-            <!-- RIGHT -->
-            <div class="sec">
-              <div class="sec-title">상담 조건 <span class="badge">필수</span></div>
-
-              <label>차량 인도 지역</label>
-              <input id="region" placeholder="예) 서울 / 경기 남부">
-
-              <label>고객 유형</label>
-              <div class="radio-row" style="flex-wrap:wrap">
-                <label class="pill" style="flex:0 0 auto; min-width: 120px;"><input type="radio" name="customerType" value="개인" checked> 개인</label>
-                <label class="pill" style="flex:0 0 auto; min-width: 120px;"><input type="radio" name="customerType" value="개인사업자"> 개인사업자</label>
-                <label class="pill" style="flex:0 0 auto; min-width: 120px;"><input type="radio" name="customerType" value="법인"> 법인</label>
-              </div>
-
-              <label>차량 필요 시기 (선택)</label>
-              <input id="needTime" placeholder="예) 가능한 빨리 / 2월 중순 / 미정">
-              <div class="hint">* “미정”으로 입력해도 괜찮습니다.</div>
-
-              <div class="divider"></div>
-
-              <div class="sec-title">신청자 정보 <span class="badge">필수</span></div>
-
-              <div class="row">
-                <div>
-                  <label>신청자명</label>
-                  <input id="name" placeholder="예) 홍길동">
-                </div>
-                <div>
-                  <label>연락처</label>
-                  <input id="phone" placeholder="예) 010-1234-5678">
-                </div>
-              </div>
-
-              <label>카카오톡 ID (선택)</label>
-              <input id="kakao" placeholder="예) melody7017">
-
-              <div class="check">
-                <input type="checkbox" id="consent">
-                <div>
-                  <b>[필수] 개인정보 수집·이용에 동의합니다.</b>
-                  <small>
-                    수집: 성명, 연락처, 카카오톡 ID(선택) · 목적: 견적/상담 안내 · 보유: 상담 완료 후 1년
-                  </small>
-                </div>
-              </div>
-
-              <button class="cta" id="submitBtn">간단 견적 요청하기</button>
-              <div class="toast" id="toast"></div>
-              <div class="hint" style="text-align:center;margin-top:10px;">
-                방문 없이 모두 비대면으로 안내드립니다.
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-<script>
-/* ✅ 너 웹앱 URL로 교체 */
-const GAS_URL = "https://script.google.com/macros/s/AKfycbxE58tNJ_Nfr5KNFMp0b6P4dWyBGnP_CPDiTuontpL1u4b931Tx6EWn5iCR9CqjEzne/exec";
-
-let CATALOG = null;
-let selected = { maker:null, model:null, trim:null, basePrice:0, optTotal:0, options:[] };
-
-const $ = (id)=>document.getElementById(id);
-const fmt = (n)=> (Number(n)||0).toLocaleString("ko-KR")+"원";
-
-const suggestBox = $("suggest");
-const carSearch = $("carSearch");
-const pickedCar = $("pickedCar");
-const trimSelect = $("trimSelect");
-const optionsDiv = $("options");
-
-const baseEl = $("basePrice");
-const optEl  = $("optPrice");
-const totalEl= $("totalPrice");
-const toast = $("toast");
-
-function showToast(msg){
-  toast.textContent = msg;
-  toast.style.display = "block";
-  setTimeout(()=>toast.style.display="none", 2600);
-}
-
-function getRadio(name){
-  return [...document.querySelectorAll(`input[name="${name}"]`)].find(x=>x.checked)?.value || "";
-}
-
-function calc(){
-  baseEl.textContent = fmt(selected.basePrice);
-  optEl.textContent  = fmt(selected.optTotal);
-  totalEl.textContent= fmt(selected.basePrice + selected.optTotal);
-}
-
-function clearAfterCarChange(){
-  selected.trim = null;
-  selected.basePrice = 0;
-  selected.optTotal = 0;
-  selected.options = [];
-  trimSelect.innerHTML = `<option value="">트림을 선택해주세요</option>`;
-  trimSelect.disabled = false;
-  optionsDiv.innerHTML = "";
-  calc();
-}
-
-function renderSuggest(keyword){
-  suggestBox.innerHTML = "";
-  if(!CATALOG || !keyword){
-    suggestBox.style.display="none";
-    return;
-  }
-  const dealType = getRadio("dealType"); // 렌트/리스
-  let count=0;
-
-  Object.entries(CATALOG).forEach(([maker, models])=>{
-    Object.entries(models).forEach(([model, info])=>{
-      const okByDeal = (dealType==="렌트") ? (info.rentAllowed!==false) : true;
-      const hit = model.includes(keyword) || maker.includes(keyword);
-      if(hit && okByDeal){
-        count++;
-        const btn = document.createElement("button");
-        btn.type="button";
-        btn.textContent = `${maker} ${model}`;
-        btn.onclick = ()=> selectCar(maker, model);
-        suggestBox.appendChild(btn);
-      }
-    });
-  });
-
-  suggestBox.style.display = count ? "block" : "none";
-}
-
-function selectCar(maker, model){
-  selected.maker = maker;
-  selected.model = model;
-  pickedCar.value = `${maker} ${model}`;
-  carSearch.value = model;
-  suggestBox.style.display="none";
-  clearAfterCarChange();
-
-  const trims = CATALOG[maker][model].trims || {};
-  trimSelect.innerHTML = `<option value="">트림을 선택해주세요</option>`;
-  Object.keys(trims).forEach((trimName)=>{
-    const opt = document.createElement("option");
-    opt.value = trimName;
-    opt.textContent = trimName;
-    trimSelect.appendChild(opt);
-  });
-}
-
-function renderOptions(maker, model, trim){
-  optionsDiv.innerHTML = "";
-  selected.options = [];
-  selected.optTotal = 0;
-
-  const tinfo = CATALOG[maker][model].trims[trim];
-  const options = tinfo.options || {};
-
-  if(Object.keys(options).length===0){
-    optionsDiv.innerHTML = `<div class="hint">선택 가능한 옵션이 없습니다.</div>`;
-    calc();
-    return;
-  }
-
-  Object.entries(options).forEach(([name, price])=>{
-    const label = document.createElement("label");
-    label.className="opt";
-    label.innerHTML = `<input type="checkbox" data-name="${name}" data-price="${price}">
-                       <span>${name} (+${Number(price).toLocaleString("ko-KR")}원)</span>`;
-    label.querySelector("input").addEventListener("change",(e)=>{
-      const p = Number(e.target.dataset.price)||0;
-      const n = e.target.dataset.name;
-      if(e.target.checked){
-        selected.options.push(n);
-        selected.optTotal += p;
-      }else{
-        selected.options = selected.options.filter(x=>x!==n);
-        selected.optTotal -= p;
-      }
-      calc();
-    });
-    optionsDiv.appendChild(label);
-  });
-
-  calc();
-}
-
-async function loadCatalog(){
-  const url = `${GAS_URL}?action=catalog`;
-  const res = await fetch(url);
-  const data = await res.json();
-  CATALOG = data.catalog || data;
-}
-
-function validate(){
-  if(!selected.maker || !selected.model) return "차량을 선택해주세요.";
-  if(!selected.trim) return "트림을 선택해주세요.";
-  if(!$("region").value.trim()) return "차량 인도 지역을 입력해주세요.";
-  if(!$("name").value.trim()) return "신청자명을 입력해주세요.";
-  if(!$("phone").value.trim()) return "연락처를 입력해주세요.";
-  if(!$("consent").checked) return "개인정보 수집·이용 동의가 필요합니다.";
-  return "";
-}
-
-async function submit(){
-  const err = validate();
-  if(err){ showToast(err); return; }
-
-  const payload = {
-    action: "submit",
-    dealType: getRadio("dealType"),
-    customerType: getRadio("customerType"),
-    maker: selected.maker,
-    model: selected.model,
-    trim: selected.trim,
-    basePrice: selected.basePrice,
-    options: selected.options.join(", "),
-    optionPrice: selected.optTotal,
-    totalPrice: selected.basePrice + selected.optTotal,
-    region: $("region").value.trim(),
-    needTime: $("needTime").value.trim(),
-    applicantName: $("name").value.trim(),
-    phone: $("phone").value.trim(),
-    kakaoId: $("kakao").value.trim(),
-    consent: true,
-    createdAt: new Date().toISOString()
-  };
-
-  $("submitBtn").disabled = true;
-  $("submitBtn").textContent = "접수 중…";
-
-  try{
-    const res = await fetch(GAS_URL, {
-      method:"POST",
-      headers:{ "Content-Type":"text/plain;charset=utf-8" },
-      body: JSON.stringify(payload)
-    });
-    await res.json().catch(()=> ({}));
-    showToast("신청이 정상적으로 접수되었습니다. 문자 또는 카카오톡으로 안내드릴게요.");
-  }catch(e){
-    console.error(e);
-    showToast("전송에 실패했습니다. 잠시 후 다시 시도해주세요.");
-  }finally{
-    $("submitBtn").disabled = false;
-    $("submitBtn").textContent = "간단 견적 요청하기";
-  }
-}
-
-carSearch.addEventListener("input", ()=> renderSuggest(carSearch.value.trim()));
-
-document.querySelectorAll('input[name="dealType"]').forEach(r=>{
-  r.addEventListener("change", ()=>{
-    pickedCar.value = "아직 선택 전";
-    carSearch.value = "";
-    suggestBox.style.display="none";
-    trimSelect.disabled = true;
-    trimSelect.innerHTML = `<option>차량을 먼저 선택해주세요</option>`;
-    optionsDiv.innerHTML = "";
-    selected = { maker:null, model:null, trim:null, basePrice:0, optTotal:0, options:[] };
-    calc();
-  });
-});
-
-trimSelect.addEventListener("change", ()=>{
-  const t = trimSelect.value;
-  if(!t){ return; }
-  selected.trim = t;
-
-  const tinfo = CATALOG[selected.maker][selected.model].trims[t];
-  selected.basePrice = Number(tinfo.basePrice)||0;
-  renderOptions(selected.maker, selected.model, t);
-});
-
-$("submitBtn").addEventListener("click", submit);
-
-(async ()=>{
-  try{
-    await loadCatalog();
-  }catch(e){
-    console.error(e);
-    showToast("차량 목록을 불러오지 못했습니다. GAS URL / 배포 상태를 확인해주세요.");
-  }
-})();
-</script>
-</body>
-</html>          rgba(255,95,179,.72) 100%
-        ),
-        var(--bg);
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-
-      /* ✅ 모바일에서 fixed가 깨질 수 있어 끔 */
-      background-attachment: scroll;
-      min-height:100vh;
-    }
-
-    @media (min-width: 900px){
-      body{ background-attachment: fixed; }
-    }
-
+    /* =========================
+       2) 레이아웃/카드
+       ========================= */
     .wrap{
       max-width: 980px;
-      margin: 28px auto 70px;
-      padding: 0 16px;
-    }
-
-    .shell{
-      border-radius: 26px;
-      background: rgba(255,255,255,.20);
-      border: 1px solid rgba(255,255,255,.28);
-      box-shadow: var(--shadow);
-      overflow:hidden;
-      backdrop-filter: blur(10px);
-    }
-
-    /* ✅ 상단 배너 영역 */
-    .banner{
-      height: 190px;
-      position: relative;
-      display:flex;
-      align-items:flex-end;
-      justify-content:center;
-      padding: 16px;
-      border-bottom: 1px solid rgba(255,255,255,.25);
-    }
-
-    /* 배너 위에 어두운 가독성 오버레이 */
-    .banner::before{
-      content:"";
-      position:absolute;
-      inset:0;
-      background:
-        linear-gradient(to bottom,
-          rgba(255,255,255,.10) 0%,
-          rgba(255,120,190,.35) 65%,
-          rgba(255,90,180,.55) 100%
-        );
-      pointer-events:none;
-    }
-
-    .banner-inner{
-      position:relative;
-      text-align:center;
-      padding: 18px 18px 14px;
-      border-radius: 22px;
-      background: rgba(255,255,255,.55);
-      border: 1px solid rgba(255,255,255,.60);
-      backdrop-filter: blur(10px);
-      max-width: 720px;
-      width: 100%;
-    }
-
-    .banner h1{
-      margin:0;
-      font-size: 22px;
-      letter-spacing:-.6px;
-      font-weight: 950;
-    }
-    .banner p{
-      margin:8px 0 0;
-      font-size: 13px;
-      font-weight: 800;
-      color: var(--muted);
-    }
-
-    .content{ padding: 16px; }
-
-    .card{
-      background: var(--card);
-      border: 1px solid var(--stroke);
-      border-radius: 22px;
-      padding: 16px;
-      box-shadow: 0 10px 35px rgba(0,0,0,.08);
-      backdrop-filter: blur(12px);
-    }
-
-    .grid{
-      display:grid;
-      grid-template-columns: 1fr;
-      gap: 14px;
-    }
-
-    @media (min-width: 860px){
-      .grid{ grid-template-columns: 1.05fr .95fr; }
-    }
-
-    .sec{
-      background: rgba(255,255,255,.72);
-      border: 1px solid rgba(255,255,255,.62);
-      border-radius: 18px;
-      padding: 14px;
-    }
-
-    .sec-title{
-      display:flex;
-      gap:10px;
-      align-items:center;
-      margin:0 0 10px;
-      font-size: 15px;
-      font-weight: 950;
-    }
-
-    .badge{
-      font-size:12px;
-      font-weight:950;
-      padding:4px 10px;
-      border-radius:999px;
-      background: rgba(255,95,179,.14);
-      border: 1px solid rgba(255,95,179,.18);
-      color:#a20b5a;
-      white-space:nowrap;
-    }
-
-    label{
-      display:block;
-      font-weight: 900;
-      margin-top: 12px;
-      font-size: 13px;
-    }
-
-    input, select{
-      width:100%;
-      margin-top: 7px;
-      padding: 12px 12px;
-      border-radius: 14px;
-      border: 1px solid rgba(0,0,0,.10);
-      background: rgba(255,255,255,.92);
-      font-size: 14px;
-      outline:none;
-    }
-    input:focus, select:focus{
-      border-color: rgba(255,95,179,.45);
-      box-shadow: 0 0 0 3px rgba(255,95,179,.12);
-    }
-
-    .row{
-      display:grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
-    }
-    @media (min-width: 520px){
-      .row{grid-template-columns: 1fr 1fr}
-    }
-
-    /* ✅ 라디오를 절대 줄바꿈 안 되게 */
-    .radio-row{
-      display:flex;
-      gap: 10px;
-      flex-wrap: nowrap;
-      margin-top: 8px;
-    }
-    .pill{
-      flex: 1;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      gap:8px;
-      padding: 12px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(0,0,0,.10);
-      background: rgba(255,255,255,.92);
-      font-weight: 950;
-      font-size: 13px;
-      white-space: nowrap;
-    }
-    .pill input{width:auto; margin:0}
-
-    .hint{
-      font-size: 12px;
-      font-weight: 800;
-      color: var(--muted);
-      margin-top: 6px;
-      line-height: 1.4;
-    }
-
-    #suggest{
-      margin-top: 8px;
-      border-radius: 14px;
-      border: 1px solid rgba(0,0,0,.10);
-      background: rgba(255,255,255,.96);
-      overflow:hidden;
-      display:none;
-      max-height: 240px;
-      overflow-y:auto;
-    }
-    #suggest button{
-      width:100%;
-      border:0;
-      background:transparent;
-      padding: 12px 12px;
-      text-align:left;
-      cursor:pointer;
-      font-weight: 950;
-      color: var(--ink);
-    }
-    #suggest button:hover{ background: rgba(255,95,179,.10); }
-
-    #options{ margin-top: 8px; display:grid; gap:8px; }
-    .opt{
-      display:flex;
-      align-items:center;
-      gap: 10px;
-      padding: 10px 12px;
-      border-radius: 14px;
-      border: 1px solid rgba(0,0,0,.08);
-      background: rgba(255,255,255,.92);
-      font-weight: 900;
-      font-size: 13px;
-    }
-    .opt input{width:auto; margin:0}
-
-    .prices{
-      display:grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-top: 12px;
-    }
-    .price{
-      border-radius: 16px;
-      padding: 12px;
-      border: 1px solid rgba(0,0,0,.08);
-      background: rgba(255,255,255,.92);
-      text-align:center;
-      font-weight: 950;
-    }
-    .price span{
-      display:block;
-      margin-top:6px;
-      font-size: 15px;
-    }
-
-    .divider{ height:1px; background: rgba(0,0,0,.06); margin: 14px 0; }
-
-    .check{
-      display:flex;
-      gap:10px;
-      align-items:flex-start;
-      padding: 12px 12px;
-      border-radius: 14px;
-      border: 1px solid rgba(0,0,0,.08);
-      background: rgba(255,255,255,.92);
-      margin-top: 12px;
-    }
-    .check input{width:auto; margin-top:2px}
-    .check b{display:block; font-weight: 950;}
-    .check small{
-      display:block; margin-top:6px;
-      color: var(--muted); font-weight: 800; line-height:1.4;
-    }
-
-    .cta{
-      margin-top: 14px;
-      width:100%;
-      border:0;
-      padding: 16px;
-      border-radius: 999px;
-      background: linear-gradient(90deg, var(--pink1), var(--pink2));
-      color:#fff;
-      font-size: 15px;
-      font-weight: 950;
-      cursor:pointer;
-      box-shadow: 0 10px 28px rgba(255,95,179,.28);
-    }
-    .cta:disabled{ opacity:.55; cursor:not-allowed; box-shadow:none; }
-
-    .toast{
-      margin-top: 10px;
-      padding: 12px 14px;
-      border-radius: 14px;
-      border: 1px solid rgba(0,0,0,.08);
-      background: rgba(255,255,255,.92);
-      font-weight: 900;
-      display:none;
-    }
-  </style>
-</head>
-
-<body>
-  <div class="wrap">
-    <div class="shell">
-
-      <!-- ✅ 배너가 반드시 보여야 함 -->
-      <div class="banner">
-        <div class="banner-inner">
-          <h1>비대면 차량 견적 상담</h1>
-          <p>간단한 조건 입력으로 비대면 안내드립니다</p>
-        </div>
-      </div>
-
-      <div class="content">
-        <div class="card">
-          <div class="grid">
-
-            <!-- LEFT -->
-            <div class="sec">
-              <div class="sec-title">차량 선택 <span class="badge">필수</span></div>
-
-              <label>상담 유형</label>
-              <div class="radio-row">
-                <label class="pill"><input type="radio" name="dealType" value="렌트" checked> 장기렌트</label>
-                <label class="pill"><input type="radio" name="dealType" value="리스"> 리스</label>
-              </div>
-
-              <label>차량명 검색</label>
-              <input id="carSearch" placeholder="예) 쏘렌토 / 셀토스 / 카니발 (부분검색 가능)">
-              <div id="suggest"></div>
-
-              <label>선택된 차량</label>
-              <input id="pickedCar" disabled value="아직 선택 전">
-
-              <label>트림 선택</label>
-              <select id="trimSelect" disabled>
-                <option>차량을 먼저 선택해주세요</option>
-              </select>
-
-              <label>옵션 선택</label>
-              <div class="hint">트림 선택 후 옵션이 표시됩니다.</div>
-              <div id="options"></div>
-
-              <div class="prices">
-                <div class="price">차량가<span id="basePrice">0원</span></div>
-                <div class="price">옵션가<span id="optPrice">0원</span></div>
-                <div class="price">총 차량가<span id="totalPrice">0원</span></div>
-              </div>
-            </div>
-
-            <!-- RIGHT -->
-            <div class="sec">
-              <div class="sec-title">상담 조건 <span class="badge">필수</span></div>
-
-              <label>차량 인도 지역</label>
-              <input id="region" placeholder="예) 서울 / 경기 남부">
-
-              <label>고객 유형</label>
-              <div class="radio-row" style="flex-wrap:wrap">
-                <label class="pill" style="flex:0 0 auto; min-width: 120px;"><input type="radio" name="customerType" value="개인" checked> 개인</label>
-                <label class="pill" style="flex:0 0 auto; min-width: 120px;"><input type="radio" name="customerType" value="개인사업자"> 개인사업자</label>
-                <label class="pill" style="flex:0 0 auto; min-width: 120px;"><input type="radio" name="customerType" value="법인"> 법인</label>
-              </div>
-
-              <label>차량 필요 시기 (선택)</label>
-              <input id="needTime" placeholder="예) 가능한 빨리 / 2월 중순 / 미정">
-              <div class="hint">* “미정”으로 입력해도 괜찮습니다.</div>
-
-              <div class="divider"></div>
-
-              <div class="sec-title">신청자 정보 <span class="badge">필수</span></div>
-
-              <div class="row">
-                <div>
-                  <label>신청자명</label>
-                  <input id="name" placeholder="예) 홍길동">
-                </div>
-                <div>
-                  <label>연락처</label>
-                  <input id="phone" placeholder="예) 010-1234-5678">
-                </div>
-              </div>
-
-              <label>카카오톡 ID (선택)</label>
-              <input id="kakao" placeholder="예) melody7017">
-
-              <div class="check">
-                <input type="checkbox" id="consent">
-                <div>
-                  <b>[필수] 개인정보 수집·이용에 동의합니다.</b>
-                  <small>
-                    수집: 성명, 연락처, 카카오톡 ID(선택) · 목적: 견적/상담 안내 · 보유: 상담 완료 후 1년
-                  </small>
-                </div>
-              </div>
-
-              <button class="cta" id="submitBtn">간단 견적 요청하기</button>
-              <div class="toast" id="toast"></div>
-              <div class="hint" style="text-align:center;margin-top:10px;">
-                방문 없이 모두 비대면으로 안내드립니다.
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-<script>
-/* ✅ 너 웹앱 URL로 교체 */
-const GAS_URL = "https://script.google.com/macros/s/AKfycbxE58tNJ_Nfr5KNFMp0b6P4dWyBGnP_CPDiTuontpL1u4b931Tx6EWn5iCR9CqjEzne/exec";
-
-let CATALOG = null;
-let selected = { maker:null, model:null, trim:null, basePrice:0, optTotal:0, options:[] };
-
-const $ = (id)=>document.getElementById(id);
-const fmt = (n)=> (Number(n)||0).toLocaleString("ko-KR")+"원";
-
-const suggestBox = $("suggest");
-const carSearch = $("carSearch");
-const pickedCar = $("pickedCar");
-const trimSelect = $("trimSelect");
-const optionsDiv = $("options");
-
-const baseEl = $("basePrice");
-const optEl  = $("optPrice");
-const totalEl= $("totalPrice");
-const toast = $("toast");
-
-function showToast(msg){
-  toast.textContent = msg;
-  toast.style.display = "block";
-  setTimeout(()=>toast.style.display="none", 2600);
-}
-
-function getRadio(name){
-  return [...document.querySelectorAll(`input[name="${name}"]`)].find(x=>x.checked)?.value || "";
-}
-
-function calc(){
-  baseEl.textContent = fmt(selected.basePrice);
-  optEl.textContent  = fmt(selected.optTotal);
-  totalEl.textContent= fmt(selected.basePrice + selected.optTotal);
-}
-
-function clearAfterCarChange(){
-  selected.trim = null;
-  selected.basePrice = 0;
-  selected.optTotal = 0;
-  selected.options = [];
-  trimSelect.innerHTML = `<option value="">트림을 선택해주세요</option>`;
-  trimSelect.disabled = false;
-  optionsDiv.innerHTML = "";
-  calc();
-}
-
-function renderSuggest(keyword){
-  suggestBox.innerHTML = "";
-  if(!CATALOG || !keyword){
-    suggestBox.style.display="none";
-    return;
-  }
-  const dealType = getRadio("dealType"); // 렌트/리스
-  let count=0;
-
-  Object.entries(CATALOG).forEach(([maker, models])=>{
-    Object.entries(models).forEach(([model, info])=>{
-      const okByDeal = (dealType==="렌트") ? (info.rentAllowed!==false) : true;
-      const hit = model.includes(keyword) || maker.includes(keyword);
-      if(hit && okByDeal){
-        count++;
-        const btn = document.createElement("button");
-        btn.type="button";
-        btn.textContent = `${maker} ${model}`;
-        btn.onclick = ()=> selectCar(maker, model);
-        suggestBox.appendChild(btn);
-      }
-    });
-  });
-
-  suggestBox.style.display = count ? "block" : "none";
-}
-
-function selectCar(maker, model){
-  selected.maker = maker;
-  selected.model = model;
-  pickedCar.value = `${maker} ${model}`;
-  carSearch.value = model;
-  suggestBox.style.display="none";
-  clearAfterCarChange();
-
-  const trims = CATALOG[maker][model].trims || {};
-  trimSelect.innerHTML = `<option value="">트림을 선택해주세요</option>`;
-  Object.keys(trims).forEach((trimName)=>{
-    const opt = document.createElement("option");
-    opt.value = trimName;
-    opt.textContent = trimName;
-    trimSelect.appendChild(opt);
-  });
-}
-
-function renderOptions(maker, model, trim){
-  optionsDiv.innerHTML = "";
-  selected.options = [];
-  selected.optTotal = 0;
-
-  const tinfo = CATALOG[maker][model].trims[trim];
-  const options = tinfo.options || {};
-
-  if(Object.keys(options).length===0){
-    optionsDiv.innerHTML = `<div class="hint">선택 가능한 옵션이 없습니다.</div>`;
-    calc();
-    return;
-  }
-
-  Object.entries(options).forEach(([name, price])=>{
-    const label = document.createElement("label");
-    label.className="opt";
-    label.innerHTML = `<input type="checkbox" data-name="${name}" data-price="${price}">
-                       <span>${name} (+${Number(price).toLocaleString("ko-KR")}원)</span>`;
-    label.querySelector("input").addEventListener("change",(e)=>{
-      const p = Number(e.target.dataset.price)||0;
-      const n = e.target.dataset.name;
-      if(e.target.checked){
-        selected.options.push(n);
-        selected.optTotal += p;
-      }else{
-        selected.options = selected.options.filter(x=>x!==n);
-        selected.optTotal -= p;
-      }
-      calc();
-    });
-    optionsDiv.appendChild(label);
-  });
-
-  calc();
-}
-
-async function loadCatalog(){
-  const url = `${GAS_URL}?action=catalog`;
-  const res = await fetch(url);
-  const data = await res.json();
-  CATALOG = data.catalog || data;
-}
-
-function validate(){
-  if(!selected.maker || !selected.model) return "차량을 선택해주세요.";
-  if(!selected.trim) return "트림을 선택해주세요.";
-  if(!$("region").value.trim()) return "차량 인도 지역을 입력해주세요.";
-  if(!$("name").value.trim()) return "신청자명을 입력해주세요.";
-  if(!$("phone").value.trim()) return "연락처를 입력해주세요.";
-  if(!$("consent").checked) return "개인정보 수집·이용 동의가 필요합니다.";
-  return "";
-}
-
-async function submit(){
-  const err = validate();
-  if(err){ showToast(err); return; }
-
-  const payload = {
-    action: "submit",
-    dealType: getRadio("dealType"),
-    customerType: getRadio("customerType"),
-    maker: selected.maker,
-    model: selected.model,
-    trim: selected.trim,
-    basePrice: selected.basePrice,
-    options: selected.options.join(", "),
-    optionPrice: selected.optTotal,
-    totalPrice: selected.basePrice + selected.optTotal,
-    region: $("region").value.trim(),
-    needTime: $("needTime").value.trim(),
-    applicantName: $("name").value.trim(),
-    phone: $("phone").value.trim(),
-    kakaoId: $("kakao").value.trim(),
-    consent: true,
-    createdAt: new Date().toISOString()
-  };
-
-  $("submitBtn").disabled = true;
-  $("submitBtn").textContent = "접수 중…";
-
-  try{
-    const res = await fetch(GAS_URL, {
-      method:"POST",
-      headers:{ "Content-Type":"text/plain;charset=utf-8" },
-      body: JSON.stringify(payload)
-    });
-    await res.json().catch(()=> ({}));
-    showToast("신청이 정상적으로 접수되었습니다. 문자 또는 카카오톡으로 안내드릴게요.");
-  }catch(e){
-    console.error(e);
-    showToast("전송에 실패했습니다. 잠시 후 다시 시도해주세요.");
-  }finally{
-    $("submitBtn").disabled = false;
-    $("submitBtn").textContent = "간단 견적 요청하기";
-  }
-}
-
-carSearch.addEventListener("input", ()=> renderSuggest(carSearch.value.trim()));
-
-document.querySelectorAll('input[name="dealType"]').forEach(r=>{
-  r.addEventListener("change", ()=>{
-    pickedCar.value = "아직 선택 전";
-    carSearch.value = "";
-    suggestBox.style.display="none";
-    trimSelect.disabled = true;
-    trimSelect.innerHTML = `<option>차량을 먼저 선택해주세요</option>`;
-    optionsDiv.innerHTML = "";
-    selected = { maker:null, model:null, trim:null, basePrice:0, optTotal:0, options:[] };
-    calc();
-  });
-});
-
-trimSelect.addEventListener("change", ()=>{
-  const t = trimSelect.value;
-  if(!t){ return; }
-  selected.trim = t;
-
-  const tinfo = CATALOG[selected.maker][selected.model].trims[t];
-  selected.basePrice = Number(tinfo.basePrice)||0;
-  renderOptions(selected.maker, selected.model, t);
-});
-
-$("submitBtn").addEventListener("click", submit);
-
-(async ()=>{
-  try{
-    await loadCatalog();
-  }catch(e){
-    console.error(e);
-    showToast("차량 목록을 불러오지 못했습니다. GAS URL / 배포 상태를 확인해주세요.");
-  }
-})();
-</script>
-</body>
-</html>          rgba(255,150,215,.55) 65%,
-          rgba(255,95,179,.72) 100%
-        ),
-        var(--bg-url);
-
-      background-size: cover;
-      background-position: center;
-      background-attachment: fixed;
-      background-repeat: no-repeat;
-    }
-
-    .wrap{
-      max-width: 980px;
-      margin: 32px auto 70px;
+      margin: 32px auto 90px;
       padding: 0 16px;
     }
 
     .shell{
       border-radius: 26px;
       background: rgba(255,255,255,.22);
-      border: 1px solid rgba(255,255,255,.30);
+      border: 1px solid rgba(255,255,255,.32);
       box-shadow: var(--shadow);
-      overflow:hidden;
+      overflow: hidden;
       backdrop-filter: blur(10px);
     }
 
-    /* 상단 헤더(배너처럼 보이게) */
+    /* 상단 "배너처럼" 보이는 영역 */
     .hero{
-      padding: 26px 18px 22px;
+      padding: 28px 18px 24px;
       text-align:center;
-      position:relative;
+      position: relative;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.55), rgba(255,255,255,.05));
     }
+
     .hero h1{
       margin:0;
-      font-size: 22px;
-      letter-spacing:-.5px;
+      font-size: 28px;
+      letter-spacing: -0.6px;
       font-weight: 900;
-      text-shadow: 0 1px 0 rgba(255,255,255,.4);
+      text-shadow: 0 1px 0 rgba(255,255,255,.35);
     }
     .hero p{
-      margin:8px 0 0;
-      font-weight:700;
+      margin:10px 0 0;
+      font-weight: 800;
       color: var(--muted);
       font-size: 13px;
     }
 
-    .content{
-      padding: 16px;
+    .content{ padding: 18px; }
+
+    .grid{
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      align-items: start;
+    }
+    @media (min-width: 860px){
+      .grid{ grid-template-columns: 1.1fr .9fr; }
     }
 
     .card{
@@ -1353,222 +143,158 @@ $("submitBtn").addEventListener("click", submit);
       backdrop-filter: blur(12px);
     }
 
-    .grid{
-      display:grid;
-      grid-template-columns: 1fr;
-      gap: 14px;
-    }
-
-    @media (min-width: 860px){
-      .content{padding: 18px}
-      .grid{
-        grid-template-columns: 1.1fr .9fr;
-        align-items:start;
-      }
-    }
-
-    .sec{
-      background: rgba(255,255,255,.72);
-      border: 1px solid rgba(255,255,255,.65);
-      border-radius: 18px;
-      padding: 14px;
-    }
-
     .sec-title{
       display:flex;
-      gap:10px;
       align-items:center;
+      gap:10px;
       margin:0 0 10px;
       font-size: 15px;
       font-weight: 900;
     }
-
     .badge{
-      font-size:12px;
-      font-weight:900;
-      padding:4px 10px;
-      border-radius:999px;
+      font-size: 12px;
+      font-weight: 900;
+      padding: 4px 10px;
+      border-radius: 999px;
       background: rgba(255,95,179,.14);
       border: 1px solid rgba(255,95,179,.18);
-      color:#a20b5a;
+      color: #a20b5a;
     }
 
     label{
       display:block;
-      font-weight: 800;
+      font-weight: 900;
       margin-top: 12px;
       font-size: 13px;
     }
-
     input, select, textarea{
-      width:100%;
-      margin-top: 7px;
+      width: 100%;
+      margin-top: 8px;
       padding: 12px 12px;
       border-radius: 14px;
       border: 1px solid rgba(0,0,0,.10);
       background: rgba(255,255,255,.92);
+      outline: none;
       font-size: 14px;
-      outline:none;
+      box-sizing: border-box;
     }
     input:focus, select:focus, textarea:focus{
-      border-color: rgba(255,95,179,.45);
-      box-shadow: 0 0 0 3px rgba(255,95,179,.12);
+      border-color: rgba(255,95,179,.55);
+      box-shadow: 0 0 0 3px rgba(255,95,179,.16);
     }
-
-    .row{
+    .row2{
       display:grid;
       grid-template-columns: 1fr;
-      gap: 10px;
+      gap: 12px;
     }
-    @media (min-width: 520px){
-      .row{grid-template-columns: 1fr 1fr}
+    @media (min-width: 560px){
+      .row2{ grid-template-columns: 1fr 1fr; }
     }
 
-    .radio-row{
+    .radio-group{
       display:flex;
-      flex-wrap:wrap;
       gap: 10px;
+      flex-wrap: wrap;
       margin-top: 8px;
     }
     .pill{
       display:flex;
       align-items:center;
-      gap:8px;
-      padding: 10px 12px;
-      border-radius: 999px;
-      border: 1px solid rgba(0,0,0,.10);
-      background: rgba(255,255,255,.9);
-      font-weight: 900;
-      font-size: 13px;
-    }
-    .pill input{width:auto; margin:0}
-
-    /* 검색 제안 */
-    #suggest{
-      margin-top: 8px;
-      border-radius: 14px;
-      border: 1px solid rgba(0,0,0,.10);
-      background: rgba(255,255,255,.96);
-      overflow:hidden;
-      display:none;
-      max-height: 220px;
-      overflow-y:auto;
-    }
-    #suggest button{
-      width:100%;
-      border:0;
-      background:transparent;
-      padding: 10px 12px;
-      text-align:left;
-      cursor:pointer;
-      font-weight: 900;
-      color: var(--ink);
-    }
-    #suggest button:hover{
-      background: rgba(255,95,179,.10);
-    }
-    .hint{
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--muted);
-      margin-top: 6px;
-      line-height: 1.4;
-    }
-
-    /* 옵션 */
-    #options{
-      margin-top: 6px;
-      display:grid;
       gap: 8px;
-    }
-    .opt{
-      display:flex;
-      align-items:center;
-      gap: 10px;
       padding: 10px 12px;
-      border-radius: 14px;
-      border: 1px solid rgba(0,0,0,.08);
-      background: rgba(255,255,255,.9);
-      font-weight: 850;
-      font-size: 13px;
-    }
-    .opt input{width:auto; margin:0}
-
-    /* 가격 */
-    .prices{
-      display:grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-top: 12px;
-    }
-    .price{
-      border-radius: 16px;
-      padding: 12px;
-      border: 1px solid rgba(0,0,0,.08);
-      background: rgba(255,255,255,.92);
-      text-align:center;
-      font-weight: 950;
-    }
-    .price span{
-      display:block;
-      margin-top:6px;
-      font-size: 15px;
-    }
-
-    .divider{
-      height:1px;
-      background: rgba(0,0,0,.06);
-      margin: 14px 0;
-    }
-
-    .check{
-      display:flex;
-      gap:10px;
-      align-items:flex-start;
-      padding: 12px 12px;
-      border-radius: 14px;
-      border: 1px solid rgba(0,0,0,.08);
-      background: rgba(255,255,255,.92);
-      margin-top: 12px;
-    }
-    .check input{width:auto; margin-top:2px}
-    .check b{display:block}
-    .check small{
-      display:block;
-      margin-top:6px;
-      color: var(--muted);
-      font-weight: 700;
-      line-height:1.4;
-    }
-
-    .cta{
-      margin-top: 14px;
-      width:100%;
-      border:0;
-      padding: 16px;
       border-radius: 999px;
-      background: linear-gradient(90deg, var(--pink1), var(--pink2));
-      color:#fff;
-      font-size: 15px;
-      font-weight: 950;
-      cursor:pointer;
-      box-shadow: 0 10px 28px rgba(255,95,179,.28);
+      border: 1px solid rgba(0,0,0,.12);
+      background: rgba(255,255,255,.86);
+      font-weight: 900;
+      cursor: pointer;
+      user-select:none;
     }
-    .cta:disabled{
+    .pill input{ width:auto; margin:0; }
+
+    .small{
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 800;
+      margin-top: 8px;
+      line-height: 1.35;
+    }
+
+    .price{
+      margin-top: 14px;
+      display:grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+    }
+    .price .box{
+      border-radius: 16px;
+      border: 1px solid rgba(0,0,0,.10);
+      background: rgba(255,255,255,.78);
+      padding: 12px;
+      text-align:center;
+    }
+    .price .box .k{ font-size: 12px; font-weight: 900; color: var(--muted); }
+    .price .box .v{ margin-top: 6px; font-size: 18px; font-weight: 900; }
+
+    .btn{
+      margin-top: 16px;
+      width: 100%;
+      padding: 14px 14px;
+      border: none;
+      border-radius: 999px;
+      font-size: 16px;
+      font-weight: 1000;
+      color: white;
+      cursor: pointer;
+      background: linear-gradient(90deg, rgba(255,95,179,1), rgba(157,120,255,1));
+      box-shadow: 0 14px 35px rgba(255,95,179,.25);
+    }
+    .btn:disabled{
       opacity:.55;
       cursor:not-allowed;
       box-shadow:none;
     }
 
+    .agree{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      margin-top: 14px;
+      padding: 12px;
+      border-radius: 16px;
+      border: 1px solid rgba(0,0,0,.10);
+      background: rgba(255,255,255,.78);
+    }
+    .agree input{ width:auto; margin-top: 2px; }
+    .agree .txt{ font-size: 12px; color: var(--muted); font-weight: 800; line-height: 1.35; }
+    .agree .txt strong{ color: var(--text); }
+
     .toast{
       margin-top: 10px;
-      padding: 12px 14px;
-      border-radius: 14px;
-      border: 1px solid rgba(0,0,0,.08);
-      background: rgba(255,255,255,.92);
-      font-weight: 850;
-      display:none;
+      font-size: 13px;
+      font-weight: 900;
+      color: rgba(34,26,35,.75);
+      text-align:center;
     }
+
+    /* 옵션 체크박스 리스트 */
+    .opt-list{
+      margin-top: 8px;
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+    .opt{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(0,0,0,.10);
+      background: rgba(255,255,255,.86);
+    }
+    .opt input{ width:auto; margin-top: 3px; }
+    .opt .name{ font-weight: 900; }
+    .opt .won{ color: var(--muted); font-weight: 900; }
   </style>
 </head>
 
@@ -1581,596 +307,367 @@ $("submitBtn").addEventListener("click", submit);
       </div>
 
       <div class="content">
-        <div class="card">
-          <div class="grid">
+        <div class="grid">
 
-            <!-- LEFT -->
-            <div class="sec">
-              <div class="sec-title">차량 선택 <span class="badge">필수</span></div>
+          <!-- 좌측: 차량 선택 -->
+          <div class="card">
+            <div class="sec-title">차량 선택 <span class="badge">필수</span></div>
 
-              <label>상담 유형</label>
-              <div class="radio-row">
-                <label class="pill"><input type="radio" name="dealType" value="렌트" checked> 장기렌트</label>
-                <label class="pill"><input type="radio" name="dealType" value="리스"> 리스</label>
-              </div>
-
-              <label>차량명 검색</label>
-              <input id="carSearch" placeholder="예) 쏘렌토 / 셀토스 / 카니발 (부분검색 가능)">
-              <div id="suggest"></div>
-              <div class="hint">차량명을 입력하면 목록이 뜹니다. 목록에서 클릭하면 트림/옵션이 자동으로 표시돼요.</div>
-
-              <label>선택된 차량</label>
-              <input id="pickedCar" disabled value="아직 선택 전">
-
-              <label>트림 선택</label>
-              <select id="trimSelect" disabled>
-                <option>차량을 먼저 선택해주세요</option>
-              </select>
-
-              <label>옵션 선택</label>
-              <div class="hint">트림 선택 후 옵션이 표시됩니다.</div>
-              <div id="options"></div>
-
-              <div class="prices">
-                <div class="price">차량가<span id="basePrice">0원</span></div>
-                <div class="price">옵션가<span id="optPrice">0원</span></div>
-                <div class="price">총 차량가<span id="totalPrice">0원</span></div>
-              </div>
+            <label>상담 유형</label>
+            <div class="radio-group" id="dealTypeGroup">
+              <label class="pill"><input type="radio" name="dealType" value="렌트" checked> 장기렌트</label>
+              <label class="pill"><input type="radio" name="dealType" value="리스"> 리스</label>
             </div>
 
-            <!-- RIGHT -->
-            <div class="sec">
-              <div class="sec-title">상담 조건 <span class="badge">필수</span></div>
+            <label>차량명 검색</label>
+            <input id="carSearch" placeholder="예) 쏘렌토 / 셀토스 / 카니발 (부분검색 가능)" autocomplete="off" />
+            <div class="small" id="searchHint">검색어를 입력하면 목록이 뜹니다.</div>
 
-              <label>차량 인도 지역</label>
-              <input id="region" placeholder="예) 경기 남부 / 서울 강남">
+            <!-- 검색 결과 -->
+            <select id="modelSelect">
+              <option value="">차량을 선택해주세요</option>
+            </select>
 
-              <label>고객 유형</label>
-              <div class="radio-row">
-                <label class="pill"><input type="radio" name="customerType" value="개인" checked> 개인</label>
-                <label class="pill"><input type="radio" name="customerType" value="개인사업자"> 개인사업자</label>
-                <label class="pill"><input type="radio" name="customerType" value="법인"> 법인</label>
+            <label>트림 선택</label>
+            <select id="trimSelect" disabled>
+              <option value="">차량을 먼저 선택하세요</option>
+            </select>
+
+            <label>옵션 선택</label>
+            <div class="small" id="optHint">트림 선택 후 옵션이 표시됩니다.</div>
+            <div class="opt-list" id="optionList"></div>
+
+            <div class="price">
+              <div class="box">
+                <div class="k">차량가</div>
+                <div class="v" id="basePrice">0원</div>
               </div>
-
-              <label>차량 필요 시기 (선택)</label>
-              <input id="needTime" placeholder="예) 가능한 빨리 / 2월 중순 / 미정">
-              <div class="hint">* “미정”으로 입력해도 괜찮습니다.</div>
-
-              <div class="divider"></div>
-
-              <div class="sec-title">신청자 정보 <span class="badge">필수</span></div>
-
-              <div class="row">
-                <div>
-                  <label>신청자명</label>
-                  <input id="name" placeholder="예) 홍길동">
-                </div>
-                <div>
-                  <label>연락처</label>
-                  <input id="phone" placeholder="예) 010-1234-5678">
-                </div>
+              <div class="box">
+                <div class="k">옵션가</div>
+                <div class="v" id="optPrice">0원</div>
               </div>
-
-              <label>카카오톡 ID (선택)</label>
-              <input id="kakao" placeholder="예) melody7017">
-
-              <div class="check">
-                <input type="checkbox" id="consent">
-                <div>
-                  <b>[필수] 개인정보 수집·이용에 동의합니다.</b>
-                  <small>
-                    수집: 성명, 연락처, 카카오톡 ID(선택) · 목적: 견적/상담 안내 · 보유: 상담 완료 후 1년
-                  </small>
-                </div>
-              </div>
-
-              <button class="cta" id="submitBtn">간단 견적 요청하기</button>
-              <div class="toast" id="toast"></div>
-              <div class="hint" style="text-align:center;margin-top:10px;">
-                방문 없이 모두 비대면으로 안내드립니다.
+              <div class="box">
+                <div class="k">총 차량가</div>
+                <div class="v" id="totalPrice">0원</div>
               </div>
             </div>
-
           </div>
+
+          <!-- 우측: 상담 조건 + 신청자 정보 -->
+          <div class="card">
+            <div class="sec-title">상담 조건 <span class="badge">필수</span></div>
+
+            <label>차량 인도 지역</label>
+            <input id="deliveryRegion" placeholder="예) 경기 남부 / 서울 강남" />
+
+            <label>고객 유형</label>
+            <div class="radio-group" id="custTypeGroup">
+              <label class="pill"><input type="radio" name="custType" value="개인" checked> 개인</label>
+              <label class="pill"><input type="radio" name="custType" value="개인사업자"> 개인사업자</label>
+              <label class="pill"><input type="radio" name="custType" value="법인"> 법인</label>
+            </div>
+
+            <label>차량 필요 시기 (선택)</label>
+            <input id="needWhen" placeholder="예) 가능한 빨리 / 2월 중순 / 미정" />
+            <div class="small">* “미정”으로 입력해도 괜찮습니다.</div>
+
+            <hr style="border:none;border-top:1px solid rgba(0,0,0,.08); margin:16px 0;">
+
+            <div class="sec-title">신청자 정보 <span class="badge">필수</span></div>
+
+            <div class="row2">
+              <div>
+                <label>신청자명</label>
+                <input id="applicantName" placeholder="예) 홍길동" />
+              </div>
+              <div>
+                <label>연락처</label>
+                <input id="phone" placeholder="예) 010-1234-5678" inputmode="tel" />
+              </div>
+            </div>
+
+            <label>카카오톡 ID (선택)</label>
+            <input id="kakaoId" placeholder="예) melody7017" />
+
+            <div class="agree">
+              <input type="checkbox" id="agree" />
+              <div class="txt">
+                <strong>[필수]</strong> 개인정보 수집·이용에 동의합니다.<br/>
+                수집: 성명, 연락처, 카카오톡 ID(선택) · 목적: 견적/상담 안내 · 보유: 상담 완료 후 1년
+              </div>
+            </div>
+
+            <button class="btn" id="submitBtn" disabled>간단 견적 요청하기</button>
+            <div class="toast" id="toast"></div>
+          </div>
+
         </div>
       </div>
     </div>
   </div>
 
-<script>
-/** =========================================================
- *  ✅ 여기만 네 웹앱 URL로 바꿔줘
- *  예) https://script.google.com/macros/s/AKfy.../exec
- * ========================================================= */
-const GAS_URL = "https://script.google.com/macros/s/AKfycbxE58tNJ_Nfr5KNFMp0b6P4dWyBGnP_CPDiTuontpL1u4b931Tx6EWn5iCR9CqjEzne/exec";
+  <script>
+    /***********************
+     * ✅ 너의 Apps Script catalog URL 넣기
+     * 예) https://script.google.com/macros/s/....../exec?action=catalog
+     ***********************/
+    const CATALOG_URL = "PASTE_YOUR_CATALOG_URL_HERE";
 
-/**
- * catalog 형식(예시)
- * {
- *   "기아":{
- *     "쏘렌토":{
- *       "렌트Allowed":true,
- *       "trims":{
- *         "트림명":{
- *            "basePrice":35020000,
- *            "options":{"스타일":700000, ...}
- *         }
- *       }
- *     }
- *   }
- * }
- */
-let CATALOG = null;
-let selected = { maker:null, model:null, trim:null, basePrice:0, optTotal:0, options:[] };
+    // 실제 신청 제출(시트 저장) URL (doPost)
+    const SUBMIT_URL  = "PASTE_YOUR_SUBMIT_URL_HERE";
 
-const $ = (id)=>document.getElementById(id);
-const fmt = (n)=> (Number(n)||0).toLocaleString("ko-KR")+"원";
+    // ====== 전역 상태 ======
+    let catalog = []; // Models 시트에서 읽어온 전체 목록
+    let filteredModels = [];
+    let selectedModel = null;
+    let selectedTrim = null;
+    let selectedOptions = [];
 
-const suggestBox = $("suggest");
-const carSearch = $("carSearch");
-const pickedCar = $("pickedCar");
-const trimSelect = $("trimSelect");
-const optionsDiv = $("options");
+    // ====== 유틸 ======
+    const won = (n) => (Number(n||0)).toLocaleString("ko-KR") + "원";
 
-const baseEl = $("basePrice");
-const optEl  = $("optPrice");
-const totalEl= $("totalPrice");
+    function setToast(msg, ok=true){
+      const el = document.getElementById("toast");
+      el.textContent = msg || "";
+      el.style.color = ok ? "rgba(34,26,35,.80)" : "#b00052";
+    }
 
-const toast = $("toast");
-function showToast(msg){
-  toast.textContent = msg;
-  toast.style.display = "block";
-  setTimeout(()=>toast.style.display="none", 2600);
-}
+    function validate(){
+      const modelOk = !!selectedModel;
+      const trimOk = !!selectedTrim;
+      const nameOk = document.getElementById("applicantName").value.trim().length > 0;
+      const phoneOk = document.getElementById("phone").value.trim().length > 0;
+      const regionOk = document.getElementById("deliveryRegion").value.trim().length > 0;
+      const agreeOk = document.getElementById("agree").checked;
 
-function getRadio(name){
-  return [...document.querySelectorAll(`input[name="${name}"]`)].find(x=>x.checked)?.value || "";
-}
+      document.getElementById("submitBtn").disabled = !(modelOk && trimOk && nameOk && phoneOk && regionOk && agreeOk);
+    }
 
-function calc(){
-  baseEl.textContent = fmt(selected.basePrice);
-  optEl.textContent  = fmt(selected.optTotal);
-  totalEl.textContent= fmt(selected.basePrice + selected.optTotal);
-}
+    function calcPrice(){
+      const base = selectedTrim ? Number(selectedTrim.trim_price||0) : 0;
+      const opt  = selectedOptions.reduce((sum,o)=> sum + Number(o.option_price||0), 0);
+      document.getElementById("basePrice").textContent = won(base);
+      document.getElementById("optPrice").textContent  = won(opt);
+      document.getElementById("totalPrice").textContent= won(base + opt);
+    }
 
-function clearAfterCarChange(){
-  selected.trim = null;
-  selected.basePrice = 0;
-  selected.optTotal = 0;
-  selected.options = [];
-  trimSelect.innerHTML = `<option>트림을 선택해주세요</option>`;
-  trimSelect.disabled = false;
-  optionsDiv.innerHTML = "";
-  calc();
-}
+    // ====== Catalog 불러오기 ======
+    async function loadCatalog(){
+      setToast("차량 목록을 불러오는 중...");
+      const res = await fetch(CATALOG_URL, { method:"GET" });
+      const json = await res.json();
+      catalog = json.models || [];
+      setToast("");
+      rebuildModelSelect("");
+    }
 
-function renderSuggest(keyword){
-  suggestBox.innerHTML = "";
-  if(!CATALOG || !keyword){
-    suggestBox.style.display="none";
-    return;
-  }
-  const dealType = getRadio("dealType"); // 렌트/리스
-  let count=0;
+    // 검색어/유형(렌트/리스)에 따라 모델 목록 구성
+    function rebuildModelSelect(keyword){
+      const dealType = document.querySelector('input[name="dealType"]:checked').value; // 렌트/리스
 
-  Object.entries(CATALOG).forEach(([maker, models])=>{
-    Object.entries(models).forEach(([model, info])=>{
-      const okByDeal = (dealType==="렌트") ? (info.rentAllowed!==false) : true;
-      const hit = model.includes(keyword) || maker.includes(keyword);
-      if(hit && okByDeal){
-        count++;
-        const btn = document.createElement("button");
-        btn.type="button";
-        btn.textContent = `${maker} ${model}`;
-        btn.onclick = ()=> selectCar(maker, model);
-        suggestBox.appendChild(btn);
+      // 모델 단위로 unique 만들기
+      const map = new Map();
+      for(const row of catalog){
+        // 렌트 선택이면 "리스 전용" 모델은 숨김 (시트에서 deal_type 같은 컬럼이 있다 가정)
+        // 너 시트 구조가 다르면 여기만 살짝 맞춰주면 됨.
+        const rowDeal = (row.deal_type || "렌트/리스"); // "리스전용" 같은 값 가정
+        if(dealType === "렌트" && rowDeal.includes("리스전용")) continue;
+
+        const model = row.model_name;
+        if(!model) continue;
+
+        if(keyword){
+          const k = keyword.toLowerCase();
+          if(!model.toLowerCase().includes(k)) continue;
+        }
+        if(!map.has(model)){
+          map.set(model, { model_name: model });
+        }
       }
-    });
-  });
+      filteredModels = [...map.values()].sort((a,b)=>a.model_name.localeCompare(b.model_name,"ko"));
+      const sel = document.getElementById("modelSelect");
+      sel.innerHTML = `<option value="">차량을 선택해주세요</option>` + filteredModels.map(m=>`<option value="${m.model_name}">${m.model_name}</option>`).join("");
+    }
 
-  suggestBox.style.display = count ? "block" : "none";
-}
+    // 모델 선택 시 트림 목록 채우기
+    function rebuildTrimSelect(modelName){
+      const trims = catalog.filter(r => r.model_name === modelName)
+        .map(r => ({
+          model_name: r.model_name,
+          trim_name: r.trim_name,
+          trim_price: r.trim_price,
+          options_json: r.options_json
+        }))
+        .filter(t => t.trim_name);
 
-function selectCar(maker, model){
-  selected.maker = maker;
-  selected.model = model;
-  pickedCar.value = `${maker} ${model}`;
-  carSearch.value = model;
-  suggestBox.style.display="none";
-  clearAfterCarChange();
+      const sel = document.getElementById("trimSelect");
+      sel.disabled = trims.length === 0;
+      sel.innerHTML = `<option value="">트림을 선택해주세요</option>` + trims.map((t,i)=>(
+        `<option value="${i}">${t.trim_name} (${Number(t.trim_price||0).toLocaleString()}원)</option>`
+      )).join("");
 
-  // trims 채우기
-  const trims = CATALOG[maker][model].trims || {};
-  trimSelect.innerHTML = `<option value="">트림을 선택해주세요</option>`;
-  Object.entries(trims).forEach(([trimName, tinfo])=>{
-    const opt = document.createElement("option");
-    opt.value = trimName;
-    opt.textContent = trimName;
-    trimSelect.appendChild(opt);
-  });
-}
+      // 트림 데이터 저장
+      sel._trims = trims;
+    }
 
-function renderOptions(maker, model, trim){
-  optionsDiv.innerHTML = "";
-  selected.options = [];
-  selected.optTotal = 0;
+    // 트림 선택 시 옵션 리스트 표시
+    function rebuildOptions(){
+      const list = document.getElementById("optionList");
+      list.innerHTML = "";
+      selectedOptions = [];
 
-  const tinfo = CATALOG[maker][model].trims[trim];
-  const options = tinfo.options || {};
-
-  if(Object.keys(options).length===0){
-    optionsDiv.innerHTML = `<div class="hint">선택 가능한 옵션이 없습니다.</div>`;
-    calc();
-    return;
-  }
-
-  Object.entries(options).forEach(([name, price])=>{
-    const label = document.createElement("label");
-    label.className="opt";
-    label.innerHTML = `<input type="checkbox" data-name="${name}" data-price="${price}">
-                       <span>${name} (+${Number(price).toLocaleString("ko-KR")}원)</span>`;
-    label.querySelector("input").addEventListener("change",(e)=>{
-      const p = Number(e.target.dataset.price)||0;
-      const n = e.target.dataset.name;
-      if(e.target.checked){
-        selected.options.push(n);
-        selected.optTotal += p;
-      }else{
-        selected.options = selected.options.filter(x=>x!==n);
-        selected.optTotal -= p;
+      if(!selectedTrim){
+        document.getElementById("optHint").textContent = "트림 선택 후 옵션이 표시됩니다.";
+        calcPrice();
+        validate();
+        return;
       }
-      calc();
-    });
-    optionsDiv.appendChild(label);
-  });
 
-  calc();
-}
-
-async function loadCatalog(){
-  const url = `${GAS_URL}?action=catalog`;
-  const res = await fetch(url);
-  const data = await res.json();
-  CATALOG = data.catalog || data; // 혹시 그냥 catalog만 내려오면 대응
-}
-
-function validate(){
-  if(!selected.maker || !selected.model) return "차량을 선택해주세요.";
-  if(!selected.trim) return "트림을 선택해주세요.";
-  if(!$("region").value.trim()) return "차량 인도 지역을 입력해주세요.";
-  if(!$("name").value.trim()) return "신청자명을 입력해주세요.";
-  if(!$("phone").value.trim()) return "연락처를 입력해주세요.";
-  if(!$("consent").checked) return "개인정보 수집·이용 동의가 필요합니다.";
-  return "";
-}
-
-async function submit(){
-  const err = validate();
-  if(err){ showToast(err); return; }
-
-  const payload = {
-    action: "submit",
-    dealType: getRadio("dealType"),       // 렌트/리스
-    customerType: getRadio("customerType"), // 개인/개인사업자/법인
-    maker: selected.maker,
-    model: selected.model,
-    trim: selected.trim,
-    basePrice: selected.basePrice,
-    options: selected.options.join(", "),
-    optionPrice: selected.optTotal,
-    totalPrice: selected.basePrice + selected.optTotal,
-    region: $("region").value.trim(),
-    needTime: $("needTime").value.trim(),
-    applicantName: $("name").value.trim(),
-    phone: $("phone").value.trim(),
-    kakaoId: $("kakao").value.trim(),
-    consent: true,
-    createdAt: new Date().toISOString()
-  };
-
-  $("submitBtn").disabled = true;
-  $("submitBtn").textContent = "접수 중…";
-
-  try{
-    const res = await fetch(GAS_URL, {
-      method:"POST",
-      headers:{ "Content-Type":"text/plain;charset=utf-8" },
-      body: JSON.stringify(payload)
-    });
-    const data = await res.json().catch(()=> ({}));
-    showToast("신청이 정상적으로 접수되었습니다. 문자 또는 카카오톡으로 안내드릴게요.");
-    // 폼 리셋(차량은 유지하고 싶으면 여기 조절)
-  }catch(e){
-    console.error(e);
-    showToast("전송에 실패했습니다. 잠시 후 다시 시도해주세요.");
-  }finally{
-    $("submitBtn").disabled = false;
-    $("submitBtn").textContent = "간단 견적 요청하기";
-  }
-}
-
-carSearch.addEventListener("input", ()=> renderSuggest(carSearch.value.trim()));
-
-document.querySelectorAll('input[name="dealType"]').forEach(r=>{
-  r.addEventListener("change", ()=>{
-    // 상담유형 변경 시: 추천 목록/선택 차량 초기화(렌트 제한 모델 숨김 반영)
-    pickedCar.value = "아직 선택 전";
-    carSearch.value = "";
-    suggestBox.style.display="none";
-    trimSelect.disabled = true;
-    trimSelect.innerHTML = `<option>차량을 먼저 선택해주세요</option>`;
-    optionsDiv.innerHTML = "";
-    selected = { maker:null, model:null, trim:null, basePrice:0, optTotal:0, options:[] };
-    calc();
-  });
-});
-
-trimSelect.addEventListener("change", ()=>{
-  const t = trimSelect.value;
-  if(!t){ return; }
-  selected.trim = t;
-
-  const tinfo = CATALOG[selected.maker][selected.model].trims[t];
-  selected.basePrice = Number(tinfo.basePrice)||0;
-
-  // 옵션 표시
-  renderOptions(selected.maker, selected.model, t);
-});
-
-$("submitBtn").addEventListener("click", submit);
-
-// init
-(async ()=>{
-  try{
-    await loadCatalog();
-  }catch(e){
-    console.error(e);
-    showToast("차량 목록을 불러오지 못했습니다. GAS URL을 확인해주세요.");
-  }
-})();
-</script>
-</body>
-</html>}
-
-h1{
-  margin:0;
-  text-align:center;
-  font-size:26px;
-}
-.sub{
-  text-align:center;
-  margin:8px 0 24px;
-  font-weight:600;
-  opacity:.7;
-}
-
-.section{
-  margin-top:24px;
-}
-.section h2{
-  font-size:18px;
-  margin-bottom:12px;
-}
-
-label{
-  display:block;
-  margin-top:12px;
-  font-weight:700;
-}
-input, select{
-  width:100%;
-  padding:12px 14px;
-  margin-top:6px;
-  border-radius:12px;
-  border:1px solid #ddd;
-  font-size:15px;
-}
-
-.radio-group{
-  display:flex;
-  gap:12px;
-  margin-top:8px;
-}
-.radio-group label{
-  display:flex;
-  align-items:center;
-  gap:6px;
-  font-weight:700;
-}
-
-#suggest{
-  border:1px solid #ddd;
-  border-radius:12px;
-  margin-top:6px;
-  background:#fff;
-  display:none;
-}
-#suggest div{
-  padding:10px 14px;
-  cursor:pointer;
-  font-weight:700;
-}
-#suggest div:hover{
-  background:#ffe2f0;
-}
-
-.option{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  margin-top:6px;
-}
-
-.prices{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:12px;
-  margin-top:16px;
-}
-.price{
-  background:#fff;
-  border-radius:12px;
-  padding:12px;
-  text-align:center;
-  font-weight:800;
-}
-
-button{
-  width:100%;
-  margin-top:24px;
-  padding:16px;
-  border:none;
-  border-radius:999px;
-  background:linear-gradient(90deg,var(--pink1),var(--pink2));
-  color:#fff;
-  font-size:16px;
-  font-weight:900;
-  cursor:pointer;
-}
-
-small{
-  display:block;
-  margin-top:6px;
-  opacity:.6;
-  font-weight:600;
-}
-</style>
-</head>
-
-<body>
-<div class="wrapper">
-  <div class="card">
-    <h1>비대면 차량 견적 상담</h1>
-    <div class="sub">간단한 조건 입력으로 비대면 안내드립니다</div>
-
-    <!-- ================= 차량 선택 ================= -->
-    <div class="section">
-      <h2>차량 선택</h2>
-
-      <label>상담 유형</label>
-      <div class="radio-group">
-        <label><input type="radio" name="dealType" value="렌트" checked> 장기렌트</label>
-        <label><input type="radio" name="dealType" value="리스"> 리스</label>
-      </div>
-
-      <label>차량명 검색</label>
-      <input id="carSearch" placeholder="예) 쏘렌토 / 셀토스">
-      <div id="suggest"></div>
-
-      <label>트림</label>
-      <select id="trimSelect" disabled>
-        <option>차량을 먼저 선택하세요</option>
-      </select>
-
-      <label>옵션</label>
-      <div id="options"></div>
-
-      <div class="prices">
-        <div class="price">차량가<br><span id="base">0원</span></div>
-        <div class="price">옵션가<br><span id="opt">0원</span></div>
-        <div class="price">총 차량가<br><span id="total">0원</span></div>
-      </div>
-    </div>
-
-    <!-- ================= 상담 조건 ================= -->
-    <div class="section">
-      <h2>상담 조건</h2>
-
-      <label>차량 인도 지역</label>
-      <input id="region" placeholder="예) 서울 / 경기 남부">
-
-      <label>차량 필요 시기 (선택)</label>
-      <input id="needTime" placeholder="예) 가능한 빨리 / 미정">
-    </div>
-
-    <!-- ================= 신청자 정보 ================= -->
-    <div class="section">
-      <h2>신청자 정보</h2>
-
-      <label>이름</label>
-      <input id="name">
-
-      <label>연락처</label>
-      <input id="phone">
-
-      <label>카카오톡 ID (선택)</label>
-      <input id="kakao">
-
-      <label>
-        <input type="checkbox" id="consent">
-        개인정보 수집·이용 동의 (필수)
-      </label>
-      <small>견적 상담 목적 · 상담 완료 후 1년 보관</small>
-    </div>
-
-    <button id="submit">간단 견적 요청하기</button>
-  </div>
-</div>
-
-<script>
-const GAS_URL = "https://script.google.com/macros/s/AKfycbxE58tNJ_Nfr5KNFMp0b6P4dWyBGnP_CPDiTuontpL1u4b931Tx6EWn5iCR9CqjEzne/exec";
-
-let catalog, selected={};
-
-fetch(GAS_URL+"?action=catalog")
-.then(r=>r.json())
-.then(d=>catalog=d.catalog);
-
-const search=document.getElementById("carSearch");
-const suggest=document.getElementById("suggest");
-const trimSelect=document.getElementById("trimSelect");
-const optionsDiv=document.getElementById("options");
-
-search.oninput=()=>{
-  suggest.innerHTML="";
-  if(!search.value) return suggest.style.display="none";
-  suggest.style.display="block";
-
-  Object.entries(catalog).forEach(([m,models])=>{
-    Object.keys(models).forEach(model=>{
-      if(model.includes(search.value)){
-        const div=document.createElement("div");
-        div.textContent=m+" "+model;
-        div.onclick=()=>selectCar(m,model);
-        suggest.appendChild(div);
+      let opts = [];
+      try{
+        opts = JSON.parse(selectedTrim.options_json || "[]");
+      }catch(e){
+        opts = [];
       }
+
+      if(!Array.isArray(opts) || opts.length === 0){
+        document.getElementById("optHint").textContent = "선택 가능한 옵션이 없습니다.";
+        calcPrice();
+        validate();
+        return;
+      }
+      document.getElementById("optHint").textContent = "옵션을 선택해주세요. (복수 선택 가능)";
+
+      for(const o of opts){
+        const div = document.createElement("label");
+        div.className = "opt";
+        div.innerHTML = `
+          <input type="checkbox" />
+          <div>
+            <div class="name">${o.option_name || "옵션"}</div>
+            <div class="won">${Number(o.option_price||0).toLocaleString()}원</div>
+          </div>
+        `;
+        const cb = div.querySelector("input");
+        cb.addEventListener("change", ()=>{
+          if(cb.checked){
+            selectedOptions.push(o);
+          }else{
+            selectedOptions = selectedOptions.filter(x => x.option_name !== o.option_name);
+          }
+          calcPrice();
+          validate();
+        });
+        list.appendChild(div);
+      }
+      calcPrice();
+      validate();
+    }
+
+    // ====== 제출 ======
+    async function submit(){
+      const dealType = document.querySelector('input[name="dealType"]:checked').value;
+      const custType = document.querySelector('input[name="custType"]:checked').value;
+
+      const payload = {
+        deal_type: dealType,
+        customer_type: custType,
+        delivery_region: document.getElementById("deliveryRegion").value.trim(),
+        need_when: document.getElementById("needWhen").value.trim(),
+        applicant_name: document.getElementById("applicantName").value.trim(),
+        phone: document.getElementById("phone").value.trim(),
+        kakao_id: document.getElementById("kakaoId").value.trim(),
+
+        model_name: selectedModel?.model_name || "",
+        trim_name: selectedTrim?.trim_name || "",
+        trim_price: selectedTrim?.trim_price || 0,
+
+        options: selectedOptions.map(o=>({
+          option_name: o.option_name,
+          option_price: o.option_price
+        })),
+
+        option_total: selectedOptions.reduce((s,o)=>s+Number(o.option_price||0),0),
+        total_price: (Number(selectedTrim?.trim_price||0) + selectedOptions.reduce((s,o)=>s+Number(o.option_price||0),0))
+      };
+
+      setToast("접수 중입니다...");
+      document.getElementById("submitBtn").disabled = true;
+
+      try{
+        const res = await fetch(SUBMIT_URL, {
+          method: "POST",
+          headers: { "Content-Type":"application/json" },
+          body: JSON.stringify(payload)
+        });
+        const json = await res.json();
+
+        if(json.ok){
+          setToast("신청이 정상적으로 접수되었습니다. 비대면으로 안내드릴게요 🙂");
+        }else{
+          setToast("접수 실패: " + (json.message || "오류"), false);
+        }
+      }catch(e){
+        setToast("접수 실패: 네트워크/URL을 확인해주세요.", false);
+      }finally{
+        validate();
+      }
+    }
+
+    // ====== 이벤트 ======
+    document.getElementById("carSearch").addEventListener("input", (e)=>{
+      rebuildModelSelect(e.target.value.trim());
     });
-  });
-};
 
-function selectCar(maker,model){
-  selected={maker,model};
-  search.value=model;
-  suggest.style.display="none";
-  trimSelect.innerHTML="";
-  trimSelect.disabled=false;
+    document.getElementById("modelSelect").addEventListener("change", (e)=>{
+      const name = e.target.value;
+      selectedModel = name ? { model_name: name } : null;
 
-  Object.keys(catalog[maker][model].trims).forEach(t=>{
-    const o=document.createElement("option");
-    o.value=t;o.textContent=t;
-    trimSelect.appendChild(o);
-  });
-}
+      // 트림/옵션 초기화
+      selectedTrim = null;
+      selectedOptions = [];
+      document.getElementById("optionList").innerHTML = "";
+      document.getElementById("trimSelect").innerHTML = `<option value="">트림을 선택해주세요</option>`;
+      document.getElementById("trimSelect").disabled = !name;
 
-trimSelect.onchange=()=>{
-  const t=trimSelect.value;
-  optionsDiv.innerHTML="";
-  const opts=catalog[selected.maker][selected.model].trims[t].options||{};
-  Object.entries(opts).forEach(([n,p])=>{
-    const l=document.createElement("label");
-    l.className="option";
-    l.innerHTML=`<input type="checkbox" data-p="${p}">${n} (+${p.toLocaleString()}원)`;
-    optionsDiv.appendChild(l);
-  });
-};
+      if(name){
+        rebuildTrimSelect(name);
+      }
+      calcPrice();
+      validate();
+    });
 
-document.getElementById("submit").onclick=()=>{
-  if(!document.getElementById("consent").checked){
-    alert("개인정보 수집 동의가 필요합니다");
-    return;
-  }
-  alert("접수 완료 (실제 저장 로직 연결됨)");
-};
-</script>
+    document.getElementById("trimSelect").addEventListener("change", (e)=>{
+      const idx = e.target.value;
+      const trims = e.target._trims || [];
+      selectedTrim = (idx !== "" && trims[idx]) ? trims[idx] : null;
+      rebuildOptions();
+    });
+
+    document.getElementById("dealTypeGroup").addEventListener("change", ()=>{
+      // 상담 유형 바뀌면 모델 목록 다시
+      rebuildModelSelect(document.getElementById("carSearch").value.trim());
+      // 선택 초기화
+      selectedModel = null;
+      selectedTrim = null;
+      selectedOptions = [];
+      document.getElementById("modelSelect").value = "";
+      document.getElementById("trimSelect").innerHTML = `<option value="">차량을 먼저 선택하세요</option>`;
+      document.getElementById("trimSelect").disabled = true;
+      document.getElementById("optionList").innerHTML = "";
+      calcPrice();
+      validate();
+    });
+
+    ["deliveryRegion","needWhen","applicantName","phone","kakaoId","agree"].forEach(id=>{
+      document.getElementById(id).addEventListener("input", validate);
+      document.getElementById(id).addEventListener("change", validate);
+    });
+
+    document.getElementById("submitBtn").addEventListener("click", submit);
+
+    // 시작
+    loadCatalog().catch(()=> setToast("Catalog URL을 확인해주세요.", false));
+  </script>
 </body>
 </html>
