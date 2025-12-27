@@ -312,6 +312,7 @@
               </small>
             </div>
           </label>
+          <input type="hidden" id="from" value="">
         </div>
 
         <div class="cta">
@@ -358,6 +359,18 @@ const elConsent       = document.getElementById("consent");
 
 const elSubmit = document.getElementById("submitBtn");
 const elToast  = document.getElementById("toast");
+  const elFrom = document.getElementById("from");
+
+function getQueryParam(name){
+  const u = new URL(window.location.href);
+  return (u.searchParams.get(name) || "").trim();
+}
+
+// 페이지 로드 시 from 세팅
+(function initFrom(){
+  const from = getQueryParam("from") || "direct";
+  if (elFrom) elFrom.value = from;
+})();
 
 /***************************************************************
  * ✅ 상태
@@ -731,6 +744,7 @@ async function submitApplication(){
   elSubmit.textContent = "전송 중…";
 
   const payload = {
+    from: (elFrom?.value || "direct"),
     action: "apply",
     submittedAt: new Date().toISOString(),
     from: "github-pages",
@@ -750,6 +764,7 @@ async function submitApplication(){
     kakaoId: norm(elKakaoId.value),
 
     consent: elConsent.checked ? "Y" : "N"
+    
   };
 
   let ok = false;
