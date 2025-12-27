@@ -40,30 +40,36 @@
 
     /* ===== 상단 BG: 이미지 너비/비율 유지 + 아래로 옅어지는 페이드 ===== */
     .hero-bg{
-      position:relative;
-      width:min(1100px, 100%);
-      margin:0 auto;
-      padding-top: var(--hero-ratio);
-      background-image: url("./bg.png");
-      background-size: contain;
-      background-repeat:no-repeat;
-      background-position:center top;
-      filter: saturate(1.02) contrast(1.02);
+  position:relative;
+  width:100%;
+  max-width:1100px;
+  margin:0 auto;
+
+  /* ✅ 이미지 높이 영역 */
+  aspect-ratio: 16 / 9;          /* bg.png가 16:9 아니면 여기 바꿔 */
+  /* (대체 지원) */
+  height:auto;
+
+  /* ✅ 핵심: 그라데이션(1번) + 이미지(2번) 레이어 */
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,0) 0%,
+      rgba(255,255,255,0) 55%,
+      rgba(255,220,240,.45) 78%,
+      rgba(255,210,235,1) 100%
+    ),
+    url("./bg.png");
+
+  background-size: 100% 100%, contain;
+  background-repeat: no-repeat, no-repeat;
+  background-position: center bottom, center top;
+
+  /* 아래쪽이 핑크로 연결되도록 */
+  border-radius: 0;
     }
     /* 아래로 갈수록 “옅어짐(투명)” + 핑크로 연결 */
-    .hero-bg::after{
-      content:"";
-      position:absolute;
-      inset:0;
-      background: linear-gradient(
-        180deg,
-        rgba(255,255,255,0) 0%,
-        rgba(255,255,255,0) 55%,
-        rgba(255,240,250,.55) 76%,
-        rgba(255,220,240,.90) 100%
-      );
-      pointer-events:none;
-    }
+  
 
     /* ===== 카드 전체 래퍼 (BG 위로 살짝 겹침) ===== */
     .wrap{
