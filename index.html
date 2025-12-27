@@ -12,17 +12,19 @@
       --text:#221a22;
       --muted: rgba(34,26,34,.62);
 
-      /* ✅ "핑크 베이스도 아래로 옅어지게" */
-      --page-grad-top: rgba(255, 156, 210, .35);
-      --page-grad-mid: rgba(255, 156, 210, .18);
-      --page-grad-btm: rgba(255, 255, 255, .00);
+      /* ✅ 바디 핑크 베이스: 아래로 갈수록 옅어지게 */
+      --pink1: rgba(255, 150, 210, .30);
+      --pink2: rgba(255, 150, 210, .14);
+      --pink3: rgba(255, 255, 255, .00);
 
       --card:#ffffff;
       --stroke: rgba(0,0,0,.08);
       --shadow: 0 18px 45px rgba(0,0,0,.10);
 
-      --primaryA:#ff6fb1;
-      --primaryB:#9b7cff;
+      /* 버튼 그라(단정하게, 눈에 띄게) */
+      --btnA: rgba(255,111,177,.95);
+      --btnB: rgba(175,120,245,.95);
+      --btnC: rgba(140,125,255,.95);
 
       --max: 980px;
       --radius-xl: 28px;
@@ -36,15 +38,21 @@
       margin:0;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans KR", Apple SD Gothic Neo, sans-serif;
       color: var(--text);
-
-      /* ✅ 본문은 "핑크 베이스 그라"만 */
-      background: linear-gradient(180deg,
-        var(--page-grad-top) 0%,
-        var(--page-grad-mid) 35%,
-        rgba(255,156,210,.08) 60%,
-        var(--page-grad-btm) 100%
-      );
       min-height: 100vh;
+
+      /* ✅ 배경색 그라 “확실히” 보이게: radial + linear 2겹 */
+      background:
+        radial-gradient(900px 520px at 50% 0%,
+          rgba(255,160,220,.32) 0%,
+          rgba(255,160,220,.18) 40%,
+          rgba(255,255,255,0) 72%
+        ),
+        linear-gradient(180deg,
+          var(--pink1) 0%,
+          var(--pink2) 38%,
+          rgba(255,150,210,.08) 60%,
+          var(--pink3) 100%
+        );
     }
 
     .wrap{
@@ -54,38 +62,36 @@
       position: relative;
     }
 
-    /* ✅ 상단 배경(hero)만 bg.png를 깜 */
+    /* ✅ 여기서부터가 핵심: bg.png + 그라를 background-image 2겹으로! */
     .hero{
       position: relative;
-      height: 340px;               /* 모바일 기준 목업 느낌 */
+      height: 340px;
+      margin: 0 -16px;
       border-bottom-left-radius: 24px;
       border-bottom-right-radius: 24px;
       overflow: hidden;
-      margin: 0 -16px;             /* 화면 폭에 꽉 차게 */
-    }
-    .hero::before{
-      content:"";
-      position:absolute; inset:0;
-      background: url("bg.png") center top / cover no-repeat;
-      opacity: .82;                /* ✅ 배경 농도 낮추기 */
-      transform: scale(1.02);
-    }
-    /* ✅ bg가 아래로 갈수록 자연스럽게 사라지고(투명) -> 아래 핑크 베이스랑 연결 */
-    .hero::after{
-      content:"";
-      position:absolute; inset:0;
-      background: linear-gradient(180deg,
-        rgba(255,255,255,0) 0%,
-        rgba(255,156,210,.10) 55%,
-        rgba(255,156,210,.32) 78%,
-        rgba(255,156,210,.52) 100%
-      );
+
+      /* ✅ 1겹: 페이드 그라(아래로 갈수록 옅어지게) + 2겹: 이미지 */
+      background-image:
+        linear-gradient(180deg,
+          rgba(255,255,255,0) 0%,
+          rgba(255,180,225,.10) 48%,
+          rgba(255,150,210,.28) 72%,
+          rgba(255,150,210,.46) 100%
+        ),
+        url("bg.png");
+      background-size: cover, cover;
+      background-position: center top, center top;
+      background-repeat: no-repeat, no-repeat;
+
+      /* ✅ 배경 농도 낮추기 */
+      filter: saturate(1.02) contrast(1.02);
     }
 
     header{
       position: relative;
       text-align:center;
-      padding: 44px 14px 22px;     /* ✅ 배경 위에 바로 타이틀 */
+      padding: 44px 14px 22px;
       z-index: 2;
     }
     h1{
@@ -93,23 +99,23 @@
       font-size: 30px;
       letter-spacing: -0.6px;
       font-weight: 900;
-      text-shadow: 0 2px 10px rgba(0,0,0,.10), 0 1px 0 rgba(255,255,255,.35);
+      text-shadow: 0 2px 10px rgba(0,0,0,.12), 0 1px 0 rgba(255,255,255,.35);
     }
     .sub{
       margin: 10px 0 0;
       font-size: 14px;
       font-weight: 800;
-      color: rgba(34,26,34,.64);
+      color: rgba(34,26,34,.66);
       text-shadow: 0 1px 0 rgba(255,255,255,.40);
     }
 
-    /* ✅ 카드 영역을 hero 아래로 살짝 겹치게(목업 느낌) */
+    /* ✅ shell도 너무 하얗게 덮지 말고, 배경 그라가 살짝 비치게 */
     .shell{
       position: relative;
       margin-top: -54px;
       border-radius: var(--radius-xl);
-      background: rgba(255,255,255,.55);
-      border: 1px solid rgba(255,255,255,.60);
+      background: rgba(255,255,255,.38);
+      border: 1px solid rgba(255,255,255,.55);
       box-shadow: var(--shadow);
       backdrop-filter: blur(10px);
       overflow: hidden;
@@ -119,7 +125,7 @@
     .content{ padding: 16px; }
 
     .section{
-      background: var(--card);
+      background: rgba(255,255,255,.94);
       border: 1px solid var(--stroke);
       border-radius: var(--radius-lg);
       padding: 16px;
@@ -162,7 +168,7 @@
       padding: 12px 12px;
       border-radius: 16px;
       border: 1px solid rgba(0,0,0,.10);
-      background: rgba(255,255,255,.96);
+      background: rgba(255,255,255,.98);
       outline: none;
       font-size: 14px;
     }
@@ -175,9 +181,6 @@
       color: rgba(34,26,34,.55);
       font-weight: 800;
     }
-
-    /* ✅ 반 갈라 입력 지양: 항상 1열 */
-    .single{ display:block; }
 
     .radio-row{
       display:flex;
@@ -192,16 +195,16 @@
       padding: 10px 12px;
       border-radius: 999px;
       border: 1px solid rgba(0,0,0,.10);
-      background: rgba(255,255,255,.96);
+      background: rgba(255,255,255,.98);
       font-weight: 900;
       font-size: 13px;
     }
     .chip input{ width:auto; margin:0; }
 
-    /* ✅ 개인정보 동의: 체크박스-텍스트 붙이기 */
+    /* ✅ 개인정보 동의: 체크박스-텍스트 거리 해결 */
     .consent{
       margin-top: 14px;
-      background: rgba(255,255,255,.96);
+      background: rgba(255,255,255,.98);
       border: 1px solid rgba(0,0,0,.08);
       border-radius: 18px;
       padding: 14px;
@@ -209,7 +212,7 @@
     .consent-row{
       display:flex;
       align-items:flex-start;
-      gap: 10px;      /* ✅ 간격 해결 */
+      gap: 10px; /* ✅ 이걸로 “왜 이렇게 멀어?” 해결 */
     }
     .consent-row input{
       width: 18px;
@@ -232,11 +235,11 @@
 
     .cta{
       padding: 16px;
-      background: rgba(255,255,255,.70);
+      background: rgba(255,255,255,.62);
       border-top: 1px solid rgba(0,0,0,.06);
     }
 
-    /* ✅ 버튼: 눈에 띄지만 단정하게(목업 느낌) */
+    /* ✅ 버튼: 은은하지만 존재감 있게(목업처럼) */
     .btn{
       width: 100%;
       border: 0;
@@ -248,15 +251,12 @@
       color: #fff;
       letter-spacing: -0.3px;
 
-      background: linear-gradient(90deg,
-        rgba(255,111,177,.92),
-        rgba(185,120,245,.92),
-        rgba(155,124,255,.92)
-      );
+      background: linear-gradient(90deg, var(--btnA), var(--btnB), var(--btnC));
       box-shadow:
-        0 16px 34px rgba(155,124,255,.20),
-        0 12px 26px rgba(255,111,177,.16);
+        0 18px 38px rgba(155,124,255,.22),
+        0 12px 28px rgba(255,111,177,.18);
     }
+    .btn:active{ transform: translateY(1px); }
     .btn:disabled{
       opacity: .55;
       cursor: not-allowed;
@@ -282,7 +282,6 @@
 </head>
 
 <body>
-  <!-- ✅ hero(bg.png) 영역 -->
   <div class="hero">
     <div class="wrap">
       <header>
@@ -296,40 +295,38 @@
     <div class="shell">
       <div class="content">
 
-        <!-- 1) 차량 선택 -->
+        <!-- 차량 선택 -->
         <section class="section" id="secCar">
           <div class="sec-title">차량 선택 <span class="badge">필수</span></div>
 
-          <div class="single">
-            <label for="maker">제조사</label>
-            <select id="maker">
-              <option value="">제조사를 선택해주세요</option>
-            </select>
+          <label for="maker">제조사</label>
+          <select id="maker">
+            <option value="">제조사를 선택해주세요</option>
+          </select>
 
-            <label for="model">차종</label>
-            <select id="model" disabled>
-              <option value="">차종을 선택해주세요</option>
-            </select>
+          <label for="model">차종</label>
+          <select id="model" disabled>
+            <option value="">차종을 선택해주세요</option>
+          </select>
 
-            <label for="trim">차량 등급</label>
-            <select id="trim" disabled>
-              <option value="">차량 등급을 선택해주세요</option>
-            </select>
+          <label for="trim">차량 등급</label>
+          <select id="trim" disabled>
+            <option value="">차량 등급을 선택해주세요</option>
+          </select>
 
-            <label for="option">옵션</label>
-            <select id="option" disabled>
-              <option value="">옵션을 선택해주세요</option>
-            </select>
+          <label for="option">옵션</label>
+          <select id="option" disabled>
+            <option value="">옵션을 선택해주세요</option>
+          </select>
 
-            <p class="help">※ 제조사 → 차종 → 등급 → 옵션 순서로 선택됩니다.</p>
-          </div>
+          <p class="help">※ 제조사 → 차종 → 등급 → 옵션 순서로 선택됩니다.</p>
         </section>
 
-        <!-- 2) 신청 정보 -->
+        <!-- 신청 정보 -->
         <section class="section" id="secApp">
           <div class="sec-title">신청 정보 <span class="badge">필수</span></div>
 
-          <label>고객 유형</label>
+          <label>개인/개인사업자/법인</label>
           <div class="radio-row" id="customerType">
             <label class="chip"><input type="radio" name="customerType" value="개인" checked> 개인</label>
             <label class="chip"><input type="radio" name="customerType" value="개인사업자"> 개인사업자</label>
@@ -345,7 +342,7 @@
           <label for="needAt">차량 인도 시기</label>
           <input id="needAt" placeholder="예) 가능한 빨리 / 2월 중순 / 미정" />
 
-          <label for="kakao">카카오톡 아이디 (선택)</label>
+          <label for="kakao">카카오톡 아이디(선택)</label>
           <input id="kakao" placeholder="예) melody7017" />
 
           <div class="consent">
@@ -388,13 +385,8 @@
     };
 
     let catalog = [];
-
-    function valRadio(name){
-      const el = document.querySelector(`input[name="${name}"]:checked`);
-      return el ? el.value : '';
-    }
-
     const uniq = (arr)=> Array.from(new Set(arr)).filter(Boolean).sort((a,b)=>a.localeCompare(b,'ko'));
+    const valRadio = (name)=> (document.querySelector(`input[name="${name}"]:checked`)||{}).value || "";
 
     function setOptions(select, arr, placeholder){
       select.innerHTML = '';
