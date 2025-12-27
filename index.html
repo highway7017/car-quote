@@ -1,284 +1,327 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>비대면 차량 견적 상담</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>비대면 차량 견적 상담</title>
 
-<style>
-:root{
-  --bg-url: url("./bg.png");     /* ✅ index.html과 같은 폴더에 bg.png */
-  --page-pink: #ffd1e6;          /* ✅ 아래쪽 바탕 핑크 */
-  --card-bg: rgba(255,255,255,0.92);
-  --text: #111827;
-  --muted: rgba(17,24,39,.6);
-  --stroke: rgba(255,255,255,.55);
-}
+  <style>
+    :root{
+      /* bg.png 비율: 16:9(2560x1440)이면 56.25% / 3:2면 66.666% */
+      --hero-ratio: 56.25%;
 
-*{ box-sizing:border-box; }
-html,body{ margin:0; padding:0; }
-body{
-  font-family: -apple-system, BlinkMacSystemFont, "Noto Sans KR", sans-serif;
-  color: var(--text);
-  background: var(--page-pink);         /* ✅ 배경은 핑크로 */
-  min-height:100vh;
-  overflow-x:hidden;
-}
+      --ink:#231a26;
+      --muted: rgba(35,26,38,.62);
 
-/* ✅ 배너(배경) 영역: 화면 전체가 아니라 "배너 높이만" */
-.bg{
-  position: fixed;
-  top:0; left:0;
-  width:100%;
-  height: 340px;                 /* ✅ 배너가 보이는 높이 */
-  z-index:-2;
+      --pink0:#fff5fb;
+      --pink1:#ffe3f2;
+      --pink2:#ffd1ea;
 
-  background-image: var(--bg-url);
-  background-repeat:no-repeat;
-  background-position:center top;
-  background-size: min(1200px, 100%) auto;
-}
+      --card: rgba(255,255,255,.78);
+      --stroke: rgba(255,255,255,.55);
+      --shadow: 0 16px 45px rgba(0,0,0,.14);
 
-/* ✅ 핑크 오버레이(너무 진하면 스샷처럼 다 핑크가 됨) → 약하게 */
-.bg::after{
-  content:"";
-  position:absolute;
-  inset:0;
-  background: linear-gradient(
-    180deg,
-    rgba(255, 80, 165, 0.28) 0%,
-    rgba(255, 160, 210, 0.18) 45%,
-    rgba(255, 209, 230, 0.06) 75%,
-    rgba(255, 209, 230, 0.00) 100%
-  );
-}
+      --r-xl: 28px;
+      --r-lg: 22px;
+      --r-md: 16px;
+    }
 
-/* ✅ 배너 아래로 갈수록 "이미지가 사라지고" 바디 핑크로 연결되는 페이드 */
-.bg-fade{
-  position: fixed;
-  top: 250px;      /* ✅ 여기부터 서서히 사라지게(배너 아래쪽) */
-  left:0;
-  width:100%;
-  height: 240px;
-  z-index:-1;
-  pointer-events:none;
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      color:var(--ink);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+      background:
+        radial-gradient(1200px 500px at 50% -10%, rgba(255,180,220,.55), rgba(255,180,220,0) 70%),
+        linear-gradient(180deg, var(--pink0) 0%, var(--pink1) 38%, var(--pink2) 100%);
+      min-height:100vh;
+      overflow-x:hidden;
+    }
 
-  background: linear-gradient(
-    180deg,
-    rgba(255, 209, 230, 0.00) 0%,
-    rgba(255, 209, 230, 0.55) 55%,
-    rgba(255, 209, 230, 1.00) 100%
-  );
-}
+    /* ===== 상단 BG: 이미지 너비/비율 유지 + 아래로 옅어지는 페이드 ===== */
+    .hero-bg{
+      position:relative;
+      width:min(1100px, 100%);
+      margin:0 auto;
+      padding-top: var(--hero-ratio);
+      background-image: url("./bg.png");
+      background-size: contain;
+      background-repeat:no-repeat;
+      background-position:center top;
+      filter: saturate(1.02) contrast(1.02);
+    }
+    /* 아래로 갈수록 “옅어짐(투명)” + 핑크로 연결 */
+    .hero-bg::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background: linear-gradient(
+        180deg,
+        rgba(255,255,255,0) 0%,
+        rgba(255,255,255,0) 55%,
+        rgba(255,240,250,.55) 76%,
+        rgba(255,220,240,.90) 100%
+      );
+      pointer-events:none;
+    }
 
-/* ✅ 카드가 배너를 너무 덮지 않게 */
-.wrapper{
-  max-width: 980px;
-  margin: 220px auto 90px;  /* ✅ 위로 올리면 배너가 덮여버림 */
-  padding: 0 16px;
-}
+    /* ===== 카드 전체 래퍼 (BG 위로 살짝 겹침) ===== */
+    .wrap{
+      width:min(980px, 100%);
+      margin:-110px auto 40px;
+      padding:0 16px;
+      position:relative;
+      z-index:2;
+    }
 
-/* 바깥 유리 패널 */
-.shell{
-  border-radius: 28px;
-  background: rgba(255,255,255,0.18);
-  border: 1px solid rgba(255,255,255,0.35);
-  box-shadow: 0 30px 80px rgba(0,0,0,0.18);
-  backdrop-filter: blur(10px);
-  overflow:hidden;
-}
+    .shell{
+      border-radius: var(--r-xl);
+      background: rgba(255,255,255,.16);
+      border: 1px solid rgba(255,255,255,.42);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      backdrop-filter: blur(10px);
+    }
 
-/* 헤더 */
-.hero{
-  padding: 26px 18px 22px;
-  text-align:center;
-  background: linear-gradient(
-    180deg,
-    rgba(255,255,255,0.40) 0%,
-    rgba(255,255,255,0.10) 100%
-  );
-}
+    .hero{
+      padding: 26px 18px 18px;
+      text-align:center;
+      background: linear-gradient(180deg, rgba(255,255,255,.46), rgba(255,255,255,.08));
+    }
+    .hero h1{
+      margin:0;
+      font-size:28px;
+      letter-spacing:-0.8px;
+      font-weight:900;
+    }
+    .hero p{
+      margin:10px 0 0;
+      font-size:14px;
+      font-weight:800;
+      color:var(--muted);
+    }
 
-.hero h1{
-  margin:0;
-  font-size: 24px;
-  font-weight: 900;
-  letter-spacing:-0.5px;
-}
-.hero p{
-  margin:10px 0 0;
-  font-weight: 700;
-  color: var(--muted);
-  font-size: 13px;
-}
+    .content{ padding:16px; }
+    .grid{
+      display:grid;
+      gap:14px;
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 860px){
+      .content{ padding:18px; }
+      .grid{ grid-template-columns: 1.05fr .95fr; align-items:start; }
+    }
 
-/* 내용 */
-.content{ padding: 16px; }
-.card{
-  background: var(--card-bg);
-  border: 1px solid var(--stroke);
-  border-radius: 22px;
-  padding: 16px;
-  box-shadow: 0 18px 45px rgba(0,0,0,0.10);
-  backdrop-filter: blur(12px);
-}
+    .card{
+      background: var(--card);
+      border: 1px solid var(--stroke);
+      border-radius: var(--r-lg);
+      padding:16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.08);
+      backdrop-filter: blur(12px);
+    }
 
-.grid{
-  display:grid;
-  grid-template-columns: 1fr;
-  gap: 14px;
-}
+    .sec-title{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      margin:0 0 10px;
+      font-size:16px;
+      font-weight:900;
+      letter-spacing:-0.3px;
+    }
+    .badge{
+      font-size:12px;
+      font-weight:900;
+      padding:4px 10px;
+      border-radius:999px;
+      color:#9d1f63;
+      background: rgba(255, 110, 190, .12);
+      border: 1px solid rgba(255, 110, 190, .18);
+    }
 
-@media (min-width: 860px){
-  .grid{ grid-template-columns: 1.1fr 0.9fr; }
-  .content{ padding: 18px; }
-}
+    label{
+      display:block;
+      margin-top:12px;
+      font-size:13px;
+      font-weight:900;
+      letter-spacing:-0.2px;
+    }
+    .hint{
+      margin-top:6px;
+      font-size:12px;
+      font-weight:800;
+      color: rgba(35,26,38,.56);
+      line-height:1.45;
+    }
 
-/* 섹션 */
-.sec{
-  background: rgba(255,255,255,0.72);
-  border: 1px solid rgba(255,255,255,0.65);
-  border-radius: 18px;
-  padding: 14px;
-}
+    input, select, textarea{
+      width:100%;
+      margin-top:7px;
+      padding:12px 12px;
+      border-radius:14px;
+      border:1px solid rgba(0,0,0,.10);
+      background: rgba(255,255,255,.92);
+      outline:none;
+      font-size:14px;
+      font-weight:700;
+      color:var(--ink);
+    }
+    input:focus, select:focus, textarea:focus{
+      border-color: rgba(255,110,190,.45);
+      box-shadow: 0 0 0 4px rgba(255,110,190,.12);
+    }
 
-.sec-title{
-  display:flex;
-  gap:10px;
-  align-items:center;
-  margin:0 0 10px;
-  font-weight: 900;
-  font-size: 15px;
-}
+    .radio-wrap{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:8px;
+    }
+    .pill{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 12px;
+      border-radius:999px;
+      background: rgba(255,255,255,.85);
+      border:1px solid rgba(0,0,0,.10);
+      font-weight:900;
+      user-select:none;
+    }
+    .pill input{ width:auto; margin:0; }
 
-.badge{
-  font-size:12px;
-  font-weight:900;
-  padding: 4px 10px;
-  border-radius: 999px;
-  background: rgba(255,95,179,0.14);
-  border: 1px solid rgba(255,95,179,0.20);
-  color:#a20b5a;
-}
+    .options{
+      margin-top:10px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      padding:10px;
+      border-radius:16px;
+      background: rgba(255,255,255,.55);
+      border:1px dashed rgba(255,110,190,.20);
+    }
+    .opt{
+      display:flex;
+      align-items:flex-start;
+      gap:10px;
+      font-weight:800;
+    }
+    .opt input{ width:auto; margin-top:2px; }
+    .opt small{
+      display:block;
+      margin-top:2px;
+      font-weight:800;
+      color: rgba(35,26,38,.58);
+    }
 
-label{
-  display:block;
-  margin-top: 12px;
-  font-weight: 900;
-  font-size: 13px;
-}
+    .summary{
+      margin-top:12px;
+      display:grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap:10px;
+    }
+    .sum-box{
+      padding:12px;
+      border-radius:16px;
+      background: rgba(255,255,255,.78);
+      border:1px solid rgba(0,0,0,.08);
+      text-align:center;
+    }
+    .sum-box b{
+      display:block;
+      font-size:12px;
+      font-weight:900;
+      color: rgba(35,26,38,.60);
+    }
+    .sum-box strong{
+      display:block;
+      margin-top:6px;
+      font-size:18px;
+      letter-spacing:-0.3px;
+    }
 
-input, select{
-  width:100%;
-  margin-top:7px;
-  padding: 12px 12px;
-  border-radius: 14px;
-  border: 1px solid rgba(0,0,0,0.10);
-  background: rgba(255,255,255,0.92);
-  outline:none;
-  font-size: 14px;
-}
+    .row{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:12px;
+    }
+    @media (min-width:860px){
+      .row.two{ grid-template-columns:1fr 1fr; }
+    }
 
-small.hint{
-  display:block;
-  margin-top:8px;
-  color: rgba(0,0,0,0.55);
-  font-weight: 700;
-}
+    .consent{
+      margin-top:12px;
+      padding:12px;
+      border-radius:16px;
+      background: rgba(255,255,255,.72);
+      border:1px solid rgba(0,0,0,.08);
+    }
+    .consent .line{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      font-weight:900;
+    }
+    .consent input{ width:auto; margin-top:2px; }
+    .consent p{
+      margin:8px 0 0;
+      font-size:12px;
+      font-weight:800;
+      color: rgba(35,26,38,.58);
+      line-height:1.45;
+    }
 
-/* 라디오 */
-.radio-row{
-  display:flex;
-  gap: 10px;
-  margin-top: 10px;
-}
-.radio-pill{
-  flex:1;
-  border: 1px solid rgba(0,0,0,0.10);
-  background: rgba(255,255,255,0.92);
-  border-radius: 999px;
-  padding: 12px 10px;
-  text-align:center;
-  font-weight: 900;
-}
-.radio-pill input{ width:auto; margin:0 6px 0 0; }
+    /* ===== 고상한 버튼(과한 그라데이션 X) ===== */
+    .cta{
+      margin-top:16px;
+      width:100%;
+      border-radius:999px;
+      padding:14px 18px;
+      font-size:16px;
+      font-weight:900;
+      letter-spacing:-0.2px;
+      color: rgba(30,20,28,.92);
+      background: linear-gradient(180deg, rgba(255,255,255,.90), rgba(255,255,255,.68));
+      border:1px solid rgba(255,110,190,.20);
+      box-shadow: 0 12px 28px rgba(0,0,0,.12);
+      cursor:pointer;
+    }
+    .cta:disabled{ opacity:.55; cursor:not-allowed; }
 
-/* 가격 */
-.price-grid{
-  display:grid;
-  grid-template-columns: repeat(3,1fr);
-  gap: 10px;
-  margin-top: 14px;
-}
-.price{
-  background: rgba(255,255,255,0.90);
-  border: 1px solid rgba(0,0,0,0.08);
-  border-radius: 16px;
-  padding: 12px;
-  text-align:center;
-}
-.price span{
-  display:block;
-  font-weight: 800;
-  font-size: 12px;
-  color: rgba(0,0,0,0.55);
-}
-.price strong{
-  display:block;
-  margin-top: 6px;
-  font-size: 18px;
-  font-weight: 900;
-}
+    .foot{
+      text-align:center;
+      padding:14px 16px 22px;
+      font-size:12px;
+      font-weight:900;
+      color: rgba(35,26,38,.52);
+    }
 
-/* 체크박스 */
-.check{
-  display:flex;
-  gap:10px;
-  align-items:flex-start;
-  margin-top: 12px;
-  background: rgba(255,255,255,0.70);
-  border: 1px solid rgba(0,0,0,0.08);
-  border-radius: 16px;
-  padding: 12px;
-}
-.check input{ margin-top: 4px; }
-.check b{ font-weight: 900; }
-.check .sub{
-  margin-top: 6px;
-  font-size: 12px;
-  color: rgba(0,0,0,0.55);
-  font-weight: 700;
-}
-
-/* 버튼 */
-button{
-  width:100%;
-  margin-top: 14px;
-  padding: 18px 16px;
-  border:none;
-  border-radius: 999px;
-  background: linear-gradient(135deg, #ff5fb3, #ff90cc);
-  color:#fff;
-  font-size: 16px;
-  font-weight: 900;
-  box-shadow: 0 18px 35px rgba(255,95,179,0.35);
-  cursor:pointer;
-}
-.footer-note{
-  text-align:center;
-  margin-top: 10px;
-  font-size: 12px;
-  font-weight: 800;
-  color: rgba(0,0,0,0.55);
-}
-</style>
+    .toast{
+      position:fixed;
+      left:50%;
+      transform:translateX(-50%);
+      bottom:18px;
+      width:min(520px, calc(100% - 24px));
+      padding:12px 14px;
+      border-radius:16px;
+      background: rgba(20,16,20,.86);
+      color:#fff;
+      font-weight:800;
+      font-size:13px;
+      opacity:0;
+      pointer-events:none;
+      transition: opacity .18s ease;
+      z-index:50;
+    }
+    .toast.show{ opacity:1; }
+  </style>
 </head>
 
 <body>
-  <div class="bg"></div>
-  <div class="bg-fade"></div>
+  <div class="hero-bg" aria-hidden="true"></div>
 
-  <div class="wrapper">
+  <div class="wrap">
     <div class="shell">
       <div class="hero">
         <h1>비대면 차량 견적 상담</h1>
@@ -286,78 +329,402 @@ button{
       </div>
 
       <div class="content">
-        <div class="card">
-          <div class="grid">
+        <div class="grid">
 
-            <div class="sec">
-              <div class="sec-title">차량 선택 <span class="badge">필수</span></div>
+          <!-- LEFT -->
+          <section class="card">
+            <h2 class="sec-title">차량 선택 <span class="badge">필수</span></h2>
 
-              <label>상담 유형</label>
-              <div class="radio-row">
-                <label class="radio-pill"><input type="radio" name="dealType" value="렌트" checked>장기렌트</label>
-                <label class="radio-pill"><input type="radio" name="dealType" value="리스">리스</label>
-              </div>
-
-              <label>차량명 검색</label>
-              <input placeholder="예) 쏘렌토 / 셀토스 / 카니발" />
-
-              <label>트림</label>
-              <select>
-                <option>차량을 먼저 선택하세요</option>
-              </select>
-
-              <label>옵션</label>
-              <select>
-                <option>트림 선택 후 옵션 표시</option>
-              </select>
-
-              <div class="price-grid">
-                <div class="price"><span>차량가</span><strong>0원</strong></div>
-                <div class="price"><span>옵션가</span><strong>0원</strong></div>
-                <div class="price"><span>총 차량가</span><strong>0원</strong></div>
-              </div>
+            <label>상담 유형</label>
+            <div class="radio-wrap">
+              <label class="pill"><input type="radio" name="contractType" value="렌트" checked> 장기렌트</label>
+              <label class="pill"><input type="radio" name="contractType" value="리스"> 리스</label>
             </div>
 
-            <div style="display:grid; gap:14px;">
-              <div class="sec">
-                <div class="sec-title">상담 조건 <span class="badge">필수</span></div>
+            <label>차량명 검색</label>
+            <input id="modelSearch" type="text" placeholder="예) 쏘렌토 / 셀토스 / 카니발 (부분검색 가능)" list="modelList" autocomplete="off" />
+            <datalist id="modelList"></datalist>
+            <div class="hint">검색어를 입력하면 목록이 뜹니다.</div>
 
+            <label>선택된 차량</label>
+            <input id="selectedModel" type="text" value="아직 선택 전" readonly />
+
+            <label>트림 선택</label>
+            <select id="trimSelect" disabled>
+              <option value="">차량을 먼저 선택하세요</option>
+            </select>
+
+            <label>옵션 선택</label>
+            <div class="options" id="optionsBox">
+              <div class="hint">트림 선택 후 옵션이 표시됩니다.</div>
+            </div>
+
+            <div class="summary">
+              <div class="sum-box"><b>차량가</b><strong id="basePrice">0원</strong></div>
+              <div class="sum-box"><b>옵션가</b><strong id="optPrice">0원</strong></div>
+              <div class="sum-box"><b>총 차량가</b><strong id="totalPrice">0원</strong></div>
+            </div>
+          </section>
+
+          <!-- RIGHT -->
+          <section class="card">
+            <h2 class="sec-title">상담 조건 <span class="badge">필수</span></h2>
+
+            <div class="row two">
+              <div>
                 <label>차량 인도 지역</label>
-                <input placeholder="예) 서울 / 경기 남부" />
-
-                <label>차량 필요 시기(선택)</label>
-                <input placeholder="예) 가능한 빨리 / 미정" />
+                <input id="deliveryRegion" type="text" placeholder="예) 경기 남부 / 서울 강남" />
               </div>
-
-              <div class="sec">
-                <div class="sec-title">신청자 정보 <span class="badge">필수</span></div>
-
-                <label>신청자명</label>
-                <input placeholder="예) 홍길동" />
-
-                <label>연락처</label>
-                <input placeholder="예) 010-1234-5678" />
-
-                <div class="check">
-                  <input type="checkbox" />
-                  <div>
-                    <b>[필수] 개인정보 수집·이용에 동의합니다.</b>
-                    <div class="sub">
-                      수집: 성명, 연락처 · 목적: 견적/상담 안내 · 보유: 상담 완료 후 1년
-                    </div>
-                  </div>
+              <div>
+                <label>고객 유형</label>
+                <div class="radio-wrap" style="margin-top:7px;">
+                  <label class="pill"><input type="radio" name="customerType" value="개인" checked> 개인</label>
+                  <label class="pill"><input type="radio" name="customerType" value="개인사업자"> 개인사업자</label>
+                  <label class="pill"><input type="radio" name="customerType" value="법인"> 법인</label>
                 </div>
-
-                <button type="button">간단 견적 요청하기</button>
-                <div class="footer-note">방문 없이 모두 비대면으로 안내드립니다.</div>
               </div>
             </div>
 
-          </div>
+            <label>차량 필요 시기 (선택)</label>
+            <input id="needWhen" type="text" placeholder="예) 가능한 빨리 / 2월 중순 / 미정" />
+            <div class="hint">* “미정”으로 입력해도 괜찮습니다.</div>
+
+            <hr style="border:0;border-top:1px solid rgba(0,0,0,.06); margin:16px 0;">
+
+            <h2 class="sec-title">신청자 정보 <span class="badge">필수</span></h2>
+
+            <div class="row two">
+              <div>
+                <label>신청자명</label>
+                <input id="applicantName" type="text" placeholder="예) 홍길동" />
+              </div>
+              <div>
+                <label>연락처</label>
+                <input id="phone" type="tel" placeholder="예) 010-1234-5678" />
+              </div>
+            </div>
+
+            <label>카카오톡 ID (선택)</label>
+            <input id="kakaoId" type="text" placeholder="예) melody7017" />
+
+            <div class="consent">
+              <div class="line">
+                <input id="consent" type="checkbox">
+                <div>
+                  <div style="font-weight:1000;">[필수] 개인정보 수집·이용에 동의합니다.</div>
+                  <p>
+                    수집: 성명, 연락처, 카카오톡 ID(선택), 차량 선택 정보 /
+                    목적: 견적·상담 안내 / 보유: 상담 완료 후 1년
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <button class="cta" id="submitBtn" disabled>간단 견적 요청하기</button>
+            <div class="foot">방문 없이 모두 비대면으로 안내드립니다.</div>
+          </section>
+
         </div>
       </div>
-
     </div>
   </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    /* ===============================
+       설정: 네 웹앱 exec 주소만 넣으면 끝
+    =============================== */
+    const API_BASE = "YOUR_WEBAPP_EXEC_URL_HERE"; // 예) https://script.google.com/macros/s/AAAA.../exec
+
+    const el = (id) => document.getElementById(id);
+    const toast = el("toast");
+
+    const modelSearch = el("modelSearch");
+    const modelList   = el("modelList");
+    const selectedModel = el("selectedModel");
+    const trimSelect  = el("trimSelect");
+    const optionsBox  = el("optionsBox");
+
+    const basePriceEl = el("basePrice");
+    const optPriceEl  = el("optPrice");
+    const totalPriceEl= el("totalPrice");
+
+    const submitBtn   = el("submitBtn");
+
+    let rows = [];
+    let models = [];
+    let currentModelObj = null;
+    let currentTrim = "";
+    let currentBase = 0;
+    let currentOptions = []; // {name, price}
+    let selectedOptionNames = new Set();
+
+    function money(n){
+      return (Number(n)||0).toLocaleString("ko-KR") + "원";
+    }
+    function showToast(msg){
+      toast.textContent = msg;
+      toast.classList.add("show");
+      setTimeout(()=>toast.classList.remove("show"), 2200);
+    }
+    function getRadio(name){
+      const checked = document.querySelector(`input[name="${name}"]:checked`);
+      return checked ? checked.value : "";
+    }
+
+    function updateSubmitEnabled(){
+      const ok =
+        !!currentModelObj &&
+        !!currentTrim &&
+        el("deliveryRegion").value.trim() &&
+        el("applicantName").value.trim() &&
+        el("phone").value.trim() &&
+        el("consent").checked;
+      submitBtn.disabled = !ok;
+    }
+
+    async function loadCatalog(){
+      const url = `${API_BASE}?action=catalog&ts=${Date.now()}`;
+      const res = await fetch(url);
+      if(!res.ok) throw new Error("catalog fetch failed");
+      const data = await res.json();
+      rows = Array.isArray(data) ? data : [];
+
+      // 모델 중복 제거
+      const map = new Map();
+      rows.forEach(r=>{
+        const maker = (r.maker||"").trim();
+        const model = (r.model||"").trim();
+        if(!maker || !model) return;
+        const key = maker + "||" + model;
+        if(!map.has(key)) map.set(key, {maker, model});
+      });
+      models = [...map.values()].sort((a,b)=> (a.model>b.model?1:-1));
+
+      rebuildModelDatalist();
+      showToast("차량 목록 불러옴");
+    }
+
+    function rebuildModelDatalist(){
+      modelList.innerHTML = "";
+      models.forEach(m=>{
+        const opt = document.createElement("option");
+        opt.value = m.model;
+        modelList.appendChild(opt);
+      });
+    }
+
+    function setModelByName(name){
+      const modelName = (name||"").trim();
+      if(!modelName) return;
+
+      const found = models.find(x => x.model === modelName);
+      if(!found) return;
+
+      currentModelObj = found;
+      selectedModel.value = found.model;
+
+      // 트림 구성
+      trimSelect.disabled = false;
+      trimSelect.innerHTML = `<option value="">트림을 선택해주세요</option>`;
+      const contractType = getRadio("contractType");
+
+      const trimSet = new Set();
+      rows.forEach(r=>{
+        if(r.maker!==found.maker || r.model!==found.model) return;
+        if(contractType==="렌트" && String(r.rentAllowed||"Y").toUpperCase()!=="Y") return;
+        if(contractType==="리스" && String(r.leaseAllowed||"Y").toUpperCase()!=="Y") return;
+
+        const t = (r.trim||"").trim();
+        if(t) trimSet.add(t);
+      });
+
+      [...trimSet].sort().forEach(t=>{
+        const o = document.createElement("option");
+        o.value = t;
+        o.textContent = t;
+        trimSelect.appendChild(o);
+      });
+
+      // 초기화
+      currentTrim = "";
+      currentBase = 0;
+      currentOptions = [];
+      selectedOptionNames.clear();
+      optionsBox.innerHTML = `<div class="hint">트림 선택 후 옵션이 표시됩니다.</div>`;
+      basePriceEl.textContent = "0원";
+      optPriceEl.textContent  = "0원";
+      totalPriceEl.textContent= "0원";
+
+      updateSubmitEnabled();
+    }
+
+    function rebuildOptions(){
+      if(!currentModelObj || !currentTrim) return;
+
+      const filtered = rows.filter(r =>
+        r.maker===currentModelObj.maker &&
+        r.model===currentModelObj.model &&
+        String(r.trim||"").trim()===currentTrim
+      );
+
+      currentBase = Number(filtered[0]?.basePrice || 0) || 0;
+
+      // options (중복 제거)
+      const optMap = new Map();
+      filtered.forEach(r=>{
+        const n = (r.optionName||"").trim();
+        if(!n) return;
+        optMap.set(n, Number(r.optionPrice||0)||0);
+      });
+      currentOptions = [...optMap.entries()].map(([name, price])=>({name, price}));
+
+      selectedOptionNames.clear();
+      optionsBox.innerHTML = "";
+
+      if(currentOptions.length===0){
+        optionsBox.innerHTML = `<div class="hint">해당 트림에 선택 옵션이 없습니다.</div>`;
+      }else{
+        currentOptions.forEach(o=>{
+          const line = document.createElement("label");
+          line.className = "opt";
+          line.innerHTML = `
+            <input type="checkbox">
+            <div>
+              <div>${o.name}</div>
+              <small>${money(o.price)}</small>
+            </div>
+          `;
+          const cb = line.querySelector("input");
+          cb.addEventListener("change", ()=>{
+            if(cb.checked) selectedOptionNames.add(o.name);
+            else selectedOptionNames.delete(o.name);
+            updatePrice();
+            updateSubmitEnabled();
+          });
+          optionsBox.appendChild(line);
+        });
+      }
+
+      updatePrice();
+      updateSubmitEnabled();
+    }
+
+    function updatePrice(){
+      const optSum = [...selectedOptionNames].reduce((sum, name)=>{
+        const o = currentOptions.find(x=>x.name===name);
+        return sum + (o ? o.price : 0);
+      }, 0);
+
+      basePriceEl.textContent = money(currentBase);
+      optPriceEl.textContent  = money(optSum);
+      totalPriceEl.textContent= money(currentBase + optSum);
+    }
+
+    async function submitApplication(){
+      if(submitBtn.disabled) return;
+
+      const optSum = [...selectedOptionNames].reduce((sum, name)=>{
+        const o = currentOptions.find(x=>x.name===name);
+        return sum + (o ? o.price : 0);
+      }, 0);
+
+      const payload = {
+        action: "apply",
+        contractType: getRadio("contractType"),
+        maker: currentModelObj?.maker || "",
+        model: currentModelObj?.model || "",
+        trim: currentTrim || "",
+        options: [...selectedOptionNames].join(" | "),
+        basePrice: String(currentBase||0),
+        optionPrice: String(optSum),
+        totalPrice: String((currentBase||0)+optSum),
+        deliveryRegion: el("deliveryRegion").value.trim(),
+        customerType: getRadio("customerType"),
+        needWhen: el("needWhen").value.trim(),
+        applicantName: el("applicantName").value.trim(),
+        phone: el("phone").value.trim(),
+        kakaoId: el("kakaoId").value.trim(),
+        consent: el("consent").checked ? "Y" : "N",
+        page: location.href
+      };
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = "접수 중…";
+
+      try{
+        const body = new URLSearchParams(payload).toString();
+        const res = await fetch(API_BASE, {
+          method:"POST",
+          headers:{ "Content-Type":"application/x-www-form-urlencoded;charset=UTF-8" },
+          body
+        });
+
+        // JSON 파싱 실패해도 접수됐을 수 있어서 유연하게 처리
+        let ok = true;
+        try{
+          const j = await res.json();
+          ok = (j && j.ok !== false);
+        }catch(_){ ok = true; }
+
+        if(ok) showToast("접수 완료! 확인 후 연락드릴게요.");
+        else showToast("접수 실패. 잠시 후 다시 시도해 주세요.");
+      }catch(e){
+        showToast("전송 오류. 네트워크 확인 후 다시 시도해 주세요.");
+      }finally{
+        submitBtn.textContent = "간단 견적 요청하기";
+        updateSubmitEnabled();
+      }
+    }
+
+    /* 이벤트 */
+    document.querySelectorAll('input[name="contractType"]').forEach(r=>{
+      r.addEventListener("change", ()=>{
+        // 상담유형 변경 시 초기화
+        currentModelObj = null;
+        currentTrim = "";
+        currentBase = 0;
+        currentOptions = [];
+        selectedOptionNames.clear();
+
+        selectedModel.value = "아직 선택 전";
+        trimSelect.innerHTML = `<option value="">차량을 먼저 선택하세요</option>`;
+        trimSelect.disabled = true;
+
+        optionsBox.innerHTML = `<div class="hint">트림 선택 후 옵션이 표시됩니다.</div>`;
+        basePriceEl.textContent = "0원";
+        optPriceEl.textContent  = "0원";
+        totalPriceEl.textContent= "0원";
+        updateSubmitEnabled();
+      });
+    });
+
+    modelSearch.addEventListener("change", e=> setModelByName(e.target.value));
+    modelSearch.addEventListener("blur",  e=> setModelByName(e.target.value)); // 모바일 안정장치
+
+    trimSelect.addEventListener("change", e=>{
+      currentTrim = e.target.value || "";
+      rebuildOptions();
+    });
+
+    ["deliveryRegion","needWhen","applicantName","phone","kakaoId","consent"].forEach(id=>{
+      el(id).addEventListener("input", updateSubmitEnabled);
+      el(id).addEventListener("change", updateSubmitEnabled);
+    });
+
+    submitBtn.addEventListener("click", submitApplication);
+
+    /* 시작 */
+    (async ()=>{
+      try{
+        await loadCatalog();
+      }catch(e){
+        console.error(e);
+        showToast("차량 목록 불러오기 실패: 웹앱 URL 확인");
+      }
+      updateSubmitEnabled();
+    })();
+  </script>
 </body>
 </html>
