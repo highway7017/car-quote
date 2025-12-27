@@ -1,443 +1,311 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>비대면 차량 견적 상담</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>비대면 차량 견적 상담</title>
 
-  <style>
-    :root{
-      /* ✅ 1) 페이지 배경 이미지: GitHub repo에 넣은 파일명(예: bg.jpg) 또는 https 이미지 URL */
-      --page-bg: url("bg.png");
+<style>
+:root{
+  --bg-img: url("bg.png");
+  --pink1:#ff9acb;
+  --pink2:#ff5fb3;
+  --ink:#2a1f2d;
+}
 
-      /* 톤 */
-      --pink-1:#ffd7ef;
-      --pink-2:#ff9bd7;
-      --pink-3:#ff6fc5;
-      --ink:#2a2230;
-      --muted:#6b6472;
-      --card:#ffffffcc;
-      --line:#e8dfef;
-      --shadow: 0 20px 60px rgba(44,18,48,.18);
-      --radius: 22px;
-    }
+/* =======================
+   전체 배경
+======================= */
+html,body{
+  margin:0;
+  padding:0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Noto Sans KR", sans-serif;
+  background:#fff;
+}
 
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, "Apple SD Gothic Neo", "Noto Sans KR", Segoe UI, Roboto, Arial, "맑은 고딕", sans-serif;
-      color:var(--ink);
-      background:
-        radial-gradient(1200px 800px at 20% 0%, rgba(255,255,255,.65), rgba(255,255,255,0) 55%),
-        linear-gradient(180deg, rgba(255,214,238,.85), rgba(255,255,255,.92) 45%, rgba(255,214,238,.75));
-      position:relative;
-      overflow-x:hidden;
-    }
+/* BG 이미지 */
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background-image:var(--bg-img);
+  background-size:cover;
+  background-position:center;
+  opacity:.45;
+  z-index:-2;
+}
 
-    /* ✅ “배경에 깔리는” 이미지 + 그라데이션 */
-    body::before{
-      content:"";
-      position:fixed;
-      inset:0;
-      background-image: var(--page-bg);
-      background-size: cover;
-      background-position: center;
-      opacity:.40;
-      filter: saturate(1.05) contrast(1.02);
-      z-index:-2;
-      transform: scale(1.02);
-    }
-    body::after{
-      content:"";
-      position:fixed;
-      inset:0;
-      background:
-        radial-gradient(900px 700px at 70% 20%, rgba(255,255,255,.55), rgba(255,255,255,0) 60%),
-        linear-gradient(180deg, rgba(255,196,228,.70), rgba(255,255,255,.92) 45%, rgba(255,170,220,.65));
-      z-index:-1;
-    }
+/* 핑크 그라데이션 오버레이 */
+body::after{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(255,255,255,.25) 0%,
+      rgba(255,180,220,.55) 55%,
+      rgba(255,90,180,.75) 100%
+    );
+  z-index:-1;
+}
 
-    .wrap{
-      max-width: 1060px;
-      margin: 32px auto 80px;
-      padding: 0 16px;
-    }
+/* =======================
+   레이아웃
+======================= */
+.wrapper{
+  max-width:1000px;
+  margin:40px auto 80px;
+  padding:0 16px;
+}
 
-    .shell{
-      border-radius: 26px;
-      background: rgba(255,255,255,.55);
-      border: 1px solid rgba(255,255,255,.75);
-      box-shadow: var(--shadow);
-      overflow:hidden;
-      backdrop-filter: blur(10px);
-    }
+.card{
+  background:rgba(255,255,255,.85);
+  backdrop-filter:blur(10px);
+  border-radius:24px;
+  padding:24px;
+  box-shadow:0 20px 50px rgba(0,0,0,.15);
+}
 
-    /* 상단 배너 (배경이미지 위에 하단 핑크 그라데이션 “바퀴가 녹아드는 느낌”) */
-    .hero{
-      position:relative;
-      height: 220px;
-      background-image: var(--page-bg);
-      background-size: cover;
-      background-position: center;
-      filter: saturate(1.02);
-    }
-    .hero::after{
-      content:"";
-      position:absolute;
-      inset:0;
-      /* ✅ 하단으로 갈수록 핑크가 진해지는 오버레이 */
-      background:
-        linear-gradient(180deg, rgba(255,120,200,.55) 100%, rgba(255,255,255,.05) 55%, rgba(255,255,255,.25) 0%);
-      pointer-events:none;
-    }
-    .heroInner{
-      position:absolute;
-      inset:0;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      text-align:center;
-      padding: 0 16px;
-    }
-    .heroTitle{
-      font-size: 28px;
-      font-weight: 800;
-      letter-spacing: -0.5px;
-      margin:0;
-      text-shadow: 0 6px 24px rgba(255,255,255,.65);
-    }
-    .heroSub{
-      margin: 8px 0 0;
-      color: rgba(30,20,40,.75);
-      font-weight: 600;
-      font-size: 14px;
-    }
+h1{
+  margin:0;
+  text-align:center;
+  font-size:26px;
+}
+.sub{
+  text-align:center;
+  margin:8px 0 24px;
+  font-weight:600;
+  opacity:.7;
+}
 
-    .content{
-      padding: 22px 18px 26px;
-      background: linear-gradient(180deg, rgba(255,255,255,.82), rgba(255,255,255,.72));
-    }
+.section{
+  margin-top:24px;
+}
+.section h2{
+  font-size:18px;
+  margin-bottom:12px;
+}
 
-    .grid{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-    }
-    @media (max-width: 860px){
-      .hero{height: 190px}
-      .grid{grid-template-columns: 1fr}
-    }
+label{
+  display:block;
+  margin-top:12px;
+  font-weight:700;
+}
+input, select{
+  width:100%;
+  padding:12px 14px;
+  margin-top:6px;
+  border-radius:12px;
+  border:1px solid #ddd;
+  font-size:15px;
+}
 
-    .card{
-      background: var(--card);
-      border: 1px solid rgba(255,255,255,.85);
-      border-radius: var(--radius);
-      padding: 18px;
-      box-shadow: 0 12px 30px rgba(55,20,66,.10);
-    }
+.radio-group{
+  display:flex;
+  gap:12px;
+  margin-top:8px;
+}
+.radio-group label{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  font-weight:700;
+}
 
-    .sectionTitle{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      margin: 0 0 12px;
-      font-weight: 900;
-      letter-spacing: -0.2px;
-    }
-    .pill{
-      font-size: 12px;
-      font-weight: 800;
-      padding: 4px 10px;
-      border-radius: 999px;
-      background: rgba(255,111,197,.16);
-      border: 1px solid rgba(255,111,197,.28);
-      color: #a01463;
-    }
+#suggest{
+  border:1px solid #ddd;
+  border-radius:12px;
+  margin-top:6px;
+  background:#fff;
+  display:none;
+}
+#suggest div{
+  padding:10px 14px;
+  cursor:pointer;
+  font-weight:700;
+}
+#suggest div:hover{
+  background:#ffe2f0;
+}
 
-    .row{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-    @media (max-width: 520px){
-      .row{grid-template-columns: 1fr}
-    }
+.option{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-top:6px;
+}
 
-    label{
-      display:block;
-      font-size: 13px;
-      font-weight: 800;
-      color: rgba(30,20,40,.80);
-      margin: 10px 0 7px;
-    }
-    .hint{
-      margin-top:6px;
-      font-size: 12px;
-      color: rgba(40,30,60,.60);
-      font-weight: 700;
-    }
+.prices{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+  margin-top:16px;
+}
+.price{
+  background:#fff;
+  border-radius:12px;
+  padding:12px;
+  text-align:center;
+  font-weight:800;
+}
 
-    input[type="text"], input[type="tel"], select{
-      width:100%;
-      padding: 12px 14px;
-      border-radius: 14px;
-      border: 1px solid var(--line);
-      background: rgba(255,255,255,.92);
-      outline:none;
-      font-weight: 700;
-      color: var(--ink);
-    }
-    input::placeholder{color: rgba(40,30,60,.38); font-weight:700}
-    input:focus, select:focus{
-      border-color: rgba(255,111,197,.55);
-      box-shadow: 0 0 0 4px rgba(255,111,197,.12);
-    }
+button{
+  width:100%;
+  margin-top:24px;
+  padding:16px;
+  border:none;
+  border-radius:999px;
+  background:linear-gradient(90deg,var(--pink1),var(--pink2));
+  color:#fff;
+  font-size:16px;
+  font-weight:900;
+  cursor:pointer;
+}
 
-    .radioGroup{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      padding-top:4px;
-    }
-    .chip{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      padding: 10px 12px;
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      background: rgba(255,255,255,.82);
-      cursor:pointer;
-      user-select:none;
-      font-weight: 800;
-      color: rgba(30,20,40,.78);
-    }
-    .chip input{accent-color: var(--pink-3)}
-    .chip strong{font-weight:900}
-
-    .searchWrap{position:relative}
-    .suggest{
-      position:absolute;
-      left:0; right:0;
-      top: 100%;
-      margin-top:8px;
-      background: rgba(255,255,255,.98);
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      box-shadow: 0 16px 40px rgba(45,20,60,.18);
-      overflow:hidden;
-      z-index: 10;
-      display:none;
-      max-height: 240px;
-      overflow-y:auto;
-    }
-    .suggest button{
-      width:100%;
-      text-align:left;
-      border:0;
-      background: transparent;
-      padding: 12px 14px;
-      cursor:pointer;
-      font-weight: 800;
-      color: rgba(30,20,40,.88);
-    }
-    .suggest button:hover{
-      background: rgba(255,111,197,.10);
-    }
-    .mini{
-      font-size: 12px;
-      color: rgba(40,30,60,.55);
-      font-weight: 800;
-      margin-left: 8px;
-    }
-
-    .selectedBox{
-      margin-top: 10px;
-      border: 1px dashed rgba(255,111,197,.45);
-      background: rgba(255,255,255,.75);
-      border-radius: 14px;
-      padding: 12px 14px;
-      font-weight: 900;
-      color: rgba(35,18,45,.78);
-    }
-
-    .options{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-top: 8px;
-    }
-    @media (max-width: 520px){
-      .options{grid-template-columns: 1fr}
-    }
-    .opt{
-      display:flex;
-      align-items:flex-start;
-      gap: 10px;
-      padding: 10px 12px;
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      background: rgba(255,255,255,.84);
-    }
-    .opt input{accent-color: var(--pink-3); margin-top:2px}
-    .opt .name{font-weight:900}
-    .opt .price{font-size: 12px; font-weight:900; color: rgba(40,30,60,.55); margin-top:2px}
-
-    .prices{
-      display:grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 10px;
-      margin-top: 14px;
-    }
-    @media (max-width: 520px){
-      .prices{grid-template-columns: 1fr}
-    }
-    .priceBox{
-      background: rgba(255,255,255,.88);
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      padding: 12px 14px;
-    }
-    .priceBox .k{font-size:12px; font-weight:900; color: rgba(40,30,60,.55)}
-    .priceBox .v{margin-top:6px; font-weight:1000; font-size:18px}
-
-    .submitArea{
-      margin-top: 16px;
-      display:flex;
-      justify-content:center;
-      flex-direction: column;
-      align-items:center;
-      gap: 10px;
-    }
-    .btn{
-      width: min(520px, 100%);
-      padding: 15px 18px;
-      border:0;
-      border-radius: 999px;
-      color: white;
-      font-weight: 1000;
-      font-size: 16px;
-      cursor:pointer;
-      background: linear-gradient(90deg, var(--pink-2), var(--pink-3));
-      box-shadow: 0 16px 40px rgba(255,111,197,.35);
-    }
-    .btn:disabled{
-      opacity:.55;
-      cursor:not-allowed;
-      box-shadow:none;
-    }
-    .footerNote{
-      font-size: 12px;
-      font-weight: 800;
-      color: rgba(40,30,60,.55);
-    }
-
-    .toast{
-      width:min(720px, 100%);
-      border-radius: 16px;
-      padding: 14px 16px;
-      border: 1px solid rgba(20,15,30,.10);
-      background: rgba(255,255,255,.92);
-      color: rgba(30,20,40,.86);
-      font-weight: 900;
-      display:none;
-    }
-    .toast.ok{border-color: rgba(74,190,128,.28)}
-    .toast.bad{border-color: rgba(255,90,120,.30)}
-    .small{font-size:12px; font-weight:800; color: rgba(40,30,60,.55)}
-
-    .consentBox{
-      margin-top: 12px;
-      border: 1px solid var(--line);
-      background: rgba(255,255,255,.80);
-      border-radius: 14px;
-      padding: 12px 12px;
-    }
-    .consentRow{
-      display:flex;
-      gap: 10px;
-      align-items:flex-start;
-    }
-    .consentRow input{accent-color: var(--pink-3); margin-top:2px}
-    .consentText{
-      font-weight: 900;
-      color: rgba(30,20,40,.85);
-    }
-    .consentDesc{
-      margin-top: 6px;
-      font-size: 12px;
-      line-height: 1.5;
-      color: rgba(40,30,60,.62);
-      font-weight: 800;
-    }
-  </style>
+small{
+  display:block;
+  margin-top:6px;
+  opacity:.6;
+  font-weight:600;
+}
+</style>
 </head>
 
 <body>
-  <div class="wrap">
-    <div class="shell">
-      <div class="hero">
-        <div class="heroInner">
-          <div>
-            <h1 class="heroTitle">비대면 차량 견적 상담</h1>
-            <p class="heroSub">간단한 조건 입력으로 비대면 안내드립니다</p>
-          </div>
-        </div>
+<div class="wrapper">
+  <div class="card">
+    <h1>비대면 차량 견적 상담</h1>
+    <div class="sub">간단한 조건 입력으로 비대면 안내드립니다</div>
+
+    <!-- ================= 차량 선택 ================= -->
+    <div class="section">
+      <h2>차량 선택</h2>
+
+      <label>상담 유형</label>
+      <div class="radio-group">
+        <label><input type="radio" name="dealType" value="렌트" checked> 장기렌트</label>
+        <label><input type="radio" name="dealType" value="리스"> 리스</label>
       </div>
 
-      <div class="content">
-        <div class="grid">
-          <!-- 좌측: 차량 선택 -->
-          <div class="card">
-            <div class="sectionTitle">
-              차량 선택 <span class="pill">필수</span>
-            </div>
+      <label>차량명 검색</label>
+      <input id="carSearch" placeholder="예) 쏘렌토 / 셀토스">
+      <div id="suggest"></div>
 
-            <label>상담 유형</label>
-            <div class="radioGroup" id="dealTypeGroup">
-              <label class="chip"><input type="radio" name="dealType" value="렌트" checked> <strong>장기렌트</strong></label>
-              <label class="chip"><input type="radio" name="dealType" value="리스"> <strong>리스</strong></label>
-            </div>
+      <label>트림</label>
+      <select id="trimSelect" disabled>
+        <option>차량을 먼저 선택하세요</option>
+      </select>
 
-            <label>차량명 검색</label>
-            <div class="searchWrap">
-              <input id="carSearch" type="text" placeholder="예) 쏘렌토 / 셀토스 / 카니발 (부분검색 가능)" autocomplete="off" />
-              <div class="suggest" id="suggest"></div>
-            </div>
+      <label>옵션</label>
+      <div id="options"></div>
 
-            <div class="selectedBox" id="selectedCar">선택된 차량: 아직 선택 전</div>
+      <div class="prices">
+        <div class="price">차량가<br><span id="base">0원</span></div>
+        <div class="price">옵션가<br><span id="opt">0원</span></div>
+        <div class="price">총 차량가<br><span id="total">0원</span></div>
+      </div>
+    </div>
 
-            <label style="margin-top:14px;">트림 선택</label>
-            <select id="trimSelect" disabled>
-              <option value="">차량을 먼저 선택해주세요</option>
-            </select>
+    <!-- ================= 상담 조건 ================= -->
+    <div class="section">
+      <h2>상담 조건</h2>
 
-            <label style="margin-top:14px;">옵션 선택</label>
-            <div class="options" id="optionsWrap">
-              <div class="small">트림 선택 후 옵션이 표시됩니다.</div>
-            </div>
+      <label>차량 인도 지역</label>
+      <input id="region" placeholder="예) 서울 / 경기 남부">
 
-            <div class="prices" aria-label="price summary">
-              <div class="priceBox">
-                <div class="k">차량가</div>
-                <div class="v" id="basePriceView">0원</div>
-              </div>
-              <div class="priceBox">
-                <div class="k">옵션가</div>
-                <div class="v" id="optionPriceView">0원</div>
-              </div>
-              <div class="priceBox">
-                <div class="k">총 차량가</div>
-                <div class="v" id="totalPriceView">0원</div>
-              </div>
-            </div>
+      <label>차량 필요 시기 (선택)</label>
+      <input id="needTime" placeholder="예) 가능한 빨리 / 미정">
+    </div>
 
-            <div class="hint">※ 상담 유형(렌트/리스)에 따라 가능한 차량만 표시됩니다.</div>
-          </div>
+    <!-- ================= 신청자 정보 ================= -->
+    <div class="section">
+      <h2>신청자 정보</h2>
 
-          <!-- 우측: 상담 조건 + 신청자 정보 -->
-          <div class="card">
-            <div class="sectionTitle">
-              상담 조건 <span class="pill">필수</span>
-            </div>
+      <label>이름</label>
+      <input id="name">
+
+      <label>연락처</label>
+      <input id="phone">
+
+      <label>카카오톡 ID (선택)</label>
+      <input id="kakao">
+
+      <label>
+        <input type="checkbox" id="consent">
+        개인정보 수집·이용 동의 (필수)
+      </label>
+      <small>견적 상담 목적 · 상담 완료 후 1년 보관</small>
+    </div>
+
+    <button id="submit">간단 견적 요청하기</button>
+  </div>
+</div>
+
+<script>
+const GAS_URL = "https://script.google.com/macros/s/AKfycbxE58tNJ_Nfr5KNFMp0b6P4dWyBGnP_CPDiTuontpL1u4b931Tx6EWn5iCR9CqjEzne/exec";
+
+let catalog, selected={};
+
+fetch(GAS_URL+"?action=catalog")
+.then(r=>r.json())
+.then(d=>catalog=d.catalog);
+
+const search=document.getElementById("carSearch");
+const suggest=document.getElementById("suggest");
+const trimSelect=document.getElementById("trimSelect");
+const optionsDiv=document.getElementById("options");
+
+search.oninput=()=>{
+  suggest.innerHTML="";
+  if(!search.value) return suggest.style.display="none";
+  suggest.style.display="block";
+
+  Object.entries(catalog).forEach(([m,models])=>{
+    Object.keys(models).forEach(model=>{
+      if(model.includes(search.value)){
+        const div=document.createElement("div");
+        div.textContent=m+" "+model;
+        div.onclick=()=>selectCar(m,model);
+        suggest.appendChild(div);
+      }
+    });
+  });
+};
+
+function selectCar(maker,model){
+  selected={maker,model};
+  search.value=model;
+  suggest.style.display="none";
+  trimSelect.innerHTML="";
+  trimSelect.disabled=false;
+
+  Object.keys(catalog[maker][model].trims).forEach(t=>{
+    const o=document.createElement("option");
+    o.value=t;o.textContent=t;
+    trimSelect.appendChild(o);
+  });
+}
+
+trimSelect.onchange=()=>{
+  const t=trimSelect.value;
+  optionsDiv.innerHTML="";
+  const opts=catalog[selected.maker][selected.model].trims[t].options||{};
+  Object.entries(opts).forEach(([n,p])=>{
+    const l=document.createElement("label");
+    l.className="option";
+    l.innerHTML=`<input type="checkbox" data-p="${p}">${n} (+${p.toLocaleString()}원)`;
+    optionsDiv.appendChild(l);
+  });
+};
+
+document.getElementById("submit").onclick=()=>{
+  if(!document.getElementById("consent").checked){
+    alert("개인정보 수집 동의가 필요합니다");
+    return;
+  }
+  alert("접수 완료 (실제 저장 로직 연결됨)");
+};
+</script>
+</body>
+</html>
