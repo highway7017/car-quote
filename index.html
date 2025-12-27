@@ -370,11 +370,26 @@
   </header>
 
   <main class="wrap">
-      <div class="content">
+
 
         <!-- ✅ 파트 1: 차량 선택 -->
         <div class="card">
+          
           <div class="card-inner">
+            <div class="sec-title">상품 유형 <span class="badge">필수</span></div>
+<div class="radio-row" role="radiogroup" aria-label="상품 유형">
+  <label class="radio-pill">
+    <input type="radio" name="productType" value="렌트" checked />
+    렌트
+  </label>
+  <label class="radio-pill">
+    <input type="radio" name="productType" value="리스" />
+    리스
+  </label>
+</div> </div>
+          </div>
+          <div class="card">
+            <div class="card-inner">
             <div class="sec-title">차량 선택 <span class="badge">필수</span></div>
 
             <label for="maker">제조사</label>
@@ -382,10 +397,9 @@
               <option value="">제조사를 선택해주세요</option>
             </select>
 
-            <label for="model">차종</label>
-            <select id="model" disabled>
-              <option value="">차종을 선택해주세요</option>
-            </select>
+            <label for="modelInput">차종</label>
+<input id="modelInput" list="modelList" placeholder="차종을 선택하거나 검색해요" disabled />
+<datalist id="modelList"></datalist>
 
             <label for="grade">차량 등급</label>
             <select id="grade" disabled>
@@ -399,7 +413,7 @@
 
             <p class="help">※ 제조사 → 차종 → 등급 → 옵션 순서로 선택됩니다.</p>
           </div>
-        </div>
+        </div></div>
 
         <!-- ✅ 파트 2: 신청 정보 -->
         <div class="card">
@@ -430,6 +444,9 @@
 
             <label for="deliveryTime">차량 인도 시기</label>
             <input id="deliveryTime" placeholder="예) 가능한 빨리 / 2월 중순 / 미정" />
+            
+            <label for="deliveryArea">차량 인도 지역</label>
+<input id="deliveryArea" placeholder="예) 서울 / 경기 남양주" />
 
             <label for="kakao">카카오톡 아이디 (선택)</label>
             <input id="kakao" placeholder="예) melody7017" autocomplete="off" />
@@ -449,383 +466,469 @@
 
             <div class="cta">
               <button id="submitBtn" class="btn" disabled>간단 견적 요청하기</button>
-              <div class="footer-note">방문 없이 모두 비대면으로 안내드립니다.</div>
+              <div class="footer-note">문자 또는 카카오톡으로 안내 드립니다.<br>
+                문자는 응대가 지연될 수 있습니다.
+              </div>
             </div>
           </div>
         </div>
 
       </div>
  
+ 
+    
   </main>
 
   <div id="toast" class="toast" aria-live="polite"></div>
 
   <script>
-    /***************************************************************
-     * ✅ API 주소 (사용자 제공)
-     ***************************************************************/
-    const API_BASE = "https://script.google.com/macros/s/AKfycbyc1TZg4YplZx91lmam-RbpugEWEWKUw3SCAX0-PWUbWfrDDJczIWlOi36CkJQ4VE6A/exec";
+/***************************************************************
+ * ✅ 설정: Apps Script Web App URL
+ ***************************************************************/
+const API_BASE = "https://script.google.com/macros/s/AKfycbxpYN2m_14RHMJtHgSHj4t315mLlNJYJti9tZniR0iyb4-WuqeR9dc0GSFwjM_NG7m8-Q/exec";
 
-    /***************************************************************
-     * ✅ DOM
-     ***************************************************************/
-    const elMaker   = document.getElementById("maker");
-    const elModel   = document.getElementById("model");
-    const elGrade   = document.getElementById("grade");
-    const elOptions = document.getElementById("options");
+/***************************************************************
+ * ✅ DOM (HTML id와 1:1로 맞춤)
+ ***************************************************************/
+const elMaker       = document.getElementById("maker");
+const elModelInput  = document.getElementById("modelInput");     // ✅ input
+const elModelList   = document.getElementById("modelList");      // ✅ datalist
+const elGrade       = document.getElementById("grade");
+const elOptions     = document.getElementById("options");
 
-    const elName = document.getElementById("name");
-    const elPhone = document.getElementById("phone");
-    const elDelivery = document.getElementById("deliveryTime");
-    const elKakao = document.getElementById("kakao");
-    const elAgree = document.getElementById("agree");
-    const elSubmit = document.getElementById("submitBtn");
-    const elToast = document.getElementById("toast");
+const elName        = document.getElementById("name");
+const elPhone       = document.getElementById("phone");
+const elDelivery    = document.getElementById("deliveryTime");
+const elRegion      = document.getElementById("deliveryArea"); // ✅ 지역
+const elKakao       = document.getElementById("kakao");
+const elAgree       = document.getElementById("agree");
+const elSubmit      = document.getElementById("submitBtn");
+const elToast       = document.getElementById("toast");
 
-    /***************************************************************
-     * ✅ 상태
-     ***************************************************************/
-    let catalogRows = []; // {maker, model, grade, option, ...}
-    let makers = [];
-    let modelsByMaker = new Map();
-    let gradesByMakerModel = new Map();      // key: maker||model
-    let optionsByTriple = new Map();         // key: maker||model||grade
+/***************************************************************
+ * ✅ 상태
+ ***************************************************************/
+let catalogRows = []; // {maker, model, grade, option}
+let makers = [];
+let modelsByMaker = new Map();         // maker -> [model...]
+let gradesByMakerModel = new Map();    // maker||model -> [grade...]
+let optionsByTriple = new Map();       // maker||model||grade -> [option...]
 
-    /***************************************************************
-     * ✅ 유틸
-     ***************************************************************/
-    const sleep = (ms)=> new Promise(r=>setTimeout(r,ms));
-    function toast(msg){
-      elToast.textContent = msg;
-      elToast.classList.add("show");
-      clearTimeout(toast._t);
-      toast._t = setTimeout(()=> elToast.classList.remove("show"), 1700);
-    }
+/***************************************************************
+ * ✅ 유틸
+ ***************************************************************/
+function toast(msg){
+  if (!elToast) { alert(msg); return; }
+  elToast.textContent = msg;
+  elToast.classList.add("show");
+  clearTimeout(toast._t);
+  toast._t = setTimeout(()=> elToast.classList.remove("show"), 1700);
+}
 
-    function norm(s){
-      return (s ?? "").toString().trim();
-    }
+function norm(s){ return (s ?? "").toString().trim(); }
+function key2(a,b){ return `${a}||${b}`; }
+function key3(a,b,c){ return `${a}||${b}||${c}`; }
 
-    function setSelectOptions(select, items, placeholder){
-      select.innerHTML = "";
-      const opt0 = document.createElement("option");
-      opt0.value = "";
-      opt0.textContent = placeholder;
-      select.appendChild(opt0);
+function setSelectOptions(select, items, placeholder){
+  if (!select) return;
+  select.innerHTML = "";
+  const opt0 = document.createElement("option");
+  opt0.value = "";
+  opt0.textContent = placeholder;
+  select.appendChild(opt0);
 
-      for (const it of items){
-        const o = document.createElement("option");
-        o.value = it;
-        o.textContent = it;
-        select.appendChild(o);
-      }
-    }
+  for (const it of items){
+    const o = document.createElement("option");
+    o.value = it;
+    o.textContent = it;
+    select.appendChild(o);
+  }
+}
 
-    function key2(a,b){ return `${a}||${b}`; }
-    function key3(a,b,c){ return `${a}||${b}||${c}`; }
+function resetSelect(select, placeholder){
+  if (!select) return;
+  select.disabled = true;
+  setSelectOptions(select, [], placeholder);
+}
+function enableSelect(select){
+  if (!select) return;
+  select.disabled = false;
+}
 
-    function phoneFormatLoose(v){
-      // 숫자만 추출 후 010-1234-5678 형태로 느슨하게 포맷
-      const d = v.replace(/[^\d]/g,"").slice(0,11);
-      if (d.length <= 3) return d;
-      if (d.length <= 7) return `${d.slice(0,3)}-${d.slice(3)}`;
-      return `${d.slice(0,3)}-${d.slice(3,7)}-${d.slice(7)}`;
-    }
+function setDatalistOptions(datalist, items){
+  if (!datalist) return;
+  datalist.innerHTML = "";
+  const frag = document.createDocumentFragment();
+  for (const it of items){
+    const opt = document.createElement("option");
+    opt.value = it;
+    frag.appendChild(opt);
+  }
+  datalist.appendChild(frag);
+}
 
-    function getCustomerType(){
-      const r = document.querySelector('input[name="customerType"]:checked');
-      return r ? r.value : "개인";
-    }
+function resetModelInput(){
+  if (!elModelInput) return;
+  elModelInput.value = "";
+  elModelInput.disabled = true;
+  elModelInput.readOnly = true;   // ✅ 모바일에서 키보드 강제 방지 해제용(초기엔 잠금)
+  setDatalistOptions(elModelList, []);
+}
 
-    function validate(){
-      const ok =
-        norm(elMaker.value) &&
-        norm(elModel.value) &&
-        norm(elGrade.value) &&
-        norm(elOptions.value) &&
-        norm(elName.value) &&
-        norm(elPhone.value) &&
-        norm(elDelivery.value) &&
-        elAgree.checked;
+function enableModelInput(){
+  if (!elModelInput) return;
+  elModelInput.disabled = false;
+  elModelInput.readOnly = false;  // ✅ 타이핑 가능
+  elModelInput.blur();            // ✅ iOS/안드로이드에서 상태 갱신 꼬임 방지
+}
 
-      elSubmit.disabled = !ok;
-      return !!ok;
-    }
+function phoneFormatLoose(v){
+  const d = v.replace(/[^\d]/g,"").slice(0,11);
+  if (d.length <= 3) return d;
+  if (d.length <= 7) return `${d.slice(0,3)}-${d.slice(3)}`;
+  return `${d.slice(0,3)}-${d.slice(3,7)}-${d.slice(7)}`;
+}
 
-    /***************************************************************
-     * ✅ 카탈로그 불러오기
-     * - Apps Script에서 action=catalog 로 JSON 반환한다고 가정
-     * - 반환 형태가 다를 수 있으니 최대한 방어적으로 파싱
-     ***************************************************************/
-    async function fetchCatalog(){
-      // 캐시 방지
-      const url = `${API_BASE}?action=catalog&_=${Date.now()}`;
+function getCheckedValue(name, fallback){
+  const r = document.querySelector(`input[name="${name}"]:checked`);
+  return r ? r.value : fallback;
+}
+function getCustomerType(){ return getCheckedValue("customerType", "개인"); }
+function getProductType(){ return getCheckedValue("productType", "렌트"); }
 
-      let res, data;
-      try{
-        res = await fetch(url, { method:"GET", cache:"no-store" });
-        data = await res.json();
-      }catch(e){
-        console.error(e);
-        toast("카탈로그를 불러오지 못했어요. (API/권한 확인)");
-        return;
-      }
+/**
+ * ✅ 서버가 JSON 아닌 걸 주면(오류 HTML 등) 원문을 보여주기 위한 함수
+ */
+async function fetchJsonStrict(url, options){
+  const res = await fetch(url, options);
+  const text = await res.text();
+  try{
+    return { ok: res.ok, json: JSON.parse(text), status: res.status, raw: text };
+  }catch(e){
+    return { ok: false, json: null, status: res.status, raw: text, parseError: e };
+  }
+}
 
-      // 가능한 형태:
-      // 1) {ok:true, data:[...] }
-      // 2) {data:[...]}
-      // 3) [...]
-      let rows = Array.isArray(data) ? data : (data?.data ?? data?.rows ?? []);
-      if (!Array.isArray(rows) || rows.length === 0){
-        console.warn("catalog payload:", data);
-        toast("카탈로그 데이터가 비어있어요. (Models 시트 확인)");
-        return;
-      }
+/***************************************************************
+ * ✅ 검증
+ * - 옵션은 필수 아님 (빈값이면 '옵션 없음'으로 저장)
+ * - 지역은 "받아야 한다" 했으니 여기서는 필수로 처리해둠
+ ***************************************************************/
+function validate(){
+  const ok =
+    norm(elMaker?.value) &&
+    norm(elModelInput?.value) &&
+    norm(elGrade?.value) &&
+    norm(elName?.value) &&
+    norm(elPhone?.value) &&
+    norm(elDelivery?.value) &&
+    norm(elRegion?.value) &&     // ✅ 지역 필수
+    !!elAgree?.checked;
 
-      // 필드명 방어: maker/제조사, model/차종, grade/등급/트림, option/옵션
-      catalogRows = rows.map(r => {
-        return {
-          maker:  norm(r.maker ?? r.제조사 ?? r.제조사명 ?? r.Maker),
-          model:  norm(r.model ?? r.차종 ?? r.모델 ?? r.Model),
-          grade:  norm(r.grade ?? r.등급 ?? r.트림 ?? r.Trim ?? r.차량등급),
-          option: norm(r.option ?? r.옵션 ?? r.Options ?? r.Option),
-          raw: r
-        };
-      }).filter(r => r.maker && r.model && r.grade); // 옵션은 없을 수도 있으니 grade까지만 필수
+  if (elSubmit) elSubmit.disabled = !ok;
+  return !!ok;
+}
 
-      if (catalogRows.length === 0){
-        toast("필수 컬럼(제조사/차종/등급) 매핑이 안 됐어요.");
-        return;
-      }
+/***************************************************************
+ * ✅ 카탈로그 로드 + 인덱스 빌드
+ * 기대 행 필드: maker/model/grade/option (또는 한글 헤더)
+ ***************************************************************/
+async function fetchCatalog(){
+  const url = `${API_BASE}?action=catalog&_=${Date.now()}`;
 
-      buildIndexes();
-      hydrateMaker();
-      toast("차량 목록을 불러왔어요.");
-    }
+  let r;
+  try{
+    r = await fetchJsonStrict(url, { method:"GET", cache:"no-store" });
+  }catch(e){
+    console.error(e);
+    toast("카탈로그 호출 실패(네트워크/권한)");
+    return;
+  }
 
-    function buildIndexes(){
-      makers = [];
-      modelsByMaker.clear();
-      gradesByMakerModel.clear();
-      optionsByTriple.clear();
+  if (!r.json){
+    console.error("Catalog raw:", r.raw);
+    toast("카탈로그 응답이 JSON이 아님. (웹앱 배포/권한/응답 확인)");
+    alert((r.raw || "").slice(0, 700));
+    return;
+  }
 
-      const makerSet = new Set();
+  const data = r.json;
+  const rows = Array.isArray(data) ? data : (data?.data ?? data?.rows ?? []);
+  if (!Array.isArray(rows) || rows.length === 0){
+    console.warn("catalog payload:", data);
+    toast("카탈로그 데이터가 비어있어요. (Models 시트/데이터/권한 확인)");
+    alert(JSON.stringify(data).slice(0, 700));
+    return;
+  }
 
-      for (const r of catalogRows){
-        makerSet.add(r.maker);
+  // 헤더 방어: 영어/한글 둘 다 받기
+  catalogRows = rows.map(x => ({
+    maker:  norm(x.maker ?? x.제조사 ?? x.제조사명 ?? x.Maker),
+    model:  norm(x.model ?? x.차종 ?? x.모델 ?? x.Model),
+    grade:  norm(x.grade ?? x.등급 ?? x.트림 ?? x.Trim ?? x.차량등급),
+    option: norm(x.option ?? x.옵션 ?? x.Options ?? x.Option),
+    raw: x
+  })).filter(r => r.maker && r.model && r.grade);
 
-        // maker -> models
-        if (!modelsByMaker.has(r.maker)) modelsByMaker.set(r.maker, new Set());
-        modelsByMaker.get(r.maker).add(r.model);
+  if (catalogRows.length === 0){
+    toast("필수 컬럼(제조사/차종/등급) 매핑이 안 됐어요. 헤더 확인!");
+    return;
+  }
 
-        // maker||model -> grades
-        const k2 = key2(r.maker, r.model);
-        if (!gradesByMakerModel.has(k2)) gradesByMakerModel.set(k2, new Set());
-        gradesByMakerModel.get(k2).add(r.grade);
+  buildIndexes();
+  hydrateMaker();
+  toast("차량 목록을 불러왔어요.");
+}
 
-        // maker||model||grade -> options
-        const k3 = key3(r.maker, r.model, r.grade);
-        if (!optionsByTriple.has(k3)) optionsByTriple.set(k3, new Set());
-        if (r.option) optionsByTriple.get(k3).add(r.option);
-      }
+function buildIndexes(){
+  makers = [];
+  modelsByMaker.clear();
+  gradesByMakerModel.clear();
+  optionsByTriple.clear();
 
-      makers = [...makerSet].sort((a,b)=>a.localeCompare(b,"ko"));
-      // Set -> Array 정렬
-      for (const [m, set] of modelsByMaker){
-        modelsByMaker.set(m, [...set].sort((a,b)=>a.localeCompare(b,"ko")));
-      }
-      for (const [k, set] of gradesByMakerModel){
-        gradesByMakerModel.set(k, [...set].sort((a,b)=>a.localeCompare(b,"ko")));
-      }
-      for (const [k, set] of optionsByTriple){
-        const arr = [...set].sort((a,b)=>a.localeCompare(b,"ko"));
-        // 옵션이 없는 트림이면, 빈 배열 유지
-        optionsByTriple.set(k, arr);
-      }
-    }
+  const makerSet = new Set();
 
-    function hydrateMaker(){
-      setSelectOptions(elMaker, makers, "제조사를 선택해주세요");
-      // reset downstream
-      resetSelect(elModel, "차종을 선택해주세요");
-      resetSelect(elGrade, "차량 등급을 선택해주세요");
-      resetSelect(elOptions, "옵션을 선택해주세요");
-      validate();
-    }
+  for (const r of catalogRows){
+    makerSet.add(r.maker);
 
-    function resetSelect(select, placeholder){
-      select.disabled = true;
-      setSelectOptions(select, [], placeholder);
-    }
+    if (!modelsByMaker.has(r.maker)) modelsByMaker.set(r.maker, new Set());
+    modelsByMaker.get(r.maker).add(r.model);
 
-    function enableSelect(select){
-      select.disabled = false;
-    }
+    const k2 = key2(r.maker, r.model);
+    if (!gradesByMakerModel.has(k2)) gradesByMakerModel.set(k2, new Set());
+    gradesByMakerModel.get(k2).add(r.grade);
 
-    /***************************************************************
-     * ✅ 선택 체인: maker -> model -> grade -> options
-     ***************************************************************/
-    elMaker.addEventListener("change", ()=>{
-      const maker = norm(elMaker.value);
+    const k3 = key3(r.maker, r.model, r.grade);
+    if (!optionsByTriple.has(k3)) optionsByTriple.set(k3, new Set());
+    if (r.option) optionsByTriple.get(k3).add(r.option);
+  }
 
-      resetSelect(elModel, "차종을 선택해주세요");
-      resetSelect(elGrade, "차량 등급을 선택해주세요");
-      resetSelect(elOptions, "옵션을 선택해주세요");
+  makers = [...makerSet].sort((a,b)=>a.localeCompare(b,"ko"));
 
-      if (!maker){
-        validate();
-        return;
-      }
+  for (const [m, set] of modelsByMaker){
+    modelsByMaker.set(m, [...set].sort((a,b)=>a.localeCompare(b,"ko")));
+  }
+  for (const [k, set] of gradesByMakerModel){
+    gradesByMakerModel.set(k, [...set].sort((a,b)=>a.localeCompare(b,"ko")));
+  }
+  for (const [k, set] of optionsByTriple){
+    optionsByTriple.set(k, [...set].sort((a,b)=>a.localeCompare(b,"ko")));
+  }
+}
 
-      const models = modelsByMaker.get(maker) ?? [];
-      setSelectOptions(elModel, models, "차종을 선택해주세요");
-      enableSelect(elModel);
-      validate();
+function hydrateMaker(){
+  setSelectOptions(elMaker, makers, "제조사를 선택해주세요");
+
+  // downstream reset
+  resetModelInput();
+  resetSelect(elGrade, "차량 등급을 선택해주세요");
+
+  // 옵션은 항상 선택 가능 + 기본 '옵션 없음'
+  setSelectOptions(elOptions, ["옵션 없음"], "옵션을 선택해주세요");
+  enableSelect(elOptions);
+  elOptions.value = "옵션 없음";
+
+  validate();
+}
+
+/***************************************************************
+ * ✅ 체인: maker -> modelInput(datalist) -> grade -> options(선택)
+ ***************************************************************/
+elMaker?.addEventListener("change", ()=>{
+  const maker = norm(elMaker.value);
+
+  resetModelInput();
+  resetSelect(elGrade, "차량 등급을 선택해주세요");
+
+  // 옵션 기본
+  setSelectOptions(elOptions, ["옵션 없음"], "옵션을 선택해주세요");
+  enableSelect(elOptions);
+  elOptions.value = "옵션 없음";
+
+  if (!maker){ validate(); return; }
+
+  const models = modelsByMaker.get(maker) ?? [];
+  setDatalistOptions(elModelList, models);
+  enableModelInput();
+  validate();
+});
+
+// 차종 입력/선택 시 등급 채움
+function onModelPicked(){
+  const maker = norm(elMaker.value);
+  const model = norm(elModelInput.value);
+
+  resetSelect(elGrade, "차량 등급을 선택해주세요");
+
+  // 옵션 기본
+  setSelectOptions(elOptions, ["옵션 없음"], "옵션을 선택해주세요");
+  enableSelect(elOptions);
+  elOptions.value = "옵션 없음";
+
+  if (!maker || !model){ validate(); return; }
+
+  // ✅ datalist 목록에 없는 값을 타이핑한 경우 막기(원하면 이 체크 제거 가능)
+  const allowed = (modelsByMaker.get(maker) ?? []).includes(model);
+  if (!allowed){
+    toast("목록에서 차종을 선택해주세요.");
+    elModelInput.value = "";
+    validate();
+    return;
+  }
+
+  const grades = gradesByMakerModel.get(key2(maker, model)) ?? [];
+  if (grades.length === 0){
+    toast("해당 차종의 등급이 없어요. (Models 데이터 확인)");
+    validate();
+    return;
+  }
+
+  setSelectOptions(elGrade, grades, "차량 등급을 선택해주세요");
+  enableSelect(elGrade);
+  validate();
+}
+
+// 모바일/브라우저마다 datalist 선택 이벤트가 달라서 input+change 둘 다 처리
+elModelInput?.addEventListener("input", onModelPicked);
+elModelInput?.addEventListener("change", onModelPicked);
+
+elGrade?.addEventListener("change", ()=>{
+  const maker = norm(elMaker.value);
+  const model = norm(elModelInput.value);
+  const grade = norm(elGrade.value);
+
+  // 옵션은 선택: 있으면 보여주고 없으면 '옵션 없음'만
+  const opts = (maker && model && grade)
+    ? (optionsByTriple.get(key3(maker, model, grade)) ?? [])
+    : [];
+
+  const list = opts.length ? ["옵션 없음", ...opts] : ["옵션 없음"];
+  setSelectOptions(elOptions, list, "옵션을 선택해주세요");
+  enableSelect(elOptions);
+  elOptions.value = "옵션 없음";
+
+  validate();
+});
+
+elOptions?.addEventListener("change", validate);
+elAgree?.addEventListener("change", validate);
+
+elName?.addEventListener("input", validate);
+elDelivery?.addEventListener("input", validate);
+elRegion?.addEventListener("input", validate);
+elKakao?.addEventListener("input", validate);
+
+elPhone?.addEventListener("input", (e)=>{
+  e.target.value = phoneFormatLoose(e.target.value);
+  validate();
+});
+
+// 라디오 변경 시 검증만 갱신
+document.querySelectorAll('input[name="productType"], input[name="customerType"]')
+  .forEach(el => el.addEventListener("change", validate));
+
+/***************************************************************
+ * ✅ 제출
+ ***************************************************************/
+async function submitApplication(){
+  if (!validate()){
+    toast("필수 항목을 확인해주세요.");
+    return;
+  }
+
+  elSubmit.disabled = true;
+  elSubmit.textContent = "전송 중…";
+
+  const payload = {
+    action: "apply",
+    productType: getProductType(),            // 렌트/리스
+    maker: norm(elMaker.value),
+    model: norm(elModelInput.value),          // ✅ input
+    grade: norm(elGrade.value),
+    option: norm(elOptions.value) || "옵션 없음", // ✅ 옵션 선택 아님
+    customerType: getCustomerType(),
+    name: norm(elName.value),
+    phone: norm(elPhone.value),
+    deliveryTime: norm(elDelivery.value),
+    deliveryArea: norm(elRegion.value),     // ✅ 지역
+    kakaoId: norm(elKakao.value),
+    agreed: true,
+    source: "github-pages",
+    ts: new Date().toISOString()
+  };
+
+  let ok = false;
+  let message = "접수 완료! 곧 안내드릴게요.";
+
+  // 1) POST(JSON)
+  try{
+    const r = await fetchJsonStrict(`${API_BASE}?action=apply`, {
+      method: "POST",
+      headers: { "Content-Type":"application/json" },
+      body: JSON.stringify(payload)
     });
 
-    elModel.addEventListener("change", ()=>{
-      const maker = norm(elMaker.value);
-      const model = norm(elModel.value);
+    if (r.json && (r.json.ok !== false)){
+      ok = true;
+      if (r.json.message) message = r.json.message;
+    }else{
+      throw new Error("POST failed / non-json");
+    }
+  }catch(e){
+    // 2) GET fallback
+    try{
+      const qs = new URLSearchParams(payload).toString();
+      const r2 = await fetchJsonStrict(`${API_BASE}?${qs}`, { method:"GET", cache:"no-store" });
 
-      resetSelect(elGrade, "차량 등급을 선택해주세요");
-      resetSelect(elOptions, "옵션을 선택해주세요");
-
-      if (!maker || !model){
-        validate();
-        return;
-      }
-
-      const grades = gradesByMakerModel.get(key2(maker, model)) ?? [];
-      setSelectOptions(elGrade, grades, "차량 등급을 선택해주세요");
-      enableSelect(elGrade);
-      validate();
-    });
-
-    elGrade.addEventListener("change", ()=>{
-      const maker = norm(elMaker.value);
-      const model = norm(elModel.value);
-      const grade = norm(elGrade.value);
-
-      resetSelect(elOptions, "옵션을 선택해주세요");
-
-      if (!maker || !model || !grade){
-        validate();
-        return;
-      }
-
-      const opts = optionsByTriple.get(key3(maker, model, grade)) ?? [];
-      // 옵션이 없는 경우도 대비: "옵션 없음"이라도 선택 가능하게
-      const list = (opts.length ? opts : ["옵션 없음"]);
-      setSelectOptions(elOptions, list, "옵션을 선택해주세요");
-      enableSelect(elOptions);
-      validate();
-    });
-
-    elOptions.addEventListener("change", validate);
-    elAgree.addEventListener("change", validate);
-
-    elName.addEventListener("input", validate);
-    elDelivery.addEventListener("input", validate);
-    elKakao.addEventListener("input", validate);
-
-    elPhone.addEventListener("input", (e)=>{
-      const cur = e.target.value;
-      e.target.value = phoneFormatLoose(cur);
-      validate();
-    });
-
-    /***************************************************************
-     * ✅ 신청 제출
-     * - action=apply 로 전송 (Apps Script에서 처리)
-     * - POST(JSON) 우선, 실패 시 GET fallback
-     ***************************************************************/
-    async function submitApplication(){
-      if (!validate()){
-        toast("필수 항목을 확인해주세요.");
-        return;
-      }
-
-      elSubmit.disabled = true;
-      elSubmit.textContent = "전송 중…";
-
-      const payload = {
-        action: "apply",
-        maker: norm(elMaker.value),
-        model: norm(elModel.value),
-        grade: norm(elGrade.value),
-        option: norm(elOptions.value),
-        customerType: getCustomerType(),
-        name: norm(elName.value),
-        phone: norm(elPhone.value),
-        deliveryTime: norm(elDelivery.value),
-        kakaoId: norm(elKakao.value),
-        agreed: true,
-        source: "github-pages",
-        ts: new Date().toISOString()
-      };
-
-      let ok = false;
-      let message = "접수 완료! 곧 안내드릴게요.";
-
-      // 1) POST JSON
-      try{
-        const res = await fetch(`${API_BASE}?action=apply`, {
-          method: "POST",
-          headers: { "Content-Type":"application/json" },
-          body: JSON.stringify(payload)
-        });
-        const data = await res.json().catch(()=> ({}));
-        if (res.ok && (data.ok !== false)){
-          ok = true;
-          if (data.message) message = data.message;
-        }else{
-          throw new Error("POST failed");
-        }
-      }catch(e){
-        // 2) GET fallback
-        try{
-          const qs = new URLSearchParams(payload).toString();
-          const res2 = await fetch(`${API_BASE}?${qs}`, { method:"GET", cache:"no-store" });
-          const data2 = await res2.json().catch(()=> ({}));
-          if (res2.ok && (data2.ok !== false)){
-            ok = true;
-            if (data2.message) message = data2.message;
-          }
-        }catch(e2){
-          console.error(e2);
-        }
-      }
-
-      await sleep(250);
-
-      if (ok){
-        toast(message);
-        // 폼 리셋(차량은 유지하고 싶으면 아래 주석 처리)
-        // reset all
-        elOptions.value = "";
-        elName.value = "";
-        elPhone.value = "";
-        elDelivery.value = "";
-        elKakao.value = "";
-        elAgree.checked = false;
-        document.querySelector('input[name="customerType"][value="개인"]').checked = true;
+      if (r2.json && (r2.json.ok !== false)){
+        ok = true;
+        if (r2.json.message) message = r2.json.message;
       }else{
-        toast("전송 실패. 웹앱 배포/권한/엔드포인트를 확인해주세요.");
+        throw new Error("GET failed / non-json");
       }
-
-      elSubmit.textContent = "간단 견적 요청하기";
-      validate();
+    }catch(e2){
+      console.error(e2);
     }
+  }
 
-    elSubmit.addEventListener("click", submitApplication);
+  if (ok){
+    toast(message);
 
-    /***************************************************************
-     * ✅ 시작
-     ***************************************************************/
-    (async function init(){
-      validate();
-      await fetchCatalog();
-    })();
-  </script>
+    // 개인정보만 리셋
+    elName.value = "";
+    elPhone.value = "";
+    elDelivery.value = "";
+    elRegion.value = "";
+    elKakao.value = "";
+    elAgree.checked = false;
+
+    // 기본 라디오
+    const ct = document.querySelector('input[name="customerType"][value="개인"]');
+    if (ct) ct.checked = true;
+    const pt = document.querySelector('input[name="productType"][value="렌트"]');
+    if (pt) pt.checked = true;
+
+    // 옵션 기본값
+    if (elOptions && [...elOptions.options].some(o => o.value === "옵션 없음")){
+      elOptions.value = "옵션 없음";
+    }
+  }else{
+    toast("전송 실패. 웹앱 응답(JSON)/권한/배포를 확인해주세요.");
+  }
+
+  elSubmit.textContent = "간단 견적 요청하기";
+  validate();
+}
+
+elSubmit?.addEventListener("click", submitApplication);
+
+/***************************************************************
+ * ✅ 시작
+ ***************************************************************/
+(function init(){
+  validate();
+  fetchCatalog();
+})();
+</script>
 </body>
 </html>
