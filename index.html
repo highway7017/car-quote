@@ -347,7 +347,13 @@ const elApplicantName = document.getElementById("name");
 const elPhone         = document.getElementById("phone");
 const elDeliveryTime  = document.getElementById("deliveryTime");
 const elDeliveryArea  = document.getElementById("deliveryArea");
-const elKakaoId       = document.getElementById("kakaoId");
+const elKakaoId = document.getElementById("kakaoId");
+
+elKakaoId.addEventListener("input", (e)=>{
+  // 영문(a-z, A-Z)만 허용
+  e.target.value = e.target.value.replace(/[^a-zA-Z]/g, "");
+  validate();
+});
 const elConsent       = document.getElementById("consent");
 
 const elSubmit = document.getElementById("submitBtn");
