@@ -38,23 +38,23 @@
 
     /* ✅ 전체 페이지 핑크 베이스 그라 (아래로 갈수록 옅어짐) */
     .page-bg{
-      position:fixed;
-      inset:0;
-      z-index:0;
-      pointer-events:none;
-      background:
-        radial-gradient(1200px 700px at 50% 8%,
-          rgba(255, 125, 195, .24) 0%,
-          rgba(255, 170, 220, .14) 42%,
-          rgba(255, 255, 255, 0) 78%
-        ),
-        linear-gradient(to bottom,
-          rgba(255, 165, 215, .30) 0%,
-          rgba(255, 205, 235, .18) 35%,
-          rgba(255, 235, 248, .10) 68%,
-          rgba(255, 255, 255, 0) 100%
-        ),
-        #fff;
+  position:fixed;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+
+  background:
+    radial-gradient(1100px 680px at 50% 10%,
+      rgba(255, 120, 190, .22) 0%,
+      rgba(255, 190, 225, .14) 45%,
+      rgba(255, 255, 255, 0) 78%
+    ),
+    linear-gradient(to bottom,
+      rgba(255, 170, 220, .30) 0%,
+      rgba(255, 215, 240, .18) 40%,
+      rgba(255, 245, 252, .10) 72%,
+      rgba(255, 255, 255, 1) 100%
+    );
     }
 
     /* ✅ 상단 배경 이미지: 화면 너비 딱 맞게 + 아래로 투명 그라(핑크 베이스와 자연 연결) */
@@ -62,8 +62,8 @@
       position:relative;
       z-index:1;
       width:100%;
-      height:min(46vh, 420px);
-      min-height: 280px;
+      height:min(38vh, 360px);
+      min-height: 220px;
       display:flex;
       align-items:flex-end;
       justify-content:center;
@@ -81,18 +81,21 @@
     }
     /* 이미지 아래쪽이 점점 투명해지며 핑크 베이스로 연결 */
     .hero::after{
-      content:"";
-      position:absolute;
-      inset:-2px;
-      background:
-        linear-gradient(to bottom,
-          rgba(255,255,255,0) 0%,
-          rgba(255,255,255,0) 45%,
-          rgba(255,205,235,.15) 70%,
-          rgba(255,205,235,.28) 82%,
-          rgba(255,255,255,0) 100%
-        );
-      pointer-events:none;
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+
+  /* ✅ 위는 투명, 아래로 갈수록 핑크+화이트로 자연스럽게 연결 */
+  background: linear-gradient(
+    to bottom,
+    rgba(255,255,255,0) 0%,
+    rgba(255,255,255,0) 46%,
+    rgba(255,210,235,.08) 62%,
+    rgba(255,205,235,.22) 76%,
+    rgba(255,235,248,.55) 88%,
+    rgba(255,255,255,.85) 100%
+  );
     }
 
     /* ✅ 타이틀: 배경 위에 바로 올라가게(별도 div로 감싸지 않음) */
