@@ -6,275 +6,475 @@
 <title>비대면 차량 견적 상담</title>
 
 <style>
-/* ===============================
-   기본 변수
-================================ */
 :root{
   --bg-url: url("./bg.png");
-  --pink: #ff5fb3;
-  --pink-soft: #ffd6ec;
-  --card-bg: rgba(255,255,255,0.95);
-  --text: #1f2937;
-  --muted: #6b7280;
+  --page-pink: #ffd1e6; /* 페이지 바탕 핑크 */
+  --card-bg: rgba(255,255,255,0.92);
+  --text: #111827;
+  --muted: rgba(17,24,39,.6);
+  --stroke: rgba(255,255,255,.55);
 }
 
-/* ===============================
-   리셋
-================================ */
+/* 리셋 */
 *{ box-sizing:border-box; }
 html,body{ margin:0; padding:0; }
 body{
   font-family: -apple-system, BlinkMacSystemFont, "Noto Sans KR", sans-serif;
   color: var(--text);
-  background:#fff;
+  background: var(--page-pink);  /* ✅ 아래는 핑크로 연결 */
   min-height:100vh;
   overflow-x:hidden;
 }
 
-/* ===============================
-   BG 이미지
-================================ */
-body::before{
-  content:"";
-  position:fixed;
+/* ✅ 배경 영역(이미지 높이 제한) */
+.bg{
+  position: fixed;
   top:0; left:0;
   width:100%;
-  height:100%;
+  height: 380px;             /* ✅ bg는 여기까지만 보이게 */
   z-index:-2;
 
   background-image: var(--bg-url);
   background-repeat:no-repeat;
-  background-position: center top;
+  background-position:center top;
   background-size: min(1200px, 100%) auto;
 }
 
-/* ===============================
-   핑크 → 투명 그라데이션
-================================ */
-body::after{
+/* ✅ 배경 영역 그라데이션(아래로 갈수록 투명 → 페이지 핑크에 자연스럽게 연결) */
+.bg::after{
   content:"";
-  position:fixed;
+  position:absolute;
   inset:0;
-  z-index:-1;
-
   background: linear-gradient(
     180deg,
-    rgba(255,95,179,0.90) 0%,
-    rgba(255,150,215,0.60) 28%,
-    rgba(255,200,230,0.35) 48%,
-    rgba(255,214,236,0.15) 65%,
-    rgba(255,214,236,0.05) 80%,
-    rgba(255,214,236,0.00) 100%
+    rgba(255, 90, 175, 0.65) 0%,
+    rgba(255, 140, 205, 0.45) 25%,
+    rgba(255, 190, 225, 0.25) 55%,
+    rgba(255, 209, 230, 0.08) 80%,
+    rgba(255, 209, 230, 0.00) 100%
   );
 }
 
-/* ===============================
-   레이아웃
-================================ */
+/* ✅ 이미지 아래쪽 “페이드아웃” 전용 마스크 (핵심!) */
+.bg-fade{
+  position: fixed;
+  top: 280px;     /* ✅ 이 지점부터 아래로 사라지는 느낌 */
+  left:0;
+  width:100%;
+  height: 220px;
+  z-index:-1;
+  pointer-events:none;
+
+  /* 위는 투명, 아래로 갈수록 페이지 핑크로 */
+  background: linear-gradient(
+    180deg,
+    rgba(255, 209, 230, 0.00) 0%,
+    rgba(255, 209, 230, 0.65) 55%,
+    rgba(255, 209, 230, 1.00) 100%
+  );
+}
+
+/* 레이아웃 */
 .wrapper{
-  max-width:960px;
-  margin:220px auto 80px;
-  padding:0 16px;
+  max-width: 980px;
+  margin: 180px auto 90px; /* ✅ 배경 위에 떠있게 */
+  padding: 0 16px;
 }
 
-.card{
-  background:var(--card-bg);
-  border-radius:26px;
-  box-shadow:0 20px 60px rgba(0,0,0,0.12);
-  padding:28px 22px 34px;
+.shell{
+  border-radius: 28px;
+  background: rgba(255,255,255,0.18);
+  border: 1px solid rgba(255,255,255,0.35);
+  box-shadow: 0 30px 80px rgba(0,0,0,0.18);
+  backdrop-filter: blur(10px);
+  overflow:hidden;
 }
 
-/* ===============================
-   헤더
-================================ */
-.header{
+/* 헤더 (상단 핑크 밴드 느낌) */
+.hero{
+  padding: 26px 18px 22px;
   text-align:center;
-  margin-bottom:26px;
-}
-.header h1{
-  margin:0;
-  font-size:26px;
-  font-weight:900;
-}
-.header p{
-  margin:10px 0 0;
-  font-size:14px;
-  color:var(--muted);
+  background: linear-gradient(
+    180deg,
+    rgba(255,255,255,0.35) 0%,
+    rgba(255,255,255,0.06) 100%
+  );
 }
 
-/* ===============================
-   폼 공통
-================================ */
-.section{
-  margin-top:26px;
+.hero h1{
+  margin:0;
+  font-size: 24px;
+  font-weight: 900;
+  letter-spacing:-0.5px;
 }
-.section h2{
-  margin:0 0 12px;
-  font-size:16px;
-  font-weight:800;
+.hero p{
+  margin:10px 0 0;
+  font-weight: 700;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+/* 내용 */
+.content{ padding: 16px; }
+.card{
+  background: var(--card-bg);
+  border: 1px solid var(--stroke);
+  border-radius: 22px;
+  padding: 16px;
+  box-shadow: 0 18px 45px rgba(0,0,0,0.10);
+  backdrop-filter: blur(12px);
+}
+
+.grid{
+  display:grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+
+@media (min-width: 860px){
+  .grid{ grid-template-columns: 1.1fr 0.9fr; }
+  .content{ padding: 18px; }
+}
+
+/* 섹션 */
+.sec{
+  background: rgba(255,255,255,0.72);
+  border: 1px solid rgba(255,255,255,0.65);
+  border-radius: 18px;
+  padding: 14px;
+}
+
+.sec-title{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  margin:0 0 10px;
+  font-weight: 900;
+  font-size: 15px;
+}
+
+.badge{
+  font-size:12px;
+  font-weight:900;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(255,95,179,0.14);
+  border: 1px solid rgba(255,95,179,0.20);
+  color:#a20b5a;
 }
 
 label{
   display:block;
-  margin-top:14px;
-  font-size:13px;
-  font-weight:700;
+  margin-top: 12px;
+  font-weight: 900;
+  font-size: 13px;
 }
 
 input, select{
   width:100%;
-  margin-top:6px;
-  padding:13px 14px;
-  border-radius:14px;
-  border:1px solid #e5e7eb;
-  font-size:14px;
+  margin-top:7px;
+  padding: 12px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(0,0,0,0.10);
+  background: rgba(255,255,255,0.92);
+  outline:none;
+  font-size: 14px;
 }
 
-.radio-group{
-  display:flex;
-  gap:14px;
-  margin-top:10px;
+small.hint{
+  display:block;
+  margin-top:8px;
+  color: rgba(0,0,0,0.55);
+  font-weight: 700;
 }
-.radio{
+
+/* 라디오 */
+.radio-row{
+  display:flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+.radio-pill{
   flex:1;
-  padding:12px;
-  border:1px solid #e5e7eb;
-  border-radius:14px;
+  border: 1px solid rgba(0,0,0,0.10);
+  background: rgba(255,255,255,0.92);
+  border-radius: 999px;
+  padding: 12px 10px;
   text-align:center;
-  font-weight:700;
+  font-weight: 900;
 }
+.radio-pill input{ width:auto; margin:0 6px 0 0; }
 
-/* ===============================
-   가격 박스
-================================ */
-.price-box{
-  display:flex;
-  justify-content:space-between;
-  margin-top:18px;
-  gap:10px;
+/* 가격 */
+.price-grid{
+  display:grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 10px;
+  margin-top: 14px;
 }
 .price{
-  flex:1;
-  background:#f9fafb;
-  border-radius:16px;
-  padding:14px;
+  background: rgba(255,255,255,0.90);
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 16px;
+  padding: 12px;
   text-align:center;
 }
 .price span{
   display:block;
-  font-size:12px;
-  color:var(--muted);
+  font-weight: 800;
+  font-size: 12px;
+  color: rgba(0,0,0,0.55);
 }
 .price strong{
   display:block;
-  margin-top:6px;
-  font-size:18px;
+  margin-top: 6px;
+  font-size: 18px;
+  font-weight: 900;
 }
 
-/* ===============================
-   버튼
-================================ */
+/* 체크박스 */
+.check{
+  display:flex;
+  gap:10px;
+  align-items:flex-start;
+  margin-top: 12px;
+  background: rgba(255,255,255,0.70);
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 16px;
+  padding: 12px;
+}
+.check input{ margin-top: 4px; }
+.check b{ font-weight: 900; }
+.check .sub{
+  margin-top: 6px;
+  font-size: 12px;
+  color: rgba(0,0,0,0.55);
+  font-weight: 700;
+}
+
+/* 버튼 */
 button{
   width:100%;
-  margin-top:30px;
-  padding:18px;
+  margin-top: 14px;
+  padding: 18px 16px;
   border:none;
-  border-radius:999px;
-  background: linear-gradient(135deg, #ff5fb3, #ff87c9);
+  border-radius: 999px;
+  background: linear-gradient(135deg, #ff5fb3, #ff90cc);
   color:#fff;
-  font-size:16px;
-  font-weight:900;
+  font-size: 16px;
+  font-weight: 900;
+  box-shadow: 0 18px 35px rgba(255,95,179,0.35);
   cursor:pointer;
 }
-
-/* ===============================
-   모바일 보정
-================================ */
-@media (max-width:480px){
-  .wrapper{ margin-top:180px; }
+.footer-note{
+  text-align:center;
+  margin-top: 10px;
+  font-size: 12px;
+  font-weight: 800;
+  color: rgba(0,0,0,0.55);
 }
 </style>
 </head>
 
 <body>
+  <!-- ✅ 배경(이미지 + 상단 그라데이션) -->
+  <div class="bg"></div>
+  <!-- ✅ 아래로 투명 그라데이션 + 페이지 핑크 연결 -->
+  <div class="bg-fade"></div>
 
-<div class="wrapper">
-  <div class="card">
-
-    <div class="header">
-      <h1>비대면 차량 견적 상담</h1>
-      <p>간단한 조건 입력으로 비대면 안내드립니다</p>
-    </div>
-
-    <!-- 차량 선택 -->
-    <div class="section">
-      <h2>차량 선택</h2>
-
-      <label>상담 유형</label>
-      <div class="radio-group">
-        <div class="radio">장기렌트</div>
-        <div class="radio">리스</div>
+  <div class="wrapper">
+    <div class="shell">
+      <div class="hero">
+        <h1>비대면 차량 견적 상담</h1>
+        <p>간단한 조건 입력으로 비대면 안내드립니다</p>
       </div>
 
-      <label>차량명 검색</label>
-      <input placeholder="예) 쏘렌토 / 셀토스 / 카니발" />
+      <div class="content">
+        <div class="card">
+          <div class="grid">
 
-      <label>트림</label>
-      <select>
-        <option>차량을 먼저 선택하세요</option>
-      </select>
+            <!-- 좌측: 차량 선택 -->
+            <div class="sec">
+              <div class="sec-title">차량 선택 <span class="badge">필수</span></div>
 
-      <label>옵션</label>
-      <select>
-        <option>트림 선택 후 옵션 표시</option>
-      </select>
+              <label>상담 유형</label>
+              <div class="radio-row">
+                <label class="radio-pill">
+                  <input type="radio" name="dealType" value="렌트" checked>
+                  장기렌트
+                </label>
+                <label class="radio-pill">
+                  <input type="radio" name="dealType" value="리스">
+                  리스
+                </label>
+              </div>
 
-      <div class="price-box">
-        <div class="price">
-          <span>차량가</span>
-          <strong>0원</strong>
-        </div>
-        <div class="price">
-          <span>옵션가</span>
-          <strong>0원</strong>
-        </div>
-        <div class="price">
-          <span>총 차량가</span>
-          <strong>0원</strong>
-        </div>
-      </div>
-    </div>
+              <label>차량명 검색</label>
+              <input id="carSearch" placeholder="예) 쏘렌토 / 셀토스 / 카니발 (부분검색 가능)" />
+              <small class="hint">검색어를 입력하면 목록이 뜹니다.</small>
 
-    <!-- 상담 조건 -->
-    <div class="section">
-      <h2>상담 조건</h2>
+              <label>차량 선택</label>
+              <select id="carSelect">
+                <option value="">차량을 선택해주세요</option>
+              </select>
 
-      <label>차량 인도 지역</label>
-      <input placeholder="예) 서울 / 경기 남부" />
+              <label>트림 선택</label>
+              <select id="trimSelect" disabled>
+                <option value="">차량을 먼저 선택하세요</option>
+              </select>
 
-      <label>차량 필요 시기</label>
-      <input placeholder="예) 가능한 빠르게 / 미정" />
-    </div>
+              <label>옵션 선택</label>
+              <select id="optionSelect" disabled>
+                <option value="">트림 선택 후 옵션이 표시됩니다.</option>
+              </select>
 
-    <!-- 신청자 -->
-    <div class="section">
-      <h2>신청자 정보</h2>
+              <div class="price-grid">
+                <div class="price">
+                  <span>차량가</span>
+                  <strong id="basePrice">0원</strong>
+                </div>
+                <div class="price">
+                  <span>옵션가</span>
+                  <strong id="optPrice">0원</strong>
+                </div>
+                <div class="price">
+                  <span>총 차량가</span>
+                  <strong id="totalPrice">0원</strong>
+                </div>
+              </div>
+            </div>
 
-      <label>이름</label>
-      <input placeholder="홍길동" />
+            <!-- 우측: 상담조건 + 신청자 -->
+            <div style="display:grid; gap:14px;">
+              <div class="sec">
+                <div class="sec-title">상담 조건 <span class="badge">필수</span></div>
 
-      <label>연락처</label>
-      <input placeholder="010-1234-5678" />
+                <label>차량 인도 지역</label>
+                <input id="deliveryArea" placeholder="예) 경기 남부 / 서울 강남" />
 
-      <label>
-        <input type="checkbox" /> 개인정보 수집·이용에 동의합니다
-      </label>
-    </div>
+                <label>고객 유형</label>
+                <div class="radio-row">
+                  <label class="radio-pill"><input type="radio" name="custType" value="개인" checked>개인</label>
+                  <label class="radio-pill"><input type="radio" name="custType" value="개인사업자">개인사업자</label>
+                  <label class="radio-pill"><input type="radio" name="custType" value="법인">법인</label>
+                </div>
 
-    <button>간단 견적 요청하기</button>
+                <label>차량 필요 시기 (선택)</label>
+                <input id="needTime" placeholder="예) 가능한 빨리 / 2월 중순 / 미정" />
+                <small class="hint">* “미정”으로 입력해도 괜찮습니다.</small>
+              </div>
 
-  </div>
-</div>
+              <div class="sec">
+                <div class="sec-title">신청자 정보 <span class="badge">필수</span></div>
 
+                <label>신청자명</label>
+                <input id="name" placeholder="예) 홍길동" />
+
+                <label>연락처</label>
+                <input id="phone" placeholder="예) 010-1234-5678" />
+
+                <label>카카오톡 ID (선택)</label>
+                <input id="kakao" placeholder="예) melody7017" />
+
+                <div class="check">
+                  <input id="agree" type="checkbox" />
+                  <div>
+                    <b>[필수] 개인정보 수집·이용에 동의합니다.</b>
+                    <div class="sub">
+                      수집: 성명, 연락처, 카카오톡 ID(선택) · 목적: 견적/상담 안내 · 보유: 상담 완료 후 1년
+                    </div>
+                  </div>
+                </div>
+
+                <button type="button">간단 견적 요청하기</button>
+                <div class="footer-note">방문 없이 모두 비대면으로 안내드립니다.</div>
+              </div>
+            </div>
+
+          </div><!-- grid -->
+        </div><!-- card -->
+      </div><!-- content -->
+    </div><!-- shell -->
+  </div><!-- wrapper -->
+
+<script>
+  // ✅ 여기 JS는 “디자인 확인용” 기본값만.
+  // 나중에 Apps Script / Sheet 연동할 때 교체하면 됨.
+
+  const carSelect = document.getElementById("carSelect");
+  const trimSelect = document.getElementById("trimSelect");
+  const optionSelect = document.getElementById("optionSelect");
+
+  // 샘플 데이터(동작 확인용)
+  const cars = [
+    {name:"쏘렌토", trims:["프레스티지","노블레스"], base:35020000},
+    {name:"셀토스", trims:["트렌디","프레스티지"], base:24900000},
+    {name:"카니발", trims:["프레스티지","시그니처"], base:39200000},
+  ];
+
+  function money(n){
+    return (n||0).toLocaleString("ko-KR") + "원";
+  }
+
+  // 차량 목록
+  cars.forEach(c=>{
+    const op = document.createElement("option");
+    op.value = c.name;
+    op.textContent = c.name;
+    carSelect.appendChild(op);
+  });
+
+  carSelect.addEventListener("change", ()=>{
+    const selected = cars.find(x=>x.name===carSelect.value);
+    trimSelect.innerHTML = "";
+    optionSelect.innerHTML = "";
+    document.getElementById("optPrice").textContent = money(0);
+
+    if(!selected){
+      trimSelect.disabled = true;
+      optionSelect.disabled = true;
+      trimSelect.innerHTML = `<option value="">차량을 먼저 선택하세요</option>`;
+      optionSelect.innerHTML = `<option value="">트림 선택 후 옵션이 표시됩니다.</option>`;
+      document.getElementById("basePrice").textContent = money(0);
+      document.getElementById("totalPrice").textContent = money(0);
+      return;
+    }
+
+    trimSelect.disabled = false;
+    trimSelect.innerHTML = `<option value="">트림을 선택해주세요</option>`;
+    selected.trims.forEach(t=>{
+      const op = document.createElement("option");
+      op.value = t; op.textContent = t;
+      trimSelect.appendChild(op);
+    });
+
+    document.getElementById("basePrice").textContent = money(selected.base);
+    document.getElementById("totalPrice").textContent = money(selected.base);
+  });
+
+  trimSelect.addEventListener("change", ()=>{
+    optionSelect.disabled = !trimSelect.value;
+    optionSelect.innerHTML = `<option value="">옵션을 선택해주세요</option>`;
+    ["스타일(+700,000)","빌트인캠2(+450,000)","파노라마선루프(+1,090,000)"].forEach((o,i)=>{
+      const op = document.createElement("option");
+      op.value = o;
+      op.textContent = o;
+      optionSelect.appendChild(op);
+    });
+  });
+
+  optionSelect.addEventListener("change", ()=>{
+    const baseText = document.getElementById("basePrice").textContent.replace(/[^0-9]/g,"");
+    const base = Number(baseText||0);
+
+    let opt = 0;
+    if(optionSelect.value.includes("700,000")) opt = 700000;
+    else if(optionSelect.value.includes("450,000")) opt = 450000;
+    else if(optionSelect.value.includes("1,090,000")) opt = 1090000;
+
+    document.getElementById("optPrice").textContent = money(opt);
+    document.getElementById("totalPrice").textContent = money(base + opt);
+  });
+</script>
 </body>
 </html>
