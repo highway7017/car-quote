@@ -1,247 +1,529 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>비대면 견적 요청</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
-    <style>
-        :root {
-            --neon-blue: #00d4ff;
-            --glass-bg: rgba(10, 10, 15, 0.75);
-            --input-bg: rgba(255, 255, 255, 0.05);
-            --border: rgba(255, 255, 255, 0.1);
-        }
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>비대면 차량 견적 상담</title>
 
-        body {
-            margin: 0; padding: 0;
-            font-family: 'Pretendard', sans-serif;
-            /* 배경 이미지를 bg.png로 설정 */
-            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('bg.png') no-repeat center center fixed;
-            background-size: cover;
-            display: flex; justify-content: center; align-items: center;
-            min-height: 100vh; color: #ffffff;
-        }
+  <style>
+    :root{
+      /* Pink base (page) */
+      --pinkTop:#ffd1e6;
+      --pinkMid:#ffe3f1;
+      --pinkBottom:#fff8fc;
 
-        /* 메인 카드 박스 - 시안의 반투명 효과 */
-        .container {
-            background: var(--glass-bg);
-            width: 95%; max-width: 460px;
-            padding: 40px 25px;
-            border-radius: 30px;
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--border);
-            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
-        }
+      /* Text */
+      --ink:#231a1f;
+      --muted:rgba(35,26,31,.60);
 
-        h2 { text-align: center; font-weight: 700; font-size: 1.5rem; margin-bottom: 30px; letter-spacing: -1px; }
+      /* Glass / card */
+      --glass:rgba(255,255,255,.28);
+      --glassBorder:rgba(255,255,255,.45);
 
-        /* 상단 렌트/리스 선택 탭 */
-        .tab-box {
-            display: flex; background: var(--input-bg);
-            padding: 4px; border-radius: 15px; margin-bottom: 25px;
-            border: 1px solid var(--border);
-        }
-        .tab-box label {
-            flex: 1; text-align: center; padding: 12px; cursor: pointer;
-            border-radius: 12px; font-weight: 600; font-size: 0.95rem; transition: 0.3s; color: #888;
-        }
-        .tab-box input { display: none; }
-        .tab-box input:checked + label {
-            background: var(--neon-blue); color: #000;
-            box-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
-        }
+      --card:rgba(255,255,255,.78);
+      --cardBorder:rgba(255,255,255,.62);
 
-        .label { font-size: 0.85rem; color: var(--neon-blue); margin: 0 0 8px 5px; font-weight: 600; }
+      --shadow: 0 18px 60px rgba(0,0,0,.18);
+      --shadowSoft: 0 10px 30px rgba(0,0,0,.10);
 
-        /* 입력 폼 요소 */
-        select, input {
-            width: 100%; padding: 15px; border-radius: 15px; border: 1px solid var(--border);
-            background: var(--input-bg); color: #fff; box-sizing: border-box;
-            font-size: 1rem; margin-bottom: 15px; transition: 0.3s; outline: none;
-        }
-        select:focus, input:focus { border-color: var(--neon-blue); box-shadow: 0 0 10px rgba(0, 212, 255, 0.2); }
-        select option { background: #111; }
+      /* Radius */
+      --rShell: 28px;
+      --rCard: 26px;
+      --rInner: 22px;
+      --rInput: 18px;
+      --rBtn: 999px;
 
-        /* 옵션 선택 박스 */
-        .option-list {
-            background: rgba(0,0,0,0.2); border-radius: 15px;
-            padding: 10px; max-height: 140px; overflow-y: auto;
-            border: 1px solid var(--border); margin-bottom: 20px;
-        }
-        .opt-item {
-            display: flex; align-items: center; padding: 10px; font-size: 0.9rem;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
-        .opt-item input { width: 18px; height: 18px; margin-right: 12px; accent-color: var(--neon-blue); }
+      /* Accent */
+      --accent:#d94b8b;
+      --accent2:#e96aa2;
+      --accent3:#f3b0cf;
+      --accentSoft: rgba(217,75,139,.14);
 
-        /* 가격 정보창 */
-        .total-price-box {
-            background: rgba(0, 212, 255, 0.08); padding: 20px;
-            border-radius: 20px; text-align: right; margin-bottom: 25px;
-            border: 1px solid rgba(0, 212, 255, 0.2);
-        }
-        .total-price-box .val { font-size: 1.8rem; color: var(--neon-blue); font-weight: 800; }
+      --maxw: 520px; /* 레퍼런스처럼 모바일 중심 */
+    }
 
-        /* 개인정보 동의 */
-        .agree-text { font-size: 0.8rem; color: #aaa; display: flex; align-items: center; gap: 8px; }
-        .agree-text input { accent-color: var(--neon-blue); }
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans KR", Arial, sans-serif;
+      color: var(--ink);
+      overflow-x:hidden;
 
-        /* 전송 버튼 - 시안의 네온 블루 느낌 */
-        .btn-submit {
-            width: 100%; padding: 20px; background: var(--neon-blue);
-            color: #000; border: none; border-radius: 18px;
-            font-size: 1.15rem; font-weight: 800; cursor: pointer;
-            margin-top: 25px; transition: 0.4s;
-            box-shadow: 0 10px 25px rgba(0, 212, 255, 0.3);
-        }
-        .btn-submit:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(0, 212, 255, 0.5); }
-        .btn-submit:disabled { background: #333; color: #666; cursor: not-allowed; box-shadow: none; }
-    </style>
+      /* ✅ 핑크 베이스도 아래로 갈수록 옅어지게 */
+      background:
+        radial-gradient(900px 420px at 50% 0%, rgba(255,255,255,.55) 0%, rgba(255,255,255,0) 60%),
+        linear-gradient(to bottom, var(--pinkTop) 0%, var(--pinkMid) 45%, var(--pinkBottom) 100%);
+    }
+
+    /* ===== 상단 배너(배경 이미지) ===== */
+    .hero-bg{
+      position:relative;
+      width:100vw;
+      height: min(70vw, 360px);
+      min-height: 260px;
+
+      background: url("./bg.png") center top / cover no-repeat;
+    }
+    /* ✅ 이미지가 아래로 “투명해지면서” 핑크와 자연스럽게 연결 */
+    .hero-bg::after{
+      content:"";
+      position:absolute;
+      left:0; right:0; bottom:0;
+      height: 70%;
+      pointer-events:none;
+      background: linear-gradient(
+        to bottom,
+        rgba(255,255,255,0) 0%,
+        rgba(255,209,230,.10) 18%,
+        rgba(255,227,241,.40) 52%,
+        rgba(255,248,252,.82) 82%,
+        rgba(255,248,252,1) 100%
+      );
+    }
+
+    /* ===== 전체 래퍼 (배너 위로 겹치기) ===== */
+    .wrap{
+      width: 100%;
+      max-width: var(--maxw);
+      margin: -120px auto 56px;
+      padding: 0 14px;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* ===== 큰 유리 카드(전체 컨테이너) ===== */
+    .shell{
+      border-radius: var(--rShell);
+      background: var(--glass);
+      border: 1px solid var(--glassBorder);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+      overflow: hidden;
+    }
+
+    /* ===== 상단 타이틀 영역 ===== */
+    .hero{
+      padding: 26px 18px 18px;
+      text-align:center;
+      background: linear-gradient(
+        to bottom,
+        rgba(255,255,255,.55),
+        rgba(255,255,255,.18)
+      );
+    }
+    .hero h1{
+      margin:0;
+      font-size: 24px;
+      font-weight: 900;
+      letter-spacing: -.7px;
+      text-shadow: 0 1px 0 rgba(255,255,255,.25);
+    }
+    .hero p{
+      margin: 8px 0 0;
+      font-size: 12.5px;
+      font-weight: 800;
+      color: rgba(35,26,31,.58);
+    }
+
+    .content{
+      padding: 14px 14px 18px;
+    }
+
+    /* ===== 섹션 카드(레퍼런스처럼 둥글고 하얀 카드) ===== */
+    .section{
+      background: var(--card);
+      border: 1px solid var(--cardBorder);
+      border-radius: var(--rCard);
+      box-shadow: var(--shadowSoft);
+      backdrop-filter: blur(10px);
+      padding: 16px;
+      margin-top: 12px;
+    }
+    .section:first-child{ margin-top: 0; }
+
+    .section-title{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin: 0 0 12px;
+      font-size: 16px;
+      font-weight: 900;
+      letter-spacing: -.3px;
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      height: 22px;
+      padding: 0 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 900;
+      color: #a8235e;
+      background: var(--accentSoft);
+      border: 1px solid rgba(217,75,139,.18);
+    }
+
+    /* ===== 입력 UI ===== */
+    .field{ margin-top: 12px; }
+    .label{
+      display:block;
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: -.2px;
+      margin-bottom: 8px;
+      color: rgba(35,26,31,.82);
+    }
+
+    select, input, textarea{
+      width: 100%;
+      border: 1px solid rgba(0,0,0,.10);
+      background: rgba(255,255,255,.92);
+      border-radius: var(--rInput);
+      padding: 14px 14px;
+      font-size: 15px;
+      font-weight: 800;
+      outline: none;
+      color: var(--ink);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.55);
+    }
+    select:disabled, input:disabled, textarea:disabled{
+      opacity: .70;
+      background: rgba(255,255,255,.72);
+    }
+    input::placeholder, textarea::placeholder{
+      color: rgba(35,26,31,.40);
+      font-weight: 800;
+    }
+    select:focus, input:focus, textarea:focus{
+      border-color: rgba(217,75,139,.42);
+      box-shadow: 0 0 0 4px rgba(217,75,139,.10);
+    }
+
+    /* 드롭다운 “둥근 박스 3개” 레퍼런스 느낌 */
+    .stack > .field{ margin-top: 10px; }
+
+    /* ===== 2열 라인(상담조건) ===== */
+    .two-col{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+    @media (min-width: 480px){
+      .two-col{ grid-template-columns: 1fr 1fr; }
+    }
+
+    .pill-row{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .pill{
+      flex: 1 1 auto;
+      min-width: 120px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      padding: 12px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,.10);
+      background: rgba(255,255,255,.92);
+      font-weight: 900;
+      cursor:pointer;
+      user-select:none;
+    }
+    .pill input{ margin:0; }
+    .pill:has(input:checked){
+      border-color: rgba(217,75,139,.40);
+      box-shadow: 0 0 0 4px rgba(217,75,139,.10);
+      background: rgba(255,255,255,.96);
+    }
+
+    /* ===== 개인정보 동의 박스 ===== */
+    .agree{
+      margin-top: 14px;
+      border-radius: var(--rInner);
+      border: 1px solid rgba(0,0,0,.10);
+      background: rgba(255,255,255,.70);
+      padding: 14px;
+    }
+    .agree-head{
+      display:flex;
+      align-items:flex-start;
+      gap:10px;
+      font-weight: 950;
+      line-height: 1.25;
+      font-size: 14px;
+    }
+    .agree small{
+      display:block;
+      margin-top: 8px;
+      color: rgba(35,26,31,.55);
+      font-weight: 800;
+      line-height: 1.35;
+      font-size: 12px;
+    }
+
+    /* ===== 버튼(“눈에 띄지만 단정한” 그라) ===== */
+    .cta{
+      margin-top: 14px;
+      width:100%;
+      border: 1px solid rgba(0,0,0,.10);
+      border-radius: var(--rBtn);
+      padding: 16px 18px;
+      font-size: 16px;
+      font-weight: 1000;
+      letter-spacing: -.3px;
+      cursor:pointer;
+
+      /* ✅ 레퍼런스처럼 “고급스러운 핑크-로즈” 단정 그라 */
+      background:
+        linear-gradient(to bottom, rgba(255,255,255,.26), rgba(255,255,255,0)),
+        linear-gradient(135deg, #d9578f 0%, #e678a8 42%, #f2b7d2 100%);
+      color: rgba(255,255,255,.95);
+
+      box-shadow:
+        0 16px 34px rgba(217,75,139,.28),
+        inset 0 1px 0 rgba(255,255,255,.35);
+      transition: transform .08s ease, filter .2s ease, opacity .2s ease;
+    }
+    .cta:hover{ filter: brightness(1.02); }
+    .cta:active{ transform: translateY(1px); }
+
+    .cta:disabled{
+      opacity: .45;
+      cursor:not-allowed;
+      filter: saturate(.70);
+      box-shadow: 0 10px 22px rgba(0,0,0,.10), inset 0 1px 0 rgba(255,255,255,.35);
+    }
+
+    .foot{
+      margin-top: 10px;
+      text-align:center;
+      font-size: 12px;
+      font-weight: 800;
+      color: rgba(35,26,31,.55);
+    }
+
+    /* 미세 조정 */
+    .divider{
+      height: 1px;
+      background: rgba(0,0,0,.06);
+      margin: 14px 0;
+      border: 0;
+    }
+  </style>
 </head>
+
 <body>
+  <!-- ✅ 상단 배너 이미지 -->
+  <div class="hero-bg" aria-hidden="true"></div>
 
-<div class="container">
-    <h2>렌트/리스 견적 요청</h2>
-    
-    <form id="quoteForm">
-        <div class="tab-box">
-            <input type="radio" id="r" name="dealType" value="장기렌트" checked>
-            <label for="r">장기렌트</label>
-            <input type="radio" id="l" name="dealType" value="자동차리스">
-            <label for="l">자동차리스</label>
-        </div>
+  <!-- ✅ 본문(레퍼런스처럼 배너 위로 올라오게) -->
+  <main class="wrap">
+    <div class="shell">
+      <header class="hero">
+        <h1>비대면 차량 견적 상담</h1>
+        <p>간단한 조건 입력으로 안내드립니다</p>
+      </header>
 
-        <div class="label">차량 정보</div>
-        <select id="mkr"><option value="">제조사 선택</option></select>
-        <select id="mdl" disabled><option value="">모델 선택</option></select>
-        <select id="trm" disabled><option value="">트림 선택</option></select>
+      <div class="content">
+        <!-- 차량 선택 -->
+        <section class="section" aria-label="차량 선택">
+          <div class="section-title">
+            차량 선택 <span class="badge">필수</span>
+          </div>
 
-        <div class="label">추가 옵션</div>
-        <div id="optContainer" class="option-list">
-            <p style="text-align:center; color:#555; font-size:0.8rem; margin-top:40px;">트림을 선택해 주세요</p>
-        </div>
+          <!-- ✅ 레퍼런스처럼 둥근 드롭다운 3단 -->
+          <div class="stack">
+            <div class="field">
+              <label class="label" for="makerSelect">메이커</label>
+              <select id="makerSelect" name="maker">
+                <option value="">메이커를 선택해주세요</option>
+              </select>
+            </div>
 
-        <div class="total-price-box">
-            <span style="font-size:0.85rem; color:#aaa;">최종 차량가</span><br>
-            <span class="val" id="totalVal">0</span>원
-        </div>
+            <div class="field">
+              <label class="label" for="modelSelect">모델</label>
+              <select id="modelSelect" name="model" disabled>
+                <option value="">모델을 선택해주세요</option>
+              </select>
+            </div>
 
-        <div class="label">상담 신청 정보</div>
-        <input type="text" id="name" placeholder="성함" required>
-        <input type="tel" id="phone" placeholder="휴대폰 번호 (- 없이)" required>
-        <input type="text" id="kakao" placeholder="카카오톡 ID (선택)">
+            <div class="field">
+              <label class="label" for="trimSelect">트림</label>
+              <select id="trimSelect" name="trim" disabled>
+                <option value="">트림해주세요</option>
+              </select>
+            </div>
+          </div>
 
-        <div class="agree-text">
-            <input type="checkbox" id="agree" required>
-            <label for="agree">개인정보 수집 및 제3자 제공에 동의합니다.</label>
-        </div>
+          <hr class="divider" />
 
-        <button type="submit" id="submitBtn" class="btn-submit">무료 견적 신청하기</button>
-    </form>
-</div>
+          <div class="field">
+            <label class="label" for="optionSelect">옵션 (선택)</label>
+            <!-- ✅ 너가 쓰던 로직에 맞춰: 단일 select든, 멀티 체크든 JS로 갈아끼우기 쉬움 -->
+            <select id="optionSelect" name="option" disabled>
+              <option value="">옵션을 선택해주세요</option>
+            </select>
+          </div>
+        </section>
 
-<script>
-    const API = 'https://script.google.com/macros/s/AKfycbxE58tNJ_Nfr5KNFMp0b6P4dWyBGnP_CPDiTuontpL1u4b931Tx6EWn5iCR9CqjEzne/exec';
-    let dataStore = [];
-    let basePriceValue = 0;
+        <!-- 상담 조건 -->
+        <section class="section" aria-label="상담 조건">
+          <div class="section-title">
+            상담 조건 <span class="badge">필수</span>
+          </div>
 
-    async function fetchData() {
-        try {
-            const r = await fetch(`${API}?action=catalog`);
-            dataStore = await r.json();
-            const makers = [...new Set(dataStore.map(x => x.maker))];
-            const mSel = document.getElementById('mkr');
-            makers.forEach(m => mSel.add(new Option(m, m)));
-        } catch (e) { alert("데이터 로드 오류"); }
+          <div class="two-col">
+            <div class="field">
+              <label class="label" for="deliveryRegion">차량 인도 지역</label>
+              <input id="deliveryRegion" name="deliveryRegion" type="text" placeholder="예) 경기 남부 / 서울 강남" />
+            </div>
+
+            <div class="field">
+              <label class="label">고객 유형 <span class="badge">필수</span></label>
+              <div class="pill-row" role="group" aria-label="고객 유형">
+                <label class="pill"><input type="radio" name="customerType" value="개인" checked> 개인</label>
+                <label class="pill"><input type="radio" name="customerType" value="개인사업자"> 개인사업자</label>
+                <label class="pill"><input type="radio" name="customerType" value="법인"> 법인</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="label" for="needWhen">차량 필요 시기 <span class="badge">초필</span></label>
+            <input id="needWhen" name="needWhen" type="text" placeholder="예) 가능한 빨리 / 2월 중순 / 미정" />
+            <div style="margin-top:8px;font-size:12px;font-weight:800;color:rgba(35,26,31,.55);">
+              참고용으로만 입력해 주세요.
+            </div>
+          </div>
+        </section>
+
+        <!-- 신청자 정보 -->
+        <section class="section" aria-label="신청자 정보">
+          <div class="section-title">
+            신청자 정보 <span class="badge">필수</span>
+          </div>
+
+          <div class="two-col">
+            <div class="field">
+              <label class="label" for="applicantName">신청자명 <span class="badge">필수</span></label>
+              <input id="applicantName" name="applicantName" type="text" placeholder="예) 홍길동" />
+            </div>
+
+            <div class="field">
+              <label class="label" for="phone">연락처 <span class="badge">필수</span></label>
+              <input id="phone" name="phone" type="tel" placeholder="예) 010-1234-5678" />
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="label" for="kakaoId">카카오톡 ID (선택)</label>
+            <input id="kakaoId" name="kakaoId" type="text" placeholder="예) melody7017" />
+          </div>
+
+          <div class="agree">
+            <label class="agree-head">
+              <input id="agree" type="checkbox" />
+              <span>[필수] 개인정보 수집·이용에 동의합니다.</span>
+            </label>
+            <small>
+              수집: 성명, 연락처, 카카오톡 ID(선택), 차량 선택 정보<br/>
+              목적: 견적·상담 안내<br/>
+              보유: 상담 완료 후 1년
+            </small>
+          </div>
+
+          <button id="submitBtn" class="cta" disabled>간단 견적 요청하기</button>
+          <div class="foot">방문 없이 모두 비대면으로 안내드립니다.</div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <!-- ✅ JS는 “이미 해둔 구조”가 있다 했으니,
+       여기엔 버튼 활성화(필수 입력)만 최소로 넣어둘게.
+       (기존에 쓰던 시트/웹앱 fetch 로직은 그대로 붙이면 됨) -->
+  <script>
+    const $ = (id)=>document.getElementById(id);
+
+    const requiredIds = ["applicantName","phone","deliveryRegion","makerSelect","modelSelect","trimSelect"];
+    function validate(){
+      const ok = requiredIds.every(id => {
+        const el = $(id);
+        return el && String(el.value || "").trim().length > 0 && !el.disabled;
+      });
+      $("submitBtn").disabled = !(ok && $("agree").checked);
     }
 
-    document.getElementById('mkr').onchange = (e) => {
-        const models = [...new Set(dataStore.filter(x => x.maker === e.target.value).map(x => x.model))];
-        setSelect('mdl', models, "모델 선택");
-        resetOptions();
-    };
+    // 변경 감지
+    ["applicantName","phone","deliveryRegion","makerSelect","modelSelect","trimSelect","agree"]
+      .forEach(id=>{
+        const el=$(id);
+        if(!el) return;
+        el.addEventListener("input", validate);
+        el.addEventListener("change", validate);
+      });
 
-    document.getElementById('mdl').onchange = (e) => {
-        const trims = [...new Set(dataStore.filter(x => x.model === e.target.value).map(x => x.trim))];
-        setSelect('trm', trims, "트림 선택");
-        resetOptions();
-    };
+    // ⚠️ 아래 3개는 “데모로” 잠깐 활성화 시켜둔 것.
+    // 너의 실제 로직에서 maker -> model -> trim 불러오면
+    // disabled 제어/option 채우는 부분만 그대로 쓰면 됨.
+    // (원래 앱스크립트 API 붙이면 이 데모는 삭제해도 됨)
+    // --- demo start ---
+    const demoMakers = ["현대","기아","제네시스"];
+    const demoModels = { "현대":["쏘나타","그랜저"], "기아":["셀토스","쏘렌토"], "제네시스":["G80","GV80"] };
+    const demoTrims = ["프레스티지","노블레스","시그니처"];
 
-    document.getElementById('trm').onchange = (e) => {
-        const rows = dataStore.filter(x => x.trim === e.target.value && x.model === document.getElementById('mdl').value);
-        if(rows.length > 0) {
-            basePriceValue = rows[0].basePrice;
-            const container = document.getElementById('optContainer');
-            container.innerHTML = '';
-            rows.forEach(row => {
-                if(row.optionName) {
-                    const item = document.createElement('div');
-                    item.className = 'opt-item';
-                    item.innerHTML = `<input type="checkbox" name="o" value="${row.optionPrice}" data-n="${row.optionName}" onchange="calcPrice()">
-                                      <span>${row.optionName} (+${row.optionPrice.toLocaleString()}원)</span>`;
-                    container.appendChild(item);
-                }
-            });
-            calcPrice();
-        }
-    };
+    demoMakers.forEach(m=>{
+      const o=document.createElement("option");
+      o.value=m; o.textContent=m;
+      $("makerSelect").appendChild(o);
+    });
 
-    function setSelect(id, list, msg) {
-        const el = document.getElementById(id);
-        el.innerHTML = `<option value="">${msg}</option>`;
-        list.forEach(v => el.add(new Option(v, v)));
-        el.disabled = false;
-    }
+    $("makerSelect").addEventListener("change", ()=>{
+      $("modelSelect").innerHTML = '<option value="">모델을 선택해주세요</option>';
+      $("trimSelect").innerHTML  = '<option value="">트림해주세요</option>';
+      $("modelSelect").disabled = true;
+      $("trimSelect").disabled = true;
+      $("optionSelect").disabled = true;
 
-    function resetOptions() {
-        document.getElementById('optContainer').innerHTML = '<p style="text-align:center; color:#555; font-size:0.8rem; margin-top:40px;">트림을 선택해 주세요</p>';
-        basePriceValue = 0;
-        calcPrice();
-    }
+      const maker = $("makerSelect").value;
+      if(!maker){ validate(); return; }
 
-    function calcPrice() {
-        let sum = 0;
-        document.querySelectorAll('input[name="o"]:checked').forEach(c => sum += Number(c.value));
-        document.getElementById('totalVal').innerText = (basePriceValue + sum).toLocaleString();
-    }
+      (demoModels[maker]||[]).forEach(m=>{
+        const o=document.createElement("option");
+        o.value=m; o.textContent=m;
+        $("modelSelect").appendChild(o);
+      });
+      $("modelSelect").disabled = false;
+      validate();
+    });
 
-    document.getElementById('quoteForm').onsubmit = async (e) => {
-        e.preventDefault();
-        const btn = document.getElementById('submitBtn');
-        btn.disabled = true; btn.innerText = "전송중...";
+    $("modelSelect").addEventListener("change", ()=>{
+      $("trimSelect").innerHTML = '<option value="">트림해주세요</option>';
+      $("trimSelect").disabled = true;
+      $("optionSelect").disabled = true;
 
-        const opts = Array.from(document.querySelectorAll('input[name="o"]:checked')).map(c => c.dataset.n).join(', ');
-        const optSum = Array.from(document.querySelectorAll('input[name="o"]:checked')).reduce((a,b)=>a+Number(b.value), 0);
+      if(!$("modelSelect").value){ validate(); return; }
 
-        const params = new URLSearchParams({
-            action: 'submit',
-            dealType: document.querySelector('input[name="dealType"]:checked').value,
-            maker: document.getElementById('mkr').value,
-            model: document.getElementById('mdl').value,
-            trim: document.getElementById('trm').value,
-            options: opts,
-            basePrice: basePriceValue,
-            optionPrice: optSum,
-            totalPrice: basePriceValue + optSum,
-            applicantName: document.getElementById('name').value,
-            phone: document.getElementById('phone').value,
-            kakaoId: document.getElementById('kakao').value,
-            submittedAt: new Date().toLocaleString()
-        });
+      demoTrims.forEach(t=>{
+        const o=document.createElement("option");
+        o.value=t; o.textContent=t;
+        $("trimSelect").appendChild(o);
+      });
+      $("trimSelect").disabled = false;
+      validate();
+    });
 
-        try {
-            await fetch(`${API}?${params.toString()}`, { mode: 'no-cors' });
-            alert("상담 신청이 완료되었습니다!");
-            location.reload();
-        } catch(e) {
-            alert("전송 오류가 발생했습니다.");
-            btn.disabled = false; btn.innerText = "무료 견적 신청하기";
-        }
-    };
-
-    fetchData();
-</script>
+    $("trimSelect").addEventListener("change", ()=>{
+      $("optionSelect").disabled = !$("trimSelect").value;
+      validate();
+    });
+    // --- demo end ---
+  </script>
 </body>
 </html>
