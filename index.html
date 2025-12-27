@@ -9,19 +9,11 @@
     :root{
       --text:#1f2328;
       --muted:rgba(31,35,40,.62);
-      --stroke:rgba(17,17,17,.10);
       --card:rgba(255,255,255,.82);
-      --card-strong:rgba(255,255,255,.90);
       --shadow: 0 18px 55px rgba(0,0,0,.12);
       --softshadow: 0 10px 30px rgba(0,0,0,.10);
       --radius: 26px;
-      --radius2: 22px;
       --field: rgba(255,255,255,.92);
-      --field2: rgba(255,255,255,.78);
-      --primary1: #ff7fbf;
-      --primary2: #b07cff;
-      --primary3: #ff5da7;
-      --danger:#e11d48;
     }
 
     *{box-sizing:border-box}
@@ -30,111 +22,52 @@
       margin:0;
       font-family: ui-sans-serif, system-ui, -apple-system, "Apple SD Gothic Neo","Noto Sans KR", Segoe UI, Roboto, Arial, sans-serif;
       color:var(--text);
-    
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
       overflow-x:hidden;
     }
 
-    /* ✅ 전체 페이지 핑크 베이스 그라 (아래로 갈수록 옅어짐) */
     .page-bg{
-  position:fixed;
-  inset:0;
-  z-index:0;
-  pointer-events:none;
-
-  background:
-    radial-gradient(1100px 680px at 50% 10%,
-      rgba(255, 120, 190, .22) 0%,
-      rgba(255, 190, 225, .14) 45%,
-      rgba(255, 255, 255, 0) 78%
-    ),
-    linear-gradient(to bottom,
-      rgba(255, 170, 220, .30) 0%,
-      rgba(255, 215, 240, .18) 40%,
-      rgba(255, 245, 252, .10) 72%,
-      rgba(255, 255, 255, 1) 100%
-    );
+      position:fixed; inset:0; z-index:0; pointer-events:none;
+      background:
+        radial-gradient(1100px 680px at 50% 10%,
+          rgba(255, 120, 190, .22) 0%,
+          rgba(255, 190, 225, .14) 45%,
+          rgba(255, 255, 255, 0) 78%
+        ),
+        linear-gradient(to bottom,
+          rgba(255, 170, 220, .30) 0%,
+          rgba(255, 215, 240, .18) 40%,
+          rgba(255, 245, 252, .10) 72%,
+          rgba(255, 255, 255, 1) 100%
+        );
     }
 
-    /* ✅ 상단 배경 이미지: 화면 너비 딱 맞게 + 아래로 투명 그라(핑크 베이스와 자연 연결) */
     .hero{
-      position:relative;
-      z-index:1;
-      width:100%;
-      height:min(48vh, 220px);
-      min-height: 220px;
-      display:flex;
-      align-items:flex-end;
-      justify-content:center;
-      padding: 22px 16px 16px;
-      overflow:hidden;
+      position:relative; z-index:1; width:100%;
+      height:min(48vh, 220px); min-height:220px;
+      display:flex; align-items:flex-end; justify-content:center;
+      padding: 22px 16px 16px; overflow:hidden;
     }
     .hero::before{
-      content:"";
-      position:absolute;
-      inset:0;
-      background:
-        url("./bg.png") center / cover no-repeat;
+      content:""; position:absolute; inset:0;
+      background:url("./bg.png") center / cover no-repeat;
       filter:saturate(1.03) contrast(1.02);
-      transform: translateZ(0);
     }
-    /* 이미지 아래쪽이 점점 투명해지며 핑크 베이스로 연결 */
-    .hero::after{
-  content:"";
-  position:absolute;
-  inset:0;
-  pointer-events:none;
-
-  
-    }
-
-    /* ✅ 타이틀: 배경 위에 바로 올라가게(별도 div로 감싸지 않음) */
     .hero-title{
-      position:relative;
-      z-index:2;
-      text-align:center;
-      color: rgba(15,15,18,.90);
-      width:min(980px, 100%);
-      padding: 0 10px 6px;
+      position:relative; z-index:2;
+      text-align:center; width:min(980px, 100%);
+      padding: 0 10px 6px; color: rgba(15,15,18,.90);
     }
     .hero-title h1{
-      margin:30px;
-      font-weight: 900;
-      letter-spacing: -1px;
+      margin:30px; font-weight:900; letter-spacing:-1px;
       font-size: clamp(22px, 5.2vw, 34px);
       text-shadow: 0 2px 18px rgba(255,255,255,.55);
     }
-    .hero-title p{
-      margin:10px 0 0;
-      font-weight: 800;
-      letter-spacing: -.3px;
-      color: rgba(20,20,24,.62);
-      font-size: clamp(13px, 3.6vw, 16px);
-      text-shadow: 0 2px 14px rgba(255,255,255,.50);
-    }
 
     .wrap{
-      position:relative;
-      z-index:2;
-      width:min(980px, 100%);
-      margin: -18px auto 32px;
-      padding: 0 16px 24px;
-    }
-
-    /* ✅ 큰 카드(목업 느낌) */
-    .shell{
-      border-radius: calc(var(--radius) + 6px);
-      background: rgba(255,255,255,.18);
-      border: 1px solid rgba(255,255,255,.28);
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      overflow:hidden;
-    }
-
-    .content{
-      padding: 14px;
+      position:relative; z-index:2; width:min(980px, 100%);
+      margin:-18px auto 32px; padding: 0 16px 24px;
     }
 
     .card{
@@ -146,216 +79,130 @@
       -webkit-backdrop-filter: blur(10px);
       overflow:hidden;
     }
-
     .card + .card{ margin-top: 14px; }
-
     .card-inner{ padding: 18px; }
 
     .sec-title{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      margin: 0 0 14px;
-      font-weight: 900;
-      letter-spacing: -0.6px;
-      font-size: 18px;
+      display:flex; align-items:center; gap:10px;
+      margin:0 0 14px; font-weight:900; letter-spacing:-0.6px;
+      font-size:18px;
     }
     .badge{
-      margin-left: 6px;
-      font-size: 12px;
-      font-weight: 900;
-      padding: 4px 10px;
-      border-radius: 999px;
+      margin-left: 6px; font-size: 12px; font-weight: 900;
+      padding: 4px 10px; border-radius: 999px;
       color: rgba(140, 20, 95, .92);
       background: rgba(255, 120, 190, .14);
       border: 1px solid rgba(255, 120, 190, .18);
       white-space:nowrap;
     }
 
-    label{
-      display:block;
-      font-weight: 850;
-      margin-top: 12px;
-      letter-spacing: -.2px;
-    }
-    .help{
-      margin: 8px 0 0;
-      font-size: 13px;
-      color: var(--muted);
-      font-weight: 700;
-    }
+    label{ display:block; font-weight: 850; margin-top: 12px; letter-spacing: -.2px; }
+    .help{ margin: 8px 0 0; font-size: 13px; color: var(--muted); font-weight: 700; }
 
     input, select{
-      width:100%;
-      margin-top: 8px;
-      padding: 14px 14px;
-      border-radius: 16px;
-      border: 1px solid rgba(0,0,0,.10);
-      background: var(--field);
-      outline: none;
-      font-size: 15px;
-      font-weight: 800;
-      color: rgba(18,18,22,.92);
+      width:100%; margin-top:8px; padding:14px 14px;
+      border-radius:16px; border:1px solid rgba(0,0,0,.10);
+      background: var(--field); outline:none;
+      font-size:15px; font-weight:800; color: rgba(18,18,22,.92);
       box-shadow: 0 1px 0 rgba(255,255,255,.65) inset;
     }
-    input::placeholder{ color: rgba(0,0,0,.34); font-weight: 800; }
-    select:disabled, input:disabled{
-      opacity: .55;
-      background: rgba(245,245,246,.85);
-    }
-    input:focus, select:focus{
-      border-color: rgba(255, 95, 170, .42);
-      box-shadow: 0 0 0 4px rgba(255, 120, 190, .12);
-    }
+    input::placeholder{ color: rgba(0,0,0,.34); font-weight:800; }
+    select:disabled, input:disabled{ opacity:.55; background: rgba(245,245,246,.85); }
+    input:focus, select:focus{ border-color: rgba(255, 95, 170, .42); box-shadow: 0 0 0 4px rgba(255, 120, 190, .12); }
 
-    .radio-row{
-      display:flex;
-      gap:6px;
-      margin-top: 10px;
-      flex-wrap: nowrap;
-      font-size: 7pt;
-    }
+    .radio-row{ display:flex; gap:6px; margin-top:10px; flex-wrap:nowrap; font-size: 11px; }
     .radio-pill{
-      flex: 1 1 auto;
-      min-width: 50px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      gap:6px;
-      padding: 8px 8px;
-      border-radius: 999px;
-      border: 1px solid rgba(0,0,0,.10);
-      background: rgba(255,255,255,.92);
-      font-weight: 700;
-      letter-spacing: -.2px;
-      cursor:pointer;
-      user-select:none;
+      flex:1 1 auto; min-width: 70px;
+      display:flex; align-items:center; justify-content:center; gap:6px;
+      padding: 10px 10px; border-radius:999px;
+      border:1px solid rgba(0,0,0,.10); background: rgba(255,255,255,.92);
+      font-weight: 800; cursor:pointer; user-select:none; white-space:nowrap;
     }
-    .radio-pill input{
-      width:18px;
-      height:18px;
-      margin:0;
-      padding:0;
-      border-radius:999px;
-      box-shadow:none;
-    }
+    .radio-pill input{ width:18px; height:18px; margin:0; padding:0; border-radius:999px; box-shadow:none; }
 
-    /* ✅ 개인정보수집: 체크박스-텍스트 붙이기 */
-    .consent{
-      margin-top: 14px;
-      padding: 14px;
+    .options-box{
+      margin-top: 10px;
+      padding: 10px 12px;
       border-radius: 18px;
       background: rgba(255,255,255,.78);
       border: 1px solid rgba(0,0,0,.08);
     }
-    .consent-row{
+    .options-box.is-hidden{ display:none; }
+
+    .opt-grid{
       display:flex;
-      align-items:flex-start;
-      gap:10px;            /* ✅ 거리 좁힘 */
+      flex-direction:column;      /* 한 줄에 하나 */
+      gap:2px;                    /* ✅ 간격 줄임 */
+      margin-top: 6px;
+    }
+    .opt-chip{
+      width:100%;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      padding: 2px 0;            /* ✅ 위아래 간격 더 줄임 */
+      border:none;
+      background: transparent;
+      font-size: 10pt;
+      font-weight: 650;
       cursor:pointer;
       user-select:none;
     }
-    .consent-row input{
-      width:20px;
-      height:20px;
-      margin: 2px 0 0;     /* ✅ 텍스트와 수평 맞춤 */
-      padding:0;
-      box-shadow:none;
-    }
-    .consent strong{
-      display:block;
-      font-weight: 950;
-      letter-spacing: -.3px;
-      margin-bottom: 6px;
-    }
-    .consent small{
-      display:block;
-      color: var(--muted);
-      font-weight: 750;
-      line-height: 1.35;
-    }
+    .opt-chip input{ width:18px; height:18px; margin:0; padding:0; box-shadow:none; }
 
-    /* ✅ 버튼: 눈에 띄지만 단정한 그라 */
-    .cta{
-      margin-top: 14px;
-      padding: 18px 16px 20px;
-      text-align:center;
+    .consent{
+      margin-top: 14px; padding: 14px;
+      border-radius: 18px; background: rgba(255,255,255,.78);
+      border: 1px solid rgba(0,0,0,.08);
     }
+    .consent-row{
+      display:flex; align-items:flex-start; gap:10px;
+      cursor:pointer; user-select:none;
+    }
+    .consent-row input{ width:20px; height:20px; margin: 2px 0 0; padding:0; box-shadow:none; }
+    .consent strong{ display:block; font-weight:950; letter-spacing:-.3px; margin-bottom:6px; }
+    .consent small{ display:block; color: var(--muted); font-weight:750; line-height:1.35; }
+
+    .cta{ margin-top:14px; padding: 18px 16px 20px; text-align:center; }
     .btn{
-  width:100%;
-  border:0;
-  border-radius:999px;
-  padding:18px 18px;
-  font-size:18px;
-  font-weight:950;
-  letter-spacing:-0.4px;
-  color:#fff;
-  cursor:pointer;
-
-  background: linear-gradient(
-    135deg,
-    #ff3d9a 10%,     /* 🔥 선명한 핫핑크 */
-    #ff5fb3 50%,
-    #c77dff 80%,
-    #9b5cff 100%   /* 🔥 딥 퍼플 */
-  );
-
-  box-shadow:
-    0 18px 40px rgba(255, 61, 154, .35),
-    0 12px 30px rgba(155, 92, 255, .35);
-
-  position:relative;
-  overflow:hidden;
-}
+      width:100%; border:0; border-radius:999px;
+      padding:18px 18px; font-size:18px; font-weight:950; letter-spacing:-0.4px;
+      color:#fff; cursor:pointer;
+      background: linear-gradient(135deg,#ff3d9a 10%,#ff5fb3 50%,#c77dff 80%,#9b5cff 100%);
+      box-shadow: 0 18px 40px rgba(255, 61, 154, .35), 0 12px 30px rgba(155, 92, 255, .35);
+      position:relative; overflow:hidden;
+    }
     .btn::after{
-      content:"";
-      position:absolute;
-      inset:0;
-      background:
-        radial-gradient(600px 120px at 30% 0%,
-          rgba(255,255,255,.35) 0%,
-          rgba(255,255,255,0) 60%
-        );
-      opacity:.65;
-      pointer-events:none;
+      content:""; position:absolute; inset:0;
+      background: radial-gradient(600px 120px at 30% 0%, rgba(255,255,255,.35) 0%, rgba(255,255,255,0) 60%);
+      opacity:.65; pointer-events:none;
     }
     .btn:active{ transform: translateY(1px); }
-    .btn:disabled{
-      cursor:not-allowed;
-      opacity:.45;
-      box-shadow:none;
-    }
+    .btn:disabled{ cursor:not-allowed; opacity:.45; box-shadow:none; }
 
     .footer-note{
-      margin-top: 10px;
-      color: rgba(0,0,0,.42);
-      font-weight: 800;
-      font-size: 13px;
+      margin-top: 10px; color: rgba(0,0,0,.42);
+      font-weight: 800; font-size: 13px; line-height: 1.35;
     }
 
-    /* 토스트 */
     .toast{
-      position: fixed;
-      left: 50%;
-      bottom: 18px;
+      position: fixed; left: 50%; bottom: 18px;
       transform: translateX(-50%);
       background: rgba(20,20,22,.86);
-      color: #fff;
-      padding: 10px 14px;
-      border-radius: 999px;
-      font-weight: 850;
-      font-size: 13px;
-      opacity: 0;
-      pointer-events: none;
+      color: #fff; padding: 10px 14px; border-radius: 999px;
+      font-weight: 850; font-size: 13px;
+      opacity: 0; pointer-events: none;
       transition: .18s ease;
       z-index: 50;
+      max-width: min(92vw, 720px);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
     .toast.show{ opacity: 1; transform: translateX(-50%) translateY(-6px); }
 
-    /* 작은 화면에서 여백만 예쁘게 */
     @media (max-width: 420px){
-      .content{ padding: 12px; }
       .card-inner{ padding: 16px; }
+      .radio-row{ font-size: 10px; }
+      .radio-pill{ min-width: 62px; padding: 9px 9px; }
     }
   </style>
 </head>
@@ -370,565 +217,620 @@
   </header>
 
   <main class="wrap">
+    <!-- 상품 유형 -->
+    <div class="card">
+      <div class="card-inner">
+        <div class="sec-title">상품 유형 <span class="badge">필수</span></div>
+        <div class="radio-row" role="radiogroup" aria-label="상품 유형">
+          <label class="radio-pill">
+            <input type="radio" name="dealType" value="렌트" checked />
+            렌트
+          </label>
+          <label class="radio-pill">
+            <input type="radio" name="dealType" value="리스" />
+            리스
+          </label>
+        </div>
+      </div>
+    </div>
 
+    <!-- 차량 선택 -->
+    <div class="card">
+      <div class="card-inner">
+        <div class="sec-title">차량 선택 <span class="badge">필수</span></div>
 
-        <!-- ✅ 파트 1: 차량 선택 -->
-        <div class="card">
-          
-          <div class="card-inner">
-            <div class="sec-title">상품 유형 <span class="badge">필수</span></div>
-<div class="radio-row" role="radiogroup" aria-label="상품 유형">
-  <label class="radio-pill">
-    <input type="radio" name="productType" value="렌트" checked />
-    렌트
-  </label>
-  <label class="radio-pill">
-    <input type="radio" name="productType" value="리스" />
-    리스
-  </label>
-</div> </div>
-          </div>
-          <div class="card">
-            <div class="card-inner">
-            <div class="sec-title">차량 선택 <span class="badge">필수</span></div>
+        <label for="maker">제조사</label>
+        <select id="maker">
+          <option value="">제조사를 선택해주세요</option>
+        </select>
 
-            <label for="maker">제조사</label>
-            <select id="maker">
-              <option value="">제조사를 선택해주세요</option>
-            </select>
+        <label for="modelInput">차종</label>
+        <input id="modelInput" list="modelList" placeholder="차종을 선택하거나 검색해요" disabled />
+        <datalist id="modelList"></datalist>
 
-            <label for="modelInput">차종</label>
-<input id="modelInput" list="modelList" placeholder="차종을 선택하거나 검색해요" disabled />
-<datalist id="modelList"></datalist>
+        <label for="grade">차량 등급(트림)</label>
+        <select id="grade" disabled>
+          <option value="">차량 등급을 선택해주세요</option>
+        </select>
 
-            <label for="grade">차량 등급</label>
-            <select id="grade" disabled>
-              <option value="">차량 등급을 선택해주세요</option>
-            </select>
-
-            <label for="options">옵션</label>
-            <select id="options" disabled>
-              <option value="">옵션을 선택해주세요</option>
-            </select>
-
-            <p class="help">※ 제조사 → 차종 → 등급 → 옵션 순서로 선택됩니다.</p>
-          </div>
-        </div></div>
-
-        <!-- ✅ 파트 2: 신청 정보 -->
-        <div class="card">
-          <div class="card-inner">
-            <div class="sec-title">신청 정보 <span class="badge">필수</span></div>
-
-            <label>고객 유형</label>
-            <div class="radio-row" role="radiogroup" aria-label="고객 유형">
-              <label class="radio-pill">
-                <input type="radio" name="customerType" value="개인" checked />
-                개인
-              </label>
-              <label class="radio-pill">
-                <input type="radio" name="customerType" value="개인사업자" />
-                개인사업자
-              </label>
-              <label class="radio-pill">
-                <input type="radio" name="customerType" value="법인" />
-                법인
-              </label>
-            </div>
-
-            <label for="name">성명</label>
-            <input id="name" placeholder="예) 홍길동" autocomplete="name" />
-
-            <label for="phone">연락처</label>
-            <input id="phone" placeholder="예) 010-1234-5678" inputmode="tel" autocomplete="tel" />
-
-            <label for="deliveryTime">차량 인도 시기</label>
-            <input id="deliveryTime" placeholder="예) 가능한 빨리 / 2월 중순 / 미정" />
-            
-            <label for="deliveryArea">차량 인도 지역</label>
-<input id="deliveryArea" placeholder="예) 서울 / 경기 남양주" />
-
-            <label for="kakao">카카오톡 아이디 (선택)</label>
-            <input id="kakao" placeholder="예) melody7017" autocomplete="off" />
-
-            <div class="consent">
-              <label class="consent-row" for="agree">
-                <input id="agree" type="checkbox" />
-                <div>
-                  <strong>[필수] 개인정보 수집·이용에 동의합니다.</strong>
-                  <small>
-                    수집: 성명, 연락처, 카카오톡 ID(선택), 차량 선택 정보 / 목적: 견적·상담 안내 /
-                    보유: 상담 완료 후 1년
-                  </small>
-                </div>
-              </label>
-            </div>
-
-            <div class="cta">
-              <button id="submitBtn" class="btn" disabled>간단 견적 요청하기</button>
-              <div class="footer-note">문자 또는 카카오톡으로 안내 드립니다.<br>
-                문자는 응대가 지연될 수 있습니다.
-              </div>
-            </div>
-          </div>
+ 
+        <div id="optionsBox" class="options-box is-hidden">
+                  <label>옵션 (복수 선택 가능)</label>
+          <div class="help" id="optionsHint" style="margin:0">트림을 선택하면 옵션이 표시됩니다.</div>
+          <div id="optionsGrid" class="opt-grid"></div>
         </div>
 
+        <p class="help">※ 제조사 → 차종 → 트림 → 옵션 순서로 선택됩니다.</p>
       </div>
- 
- 
-    
+    </div>
+
+    <!-- 신청 정보 -->
+    <div class="card">
+      <div class="card-inner">
+        <div class="sec-title">신청 정보 <span class="badge">필수</span></div>
+
+        <label>고객 유형</label>
+        <div class="radio-row" role="radiogroup" aria-label="고객 유형">
+          <label class="radio-pill">
+            <input type="radio" name="customerType" value="개인" checked />
+            개인
+          </label>
+          <label class="radio-pill">
+            <input type="radio" name="customerType" value="개인사업자" />
+            개인사업자
+          </label>
+          <label class="radio-pill">
+            <input type="radio" name="customerType" value="법인" />
+            법인
+          </label>
+        </div>
+
+        <label for="name">성명</label>
+        <input id="name" placeholder="예) 홍길동" autocomplete="name" />
+
+        <label for="phone">연락처</label>
+        <input id="phone" placeholder="예) 010-1234-5678" inputmode="tel" autocomplete="tel" />
+
+        <label for="deliveryTime">차량 인도 시기</label>
+        <input id="deliveryTime" placeholder="예) 가능한 빨리 / 2월 중순 / 미정" />
+
+        <label for="deliveryArea">차량 인도 지역</label>
+        <input id="deliveryArea" placeholder="예) 서울 / 경기 남양주" />
+
+        <label for="kakaoId">카카오톡 아이디 (선택)</label>
+        <input id="kakaoId" placeholder="예) melody7017" autocomplete="off" />
+
+        <div class="consent">
+          <label class="consent-row" for="consent">
+            <input id="consent" type="checkbox" />
+            <div>
+              <strong>[필수] 개인정보 수집·이용에 동의합니다.</strong>
+              <small>
+                수집: 성명, 연락처, 카카오톡 ID(선택), 차량 선택 정보 / 목적: 견적·상담 안내 /
+                보유기간: 상담 완료 후 60일
+              </small>
+            </div>
+          </label>
+        </div>
+
+        <div class="cta">
+          <button id="submitBtn" class="btn" disabled>견적 요청하기</button>
+          <div class="footer-note">
+            문자 또는 카카오톡으로 안내 드립니다.<br>
+            문자는 응대가 지연될 수 있습니다.
+          </div>
+        </div>
+      </div>
+    </div>
   </main>
 
   <div id="toast" class="toast" aria-live="polite"></div>
 
   <script>
-/***************************************************************
- * ✅ 설정: Apps Script Web App URL
- ***************************************************************/
-const API_BASE = "https://script.google.com/macros/s/AKfycbxpYN2m_14RHMJtHgSHj4t315mLlNJYJti9tZniR0iyb4-WuqeR9dc0GSFwjM_NG7m8-Q/exec";
+    /***************************************************************
+     * ✅ 설정: Apps Script Web App URL
+     ***************************************************************/
+    const API_BASE = "https://script.google.com/macros/s/AKfycbxpYN2m_14RHMJtHgSHj4t315mLlNJYJti9tZniR0iyb4-WuqeR9dc0GSFwjM_NG7m8-Q/exec";
 
-/***************************************************************
- * ✅ DOM (HTML id와 1:1로 맞춤)
- ***************************************************************/
-const elMaker       = document.getElementById("maker");
-const elModelInput  = document.getElementById("modelInput");     // ✅ input
-const elModelList   = document.getElementById("modelList");      // ✅ datalist
-const elGrade       = document.getElementById("grade");
-const elOptions     = document.getElementById("options");
+    /***************************************************************
+     * ✅ DOM
+     ***************************************************************/
+    const elMaker      = document.getElementById("maker");
+    const elModelInput = document.getElementById("modelInput");
+    const elModelList  = document.getElementById("modelList");
+    const elGrade      = document.getElementById("grade");
 
-const elName        = document.getElementById("name");
-const elPhone       = document.getElementById("phone");
-const elDelivery    = document.getElementById("deliveryTime");
-const elRegion      = document.getElementById("deliveryArea"); // ✅ 지역
-const elKakao       = document.getElementById("kakao");
-const elAgree       = document.getElementById("agree");
-const elSubmit      = document.getElementById("submitBtn");
-const elToast       = document.getElementById("toast");
+    const elOptionsBox  = document.getElementById("optionsBox");
+    const elOptionsHint = document.getElementById("optionsHint");
+    const elOptionsGrid = document.getElementById("optionsGrid");
 
-/***************************************************************
- * ✅ 상태
- ***************************************************************/
-let catalogRows = []; // {maker, model, grade, option}
-let makers = [];
-let modelsByMaker = new Map();         // maker -> [model...]
-let gradesByMakerModel = new Map();    // maker||model -> [grade...]
-let optionsByTriple = new Map();       // maker||model||grade -> [option...]
+    const elName         = document.getElementById("name");
+    const elPhone        = document.getElementById("phone");
+    const elDeliveryTime = document.getElementById("deliveryTime");
+    const elDeliveryArea = document.getElementById("deliveryArea");
+    const elKakaoId      = document.getElementById("kakaoId");
+    const elConsent      = document.getElementById("consent");
 
-/***************************************************************
- * ✅ 유틸
- ***************************************************************/
-function toast(msg){
-  if (!elToast) { alert(msg); return; }
-  elToast.textContent = msg;
-  elToast.classList.add("show");
-  clearTimeout(toast._t);
-  toast._t = setTimeout(()=> elToast.classList.remove("show"), 1700);
+    const elSubmit = document.getElementById("submitBtn");
+    const elToast  = document.getElementById("toast");
+
+    /***************************************************************
+     * ✅ 상태(카탈로그)
+     ***************************************************************/
+    let catalogRows = []; // { maker, model, grade, option }
+    let makers = [];
+    const modelsByMaker = new Map();           // maker -> Set(model)
+    const gradesByMakerModel = new Map();      // maker||model -> Set(grade)
+    const optionsByTriple = new Map();         // maker||model||grade -> Set(option)
+
+    /***************************************************************
+     * ✅ 유틸
+     ***************************************************************/
+    const sleep = (ms)=> new Promise(r=>setTimeout(r, ms));
+
+    function toast(msg){
+      elToast.textContent = msg;
+      elToast.classList.add("show");
+      clearTimeout(toast._t);
+      toast._t = setTimeout(()=> elToast.classList.remove("show"), 1700);
+    }
+
+    function norm(s){
+      return (s ?? "").toString().replace(/\s+/g, " ").trim();
+    }
+    function key2(a,b){ return `${a}||${b}`; }
+    function key3(a,b,c){ return `${a}||${b}||${c}`; }
+
+    function phoneFormatLoose(v){
+      const d = (v ?? "").toString().replace(/[^\d]/g,"").slice(0,11);
+      if (d.length <= 3) return d;
+      if (d.length <= 7) return `${d.slice(0,3)}-${d.slice(3)}`;
+      return `${d.slice(0,3)}-${d.slice(3,7)}-${d.slice(7)}`;
+    }
+
+    function getCheckedValue(name, fallback){
+      const r = document.querySelector(`input[name="${name}"]:checked`);
+      return r ? r.value : fallback;
+    }
+
+    function fillSelect(selectEl, items, placeholder){
+      selectEl.innerHTML = "";
+      const opt0 = document.createElement("option");
+      opt0.value = "";
+      opt0.textContent = placeholder;
+      selectEl.appendChild(opt0);
+
+      for (const it of items){
+        const o = document.createElement("option");
+        o.value = it;
+        o.textContent = it;
+        selectEl.appendChild(o);
+      }
+    }
+
+    function fillDatalist(datalistEl, items){
+      datalistEl.innerHTML = "";
+      const uniq = [...new Set(items)].filter(Boolean);
+      for (const v of uniq){
+        const opt = document.createElement("option");
+        opt.value = v;
+        datalistEl.appendChild(opt);
+      }
+    }
+
+    function clearOptionsUI(){
+      elOptionsGrid.innerHTML = "";
+    }
+    function hideOptionsBox(){
+      clearOptionsUI();
+      if (elOptionsHint) elOptionsHint.style.display = "block";
+      elOptionsBox.classList.add("is-hidden");
+    }
+    function showOptionsBox(){
+      if (elOptionsHint) elOptionsHint.style.display = "none";
+      elOptionsBox.classList.remove("is-hidden");
+    }
+
+    function renderOptions(optionsArr){
+      showOptionsBox();
+      clearOptionsUI();
+
+      const base = Array.isArray(optionsArr) ? optionsArr : [];
+      const uniq = [...new Set(["무옵션", ...base.map(norm).filter(Boolean)])];
+
+      for (const optName of uniq){
+        const id = `opt_${Math.random().toString(16).slice(2)}`;
+
+        const label = document.createElement("label");
+        label.className = "opt-chip";
+        label.setAttribute("for", id);
+
+        const input = document.createElement("input");
+        input.type = "checkbox";
+        input.id = id;
+        input.value = optName;
+        input.name = "optionsChk";
+
+        input.addEventListener("change", ()=>{
+          const v = input.value;
+
+          if (v === "무옵션" && input.checked){
+            document.querySelectorAll('input[name="optionsChk"]').forEach(ch=>{
+              if (ch.value !== "무옵션") ch.checked = false;
+            });
+          }
+          if (v !== "무옵션" && input.checked){
+            const none = [...document.querySelectorAll('input[name="optionsChk"]')].find(ch=>ch.value==="무옵션");
+            if (none) none.checked = false;
+          }
+
+          validate();
+        });
+
+        const text = document.createElement("span");
+        text.textContent = optName;
+
+        label.appendChild(input);
+        label.appendChild(text);
+        elOptionsGrid.appendChild(label);
+      }
+    }
+
+    function getSelectedOptionString(){
+  const checked = [...document.querySelectorAll('input[name="optionsChk"]:checked')]
+    .map(x => norm(x.value))
+    .filter(Boolean);
+
+  // 아무것도 선택 안 하면 무옵션
+  if (checked.length === 0) return "무옵션";
+
+  // 무옵션만 선택이면 무옵션
+  if (checked.length === 1 && checked[0] === "무옵션") return "무옵션";
+
+  // 무옵션이 섞이면 제거
+  const cleaned = checked.filter(x => x !== "무옵션");
+
+  // ✅ / 로 구분해서 반환
+  return cleaned.length ? cleaned.join(" / ") : "무옵션";
 }
 
-function norm(s){ return (s ?? "").toString().trim(); }
-function key2(a,b){ return `${a}||${b}`; }
-function key3(a,b,c){ return `${a}||${b}||${c}`; }
+    function findExactModel(maker, typed){
+      const t = norm(typed);
+      if (!maker || !t) return "";
+      const list = [...(modelsByMaker.get(maker) ?? new Set())].map(norm);
+      const exact = list.find(x => x === t);
+      return exact || "";
+    }
 
-function setSelectOptions(select, items, placeholder){
-  if (!select) return;
-  select.innerHTML = "";
-  const opt0 = document.createElement("option");
-  opt0.value = "";
-  opt0.textContent = placeholder;
-  select.appendChild(opt0);
+    /***************************************************************
+     * ✅ 검증
+     ***************************************************************/
+    function validate(){
+      const maker = norm(elMaker.value);
+      const model = findExactModel(maker, elModelInput.value);
+      const grade = norm(elGrade.value);
 
-  for (const it of items){
-    const o = document.createElement("option");
-    o.value = it;
-    o.textContent = it;
-    select.appendChild(o);
-  }
-}
+      const ok =
+        !!maker &&
+        !!model &&
+        !!grade &&
+        !!norm(elName.value) &&
+        !!norm(elPhone.value) &&
+        !!norm(elDeliveryTime.value) &&
+        !!norm(elDeliveryArea.value) &&
+        !!elConsent.checked;
 
-function resetSelect(select, placeholder){
-  if (!select) return;
-  select.disabled = true;
-  setSelectOptions(select, [], placeholder);
-}
-function enableSelect(select){
-  if (!select) return;
-  select.disabled = false;
-}
+      elSubmit.disabled = !ok;
+      return ok;
+    }
 
-function setDatalistOptions(datalist, items){
-  if (!datalist) return;
-  datalist.innerHTML = "";
-  const frag = document.createDocumentFragment();
-  for (const it of items){
-    const opt = document.createElement("option");
-    opt.value = it;
-    frag.appendChild(opt);
-  }
-  datalist.appendChild(frag);
-}
+    /***************************************************************
+     * ✅ 카탈로그 불러오기
+     ***************************************************************/
+    async function fetchCatalog(){
+      const url = `${API_BASE}?action=catalog&_=${Date.now()}`;
 
-function resetModelInput(){
-  if (!elModelInput) return;
-  elModelInput.value = "";
-  elModelInput.disabled = true;
-  elModelInput.readOnly = true;   // ✅ 모바일에서 키보드 강제 방지 해제용(초기엔 잠금)
-  setDatalistOptions(elModelList, []);
-}
+      let res, text;
+      try{
+        res = await fetch(url, { method:"GET", cache:"no-store" });
+        text = await res.text();
+      }catch(e){
+        console.error(e);
+        toast("카탈로그 호출 실패(네트워크/권한)");
+        return;
+      }
 
-function enableModelInput(){
-  if (!elModelInput) return;
-  elModelInput.disabled = false;
-  elModelInput.readOnly = false;  // ✅ 타이핑 가능
-  elModelInput.blur();            // ✅ iOS/안드로이드에서 상태 갱신 꼬임 방지
-}
+      let data;
+      try{
+        data = JSON.parse(text);
+      }catch(e){
+        console.error("NOT JSON:", text);
+        toast("카탈로그 응답이 JSON이 아님(웹앱 배포/권한/출력 확인)");
+        alert(text.slice(0, 600));
+        return;
+      }
 
-function phoneFormatLoose(v){
-  const d = v.replace(/[^\d]/g,"").slice(0,11);
-  if (d.length <= 3) return d;
-  if (d.length <= 7) return `${d.slice(0,3)}-${d.slice(3)}`;
-  return `${d.slice(0,3)}-${d.slice(3,7)}-${d.slice(7)}`;
-}
+      const rows = Array.isArray(data) ? data : (data?.data ?? data?.rows ?? []);
+      if (!Array.isArray(rows) || rows.length === 0){
+        console.warn("EMPTY payload:", data);
+        toast("카탈로그가 비어있어요(Models 시트/데이터 확인)");
+        alert(JSON.stringify(data).slice(0, 600));
+        return;
+      }
 
-function getCheckedValue(name, fallback){
-  const r = document.querySelector(`input[name="${name}"]:checked`);
-  return r ? r.value : fallback;
-}
-function getCustomerType(){ return getCheckedValue("customerType", "개인"); }
-function getProductType(){ return getCheckedValue("productType", "렌트"); }
+      // ✅ option은 비어있을 수도 있으니(무옵션 트림) option은 필수로 걸지 않음
+      catalogRows = rows.map(r => ({
+        maker:  norm(r.maker ?? r.제조사 ?? r.Maker),
+        model:  norm(r.model ?? r.차종 ?? r.Model),
+        grade:  norm(r.grade ?? r.트림 ?? r.등급 ?? r.Trim),
+        option: norm(r.option ?? r.options ?? r.옵션 ?? r.Option)
+      })).filter(r => r.maker && r.model && r.grade);
 
-/**
- * ✅ 서버가 JSON 아닌 걸 주면(오류 HTML 등) 원문을 보여주기 위한 함수
- */
-async function fetchJsonStrict(url, options){
-  const res = await fetch(url, options);
-  const text = await res.text();
-  try{
-    return { ok: res.ok, json: JSON.parse(text), status: res.status, raw: text };
-  }catch(e){
-    return { ok: false, json: null, status: res.status, raw: text, parseError: e };
-  }
-}
+      if (catalogRows.length === 0){
+        toast("Models 컬럼명이 안 맞아요. maker/model/grade/option 확인!");
+        return;
+      }
 
-/***************************************************************
- * ✅ 검증
- * - 옵션은 필수 아님 (빈값이면 '옵션 없음'으로 저장)
- * - 지역은 "받아야 한다" 했으니 여기서는 필수로 처리해둠
- ***************************************************************/
-function validate(){
-  const ok =
-    norm(elMaker?.value) &&
-    norm(elModelInput?.value) &&
-    norm(elGrade?.value) &&
-    norm(elName?.value) &&
-    norm(elPhone?.value) &&
-    norm(elDelivery?.value) &&
-    norm(elRegion?.value) &&     // ✅ 지역 필수
-    !!elAgree?.checked;
+      buildIndexes();
+      hydrateMaker();
+      toast("차량 목록을 불러왔어요.");
+    }
 
-  if (elSubmit) elSubmit.disabled = !ok;
-  return !!ok;
-}
+    function buildIndexes(){
+      makers = [];
+      modelsByMaker.clear();
+      gradesByMakerModel.clear();
+      optionsByTriple.clear();
 
-/***************************************************************
- * ✅ 카탈로그 로드 + 인덱스 빌드
- * 기대 행 필드: maker/model/grade/option (또는 한글 헤더)
- ***************************************************************/
-async function fetchCatalog(){
-  const url = `${API_BASE}?action=catalog&_=${Date.now()}`;
+      const makerSet = new Set();
 
-  let r;
-  try{
-    r = await fetchJsonStrict(url, { method:"GET", cache:"no-store" });
-  }catch(e){
-    console.error(e);
-    toast("카탈로그 호출 실패(네트워크/권한)");
-    return;
-  }
+      for (const r of catalogRows){
+        makerSet.add(r.maker);
 
-  if (!r.json){
-    console.error("Catalog raw:", r.raw);
-    toast("카탈로그 응답이 JSON이 아님. (웹앱 배포/권한/응답 확인)");
-    alert((r.raw || "").slice(0, 700));
-    return;
-  }
+        if (!modelsByMaker.has(r.maker)) modelsByMaker.set(r.maker, new Set());
+        modelsByMaker.get(r.maker).add(r.model);
 
-  const data = r.json;
-  const rows = Array.isArray(data) ? data : (data?.data ?? data?.rows ?? []);
-  if (!Array.isArray(rows) || rows.length === 0){
-    console.warn("catalog payload:", data);
-    toast("카탈로그 데이터가 비어있어요. (Models 시트/데이터/권한 확인)");
-    alert(JSON.stringify(data).slice(0, 700));
-    return;
-  }
+        const k2 = key2(r.maker, r.model);
+        if (!gradesByMakerModel.has(k2)) gradesByMakerModel.set(k2, new Set());
+        gradesByMakerModel.get(k2).add(r.grade);
 
-  // 헤더 방어: 영어/한글 둘 다 받기
-  catalogRows = rows.map(x => ({
-    maker:  norm(x.maker ?? x.제조사 ?? x.제조사명 ?? x.Maker),
-    model:  norm(x.model ?? x.차종 ?? x.모델 ?? x.Model),
-    grade:  norm(x.grade ?? x.등급 ?? x.트림 ?? x.Trim ?? x.차량등급),
-    option: norm(x.option ?? x.옵션 ?? x.Options ?? x.Option),
-    raw: x
-  })).filter(r => r.maker && r.model && r.grade);
+        const k3 = key3(r.maker, r.model, r.grade);
+        if (!optionsByTriple.has(k3)) optionsByTriple.set(k3, new Set());
+        if (r.option) optionsByTriple.get(k3).add(r.option);
+      }
 
-  if (catalogRows.length === 0){
-    toast("필수 컬럼(제조사/차종/등급) 매핑이 안 됐어요. 헤더 확인!");
-    return;
-  }
+      makers = [...makerSet].sort((a,b)=>a.localeCompare(b,"ko"));
+    }
 
-  buildIndexes();
-  hydrateMaker();
-  toast("차량 목록을 불러왔어요.");
-}
+    function hydrateMaker(){
+      fillSelect(elMaker, makers, "제조사를 선택해주세요");
 
-function buildIndexes(){
-  makers = [];
-  modelsByMaker.clear();
-  gradesByMakerModel.clear();
-  optionsByTriple.clear();
+      elModelInput.value = "";
+      elModelInput.disabled = true;
+      fillDatalist(elModelList, []);
 
-  const makerSet = new Set();
+      elGrade.value = "";
+      elGrade.disabled = true;
+      fillSelect(elGrade, [], "차량 등급을 선택해주세요");
 
-  for (const r of catalogRows){
-    makerSet.add(r.maker);
+      hideOptionsBox();   // ✅ 트림 전엔 옵션 박스 숨김
+      validate();
+    }
 
-    if (!modelsByMaker.has(r.maker)) modelsByMaker.set(r.maker, new Set());
-    modelsByMaker.get(r.maker).add(r.model);
+    /***************************************************************
+     * ✅ 선택 체인
+     ***************************************************************/
+    elMaker.addEventListener("change", ()=>{
+      const maker = norm(elMaker.value);
 
-    const k2 = key2(r.maker, r.model);
-    if (!gradesByMakerModel.has(k2)) gradesByMakerModel.set(k2, new Set());
-    gradesByMakerModel.get(k2).add(r.grade);
+      // reset downstream
+      elModelInput.value = "";
+      elModelInput.disabled = true;
+      fillDatalist(elModelList, []);
 
-    const k3 = key3(r.maker, r.model, r.grade);
-    if (!optionsByTriple.has(k3)) optionsByTriple.set(k3, new Set());
-    if (r.option) optionsByTriple.get(k3).add(r.option);
-  }
+      elGrade.value = "";
+      elGrade.disabled = true;
+      fillSelect(elGrade, [], "차량 등급을 선택해주세요");
 
-  makers = [...makerSet].sort((a,b)=>a.localeCompare(b,"ko"));
+      hideOptionsBox();
 
-  for (const [m, set] of modelsByMaker){
-    modelsByMaker.set(m, [...set].sort((a,b)=>a.localeCompare(b,"ko")));
-  }
-  for (const [k, set] of gradesByMakerModel){
-    gradesByMakerModel.set(k, [...set].sort((a,b)=>a.localeCompare(b,"ko")));
-  }
-  for (const [k, set] of optionsByTriple){
-    optionsByTriple.set(k, [...set].sort((a,b)=>a.localeCompare(b,"ko")));
-  }
-}
+      if (!maker){ validate(); return; }
 
-function hydrateMaker(){
-  setSelectOptions(elMaker, makers, "제조사를 선택해주세요");
+      // maker별 차종만 datalist에 채우기
+      const models = [...(modelsByMaker.get(maker) ?? new Set())].sort((a,b)=>a.localeCompare(b,"ko"));
+      fillDatalist(elModelList, models);
 
-  // downstream reset
-  resetModelInput();
-  resetSelect(elGrade, "차량 등급을 선택해주세요");
+      // 타자 가능
+      elModelInput.disabled = false;
+      setTimeout(()=> elModelInput.focus(), 0);
 
-  // 옵션은 항상 선택 가능 + 기본 '옵션 없음'
-  setSelectOptions(elOptions, ["옵션 없음"], "옵션을 선택해주세요");
-  enableSelect(elOptions);
-  elOptions.value = "옵션 없음";
-
-  validate();
-}
-
-/***************************************************************
- * ✅ 체인: maker -> modelInput(datalist) -> grade -> options(선택)
- ***************************************************************/
-elMaker?.addEventListener("change", ()=>{
-  const maker = norm(elMaker.value);
-
-  resetModelInput();
-  resetSelect(elGrade, "차량 등급을 선택해주세요");
-
-  // 옵션 기본
-  setSelectOptions(elOptions, ["옵션 없음"], "옵션을 선택해주세요");
-  enableSelect(elOptions);
-  elOptions.value = "옵션 없음";
-
-  if (!maker){ validate(); return; }
-
-  const models = modelsByMaker.get(maker) ?? [];
-  setDatalistOptions(elModelList, models);
-  enableModelInput();
-  validate();
-});
-
-// 차종 입력/선택 시 등급 채움
-function onModelPicked(){
-  const maker = norm(elMaker.value);
-  const model = norm(elModelInput.value);
-
-  resetSelect(elGrade, "차량 등급을 선택해주세요");
-
-  // 옵션 기본
-  setSelectOptions(elOptions, ["옵션 없음"], "옵션을 선택해주세요");
-  enableSelect(elOptions);
-  elOptions.value = "옵션 없음";
-
-  if (!maker || !model){ validate(); return; }
-
-  // ✅ datalist 목록에 없는 값을 타이핑한 경우 막기(원하면 이 체크 제거 가능)
-  const allowed = (modelsByMaker.get(maker) ?? []).includes(model);
-  if (!allowed){
-    toast("목록에서 차종을 선택해주세요.");
-    elModelInput.value = "";
-    validate();
-    return;
-  }
-
-  const grades = gradesByMakerModel.get(key2(maker, model)) ?? [];
-  if (grades.length === 0){
-    toast("해당 차종의 등급이 없어요. (Models 데이터 확인)");
-    validate();
-    return;
-  }
-
-  setSelectOptions(elGrade, grades, "차량 등급을 선택해주세요");
-  enableSelect(elGrade);
-  validate();
-}
-
-// 모바일/브라우저마다 datalist 선택 이벤트가 달라서 input+change 둘 다 처리
-elModelInput?.addEventListener("input", onModelPicked);
-elModelInput?.addEventListener("change", onModelPicked);
-
-elGrade?.addEventListener("change", ()=>{
-  const maker = norm(elMaker.value);
-  const model = norm(elModelInput.value);
-  const grade = norm(elGrade.value);
-
-  // 옵션은 선택: 있으면 보여주고 없으면 '옵션 없음'만
-  const opts = (maker && model && grade)
-    ? (optionsByTriple.get(key3(maker, model, grade)) ?? [])
-    : [];
-
-  const list = opts.length ? ["옵션 없음", ...opts] : ["옵션 없음"];
-  setSelectOptions(elOptions, list, "옵션을 선택해주세요");
-  enableSelect(elOptions);
-  elOptions.value = "옵션 없음";
-
-  validate();
-});
-
-elOptions?.addEventListener("change", validate);
-elAgree?.addEventListener("change", validate);
-
-elName?.addEventListener("input", validate);
-elDelivery?.addEventListener("input", validate);
-elRegion?.addEventListener("input", validate);
-elKakao?.addEventListener("input", validate);
-
-elPhone?.addEventListener("input", (e)=>{
-  e.target.value = phoneFormatLoose(e.target.value);
-  validate();
-});
-
-// 라디오 변경 시 검증만 갱신
-document.querySelectorAll('input[name="productType"], input[name="customerType"]')
-  .forEach(el => el.addEventListener("change", validate));
-
-/***************************************************************
- * ✅ 제출
- ***************************************************************/
-async function submitApplication(){
-  if (!validate()){
-    toast("필수 항목을 확인해주세요.");
-    return;
-  }
-
-  elSubmit.disabled = true;
-  elSubmit.textContent = "전송 중…";
-
-  const payload = {
-    action: "apply",
-    productType: getProductType(),            // 렌트/리스
-    maker: norm(elMaker.value),
-    model: norm(elModelInput.value),          // ✅ input
-    grade: norm(elGrade.value),
-    option: norm(elOptions.value) || "옵션 없음", // ✅ 옵션 선택 아님
-    customerType: getCustomerType(),
-    name: norm(elName.value),
-    phone: norm(elPhone.value),
-    deliveryTime: norm(elDelivery.value),
-    deliveryArea: norm(elRegion.value),     // ✅ 지역
-    kakaoId: norm(elKakao.value),
-    agreed: true,
-    source: "github-pages",
-    ts: new Date().toISOString()
-  };
-
-  let ok = false;
-  let message = "접수 완료! 곧 안내드릴게요.";
-
-  // 1) POST(JSON)
-  try{
-    const r = await fetchJsonStrict(`${API_BASE}?action=apply`, {
-      method: "POST",
-      headers: { "Content-Type":"application/json" },
-      body: JSON.stringify(payload)
+      validate();
     });
 
-    if (r.json && (r.json.ok !== false)){
-      ok = true;
-      if (r.json.message) message = r.json.message;
-    }else{
-      throw new Error("POST failed / non-json");
-    }
-  }catch(e){
-    // 2) GET fallback
-    try{
-      const qs = new URLSearchParams(payload).toString();
-      const r2 = await fetchJsonStrict(`${API_BASE}?${qs}`, { method:"GET", cache:"no-store" });
+    function handleModelInput(){
+      const maker = norm(elMaker.value);
+      const model = findExactModel(maker, elModelInput.value);
 
-      if (r2.json && (r2.json.ok !== false)){
-        ok = true;
-        if (r2.json.message) message = r2.json.message;
-      }else{
-        throw new Error("GET failed / non-json");
+      // grade reset
+      elGrade.value = "";
+      elGrade.disabled = true;
+      fillSelect(elGrade, [], "차량 등급을 선택해주세요");
+
+      hideOptionsBox();
+
+      if (!maker || !model){ validate(); return; }
+
+      const grades = [...(gradesByMakerModel.get(key2(maker, model)) ?? new Set())]
+        .sort((a,b)=>a.localeCompare(b,"ko"));
+
+      fillSelect(elGrade, grades, "차량 등급을 선택해주세요");
+      elGrade.disabled = false;
+
+      validate();
+    }
+
+    // 모바일 대응: input + blur
+    elModelInput.addEventListener("input", handleModelInput);
+    elModelInput.addEventListener("blur", handleModelInput);
+
+    elGrade.addEventListener("change", ()=>{
+      const maker = norm(elMaker.value);
+      const model = findExactModel(maker, elModelInput.value);
+      const grade = norm(elGrade.value);
+
+      hideOptionsBox();
+
+      if (!maker || !model || !grade){ validate(); return; }
+
+      const opts = [...(optionsByTriple.get(key3(maker, model, grade)) ?? new Set())]
+        .map(norm).filter(Boolean);
+
+      // 옵션이 하나도 없으면(무옵션 트림) → 박스는 보여주고 "무옵션"만 제공
+      renderOptions(opts.length ? opts : []);
+      validate();
+    });
+
+    /***************************************************************
+     * ✅ 입력 변화들
+     ***************************************************************/
+    elName.addEventListener("input", validate);
+    elDeliveryTime.addEventListener("input", validate);
+    elDeliveryArea.addEventListener("input", validate);
+    elKakaoId.addEventListener("input", validate);
+    elConsent.addEventListener("change", validate);
+
+    elPhone.addEventListener("input", (e)=>{
+      e.target.value = phoneFormatLoose(e.target.value);
+      validate();
+    });
+
+    document.querySelectorAll('input[name="dealType"], input[name="customerType"]').forEach(el=>{
+      el.addEventListener("change", validate);
+    });
+
+    /***************************************************************
+     * ✅ 제출
+     * - 키 이름: grade, name, deliveryTime, deliveryArea
+     ***************************************************************/
+    async function fetchJsonLoose(url, options){
+      const res = await fetch(url, options);
+      const text = await res.text();
+      try{
+        return { ok: res.ok, data: JSON.parse(text), rawText: text, status: res.status };
+      }catch(e){
+        return { ok:false, data:null, rawText:text, status:res.status, parseError:e };
       }
-    }catch(e2){
-      console.error(e2);
     }
-  }
 
-  if (ok){
-    toast(message);
+    async function submitApplication(){
+      if (!validate()){
+        toast("필수 항목을 확인해주세요.");
+        return;
+      }
 
-    // 개인정보만 리셋
-    elName.value = "";
-    elPhone.value = "";
-    elDelivery.value = "";
-    elRegion.value = "";
-    elKakao.value = "";
-    elAgree.checked = false;
+      elSubmit.disabled = true;
+      elSubmit.textContent = "전송 중…";
 
-    // 기본 라디오
-    const ct = document.querySelector('input[name="customerType"][value="개인"]');
-    if (ct) ct.checked = true;
-    const pt = document.querySelector('input[name="productType"][value="렌트"]');
-    if (pt) pt.checked = true;
+      const maker = norm(elMaker.value);
+      const model = findExactModel(maker, elModelInput.value);
+      const grade = norm(elGrade.value);
 
-    // 옵션 기본값
-    if (elOptions && [...elOptions.options].some(o => o.value === "옵션 없음")){
-      elOptions.value = "옵션 없음";
+      const payload = {
+        action: "apply",
+        submittedAt: new Date().toISOString(),
+        from: "github-pages",
+        dealType: getCheckedValue("dealType", "렌트"),
+        maker,
+        model,
+        grade,                          // ✅ grade로 전송
+        option: getSelectedOptionString(),
+        customerType: getCheckedValue("customerType", "개인"),
+        name: norm(elName.value),       // ✅ name으로 전송
+        phone: norm(elPhone.value),
+        deliveryTime: norm(elDeliveryTime.value),  // ✅ deliveryTime
+        deliveryArea: norm(elDeliveryArea.value),  // ✅ deliveryArea
+        kakaoId: norm(elKakaoId.value),
+        consent: elConsent.checked ? "Y" : "N"
+      };
+
+      let ok = false;
+      let message = "접수 완료! 곧 안내드릴게요.";
+
+      try{
+        const r = await fetchJsonLoose(`${API_BASE}?action=apply`, {
+          method: "POST",
+          headers: { "Content-Type":"application/json" },
+          body: JSON.stringify(payload)
+        });
+        if (r.data && (r.data.ok !== false)){
+          ok = true;
+          if (r.data.message) message = r.data.message;
+        }else{
+          throw new Error("POST failed");
+        }
+      }catch(e){
+        try{
+          const qs = new URLSearchParams(payload).toString();
+          const r2 = await fetchJsonLoose(`${API_BASE}?${qs}`, { method:"GET", cache:"no-store" });
+          if (r2.data && (r2.data.ok !== false)){
+            ok = true;
+            if (r2.data.message) message = r2.data.message;
+          }else{
+            throw new Error("GET failed");
+          }
+        }catch(e2){
+          console.error(e2);
+        }
+      }
+
+      await sleep(200);
+
+      if (ok){
+        toast(message);
+
+        // 신청정보만 리셋(차량 선택 유지)
+        elName.value = "";
+        elPhone.value = "";
+        elDeliveryTime.value = "";
+        elDeliveryArea.value = "";
+        elKakaoId.value = "";
+        elConsent.checked = false;
+
+        // 옵션 체크 초기화: 트림 유지 상태면 옵션 박스는 유지(원하면 hideOptionsBox로 바꿔도 됨)
+        // 여기선 체크만 비우기 위해 다시 렌더 (트림 값이 있으면 옵션 다시 구성)
+        const maker2 = norm(elMaker.value);
+        const model2 = findExactModel(maker2, elModelInput.value);
+        const grade2 = norm(elGrade.value);
+        if (maker2 && model2 && grade2){
+          const opts2 = [...(optionsByTriple.get(key3(maker2, model2, grade2)) ?? new Set())].map(norm).filter(Boolean);
+          renderOptions(opts2.length ? opts2 : []);
+        }else{
+          hideOptionsBox();
+        }
+
+        // 라디오 기본
+        const ct = document.querySelector('input[name="customerType"][value="개인"]');
+        if (ct) ct.checked = true;
+        const dt = document.querySelector('input[name="dealType"][value="렌트"]');
+        if (dt) dt.checked = true;
+
+      }else{
+        toast("전송 실패. 웹앱 배포/권한/응답(JSON) 확인해주세요.");
+      }
+
+      elSubmit.textContent = "간단 견적 요청하기";
+      validate();
     }
-  }else{
-    toast("전송 실패. 웹앱 응답(JSON)/권한/배포를 확인해주세요.");
-  }
 
-  elSubmit.textContent = "간단 견적 요청하기";
-  validate();
-}
+    elSubmit.addEventListener("click", submitApplication);
 
-elSubmit?.addEventListener("click", submitApplication);
-
-/***************************************************************
- * ✅ 시작
- ***************************************************************/
-(function init(){
-  validate();
-  fetchCatalog();
-})();
-</script>
+    /***************************************************************
+     * ✅ 시작
+     ***************************************************************/
+    (async function init(){
+      validate();
+      await fetchCatalog();
+    })();
+  </script>
 </body>
 </html>
