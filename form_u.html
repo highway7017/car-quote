@@ -992,8 +992,49 @@
   </script>
   <!-- 기존 form_u.html 코드 -->
 <form id="applyForm">
-  ...
+  <!-- 기존 입력들 그대로 -->
 </form>
+
+<iframe name="hiddenFrame" style="display:none;"></iframe>
+
+<script>
+(() => {
+  const GAS_URL = "https://script.google.com/macros/s/AKfycbxrpExl_VU-axcCt0N1z_dkrqpCNI9O5ungUKC3r6q0LPYEpkGdzwtgvWByYwO4IM16tg/exec";
+
+  function getSourceCode() {
+    const params = new URLSearchParams(location.search);
+    // form_u.html?action=U135 를 유입코드로 사용
+    const a = (params.get("action") || "").trim();
+    if (a && a !== "apply" && a !== "catalog") return a;
+    return (params.get("src") || params.get("source") || "web").trim();
+  }
+
+  const form = document.getElementById("applyForm");
+  form.setAttribute("action", GAS_URL);
+  form.setAttribute("method", "POST");
+  form.setAttribute("target", "hiddenFrame"); // 화면 이동 없이 전송
+
+  // 숨은 필드로 action/source 강제 주입
+  function upsertHidden(name, value) {
+    let el = form.querySelector(`input[name="${name}"]`);
+    if (!el) {
+      el = document.createElement("input");
+      el.type = "hidden";
+      el.name = name;
+      form.appendChild(el);
+    }
+    el.value = value;
+  }
+
+  form.addEventListener("submit", () => {
+    upsertHidden("action", "apply");
+    upsertHidden("source", getSourceCode()); // ✅ U135 들어감
+    // 여기서 바로 알림/감사 페이지로 이동도 가능
+    // location.href = "thanks.html";
+  });
+})();
+</script>
+
 
 <!-- ⬇️ 여기 맨 아래에 추가 -->
 <script>
