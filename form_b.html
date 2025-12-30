@@ -7,385 +7,406 @@
 
   <style>
     :root{
-      --text:#1f2328;
-      --muted:rgba(31,35,40,.62);
+  --text:#1f2328;
+  --muted:rgba(31,35,40,.62);
 
-      --paper:#f4f3ef;
-      --paper-2:#f7f6f2;
-      --line:rgba(0,0,0,.07);
+  /* Paper base */
+  --paper:#f4f3ef;           /* 배경 종이색 */
+  --paper-2:#f7f6f2;         /* 카드 위 살짝 밝은 종이 */
+  --line:rgba(0,0,0,.07);
 
-      --card:#ffffff;
-      --shadow1: 0 1px 0 rgba(0,0,0,.04);
-      --shadow2: 0 10px 24px rgba(0,0,0,.08);
-      --radius: 20px;
+  /* Card */
+  --card:#ffffff;
+  --shadow1: 0 1px 0 rgba(0,0,0,.04);
+  --shadow2: 0 10px 24px rgba(0,0,0,.08);
+  --radius: 20px;
 
-      --field:#fbfaf7;
-      --field-border:rgba(0,0,0,.10);
+  /* Field */
+  --field:#fbfaf7;
+  --field-border:rgba(0,0,0,.10);
 
-      --ink:#2f6f5e;
-      --ink2:#245a4c;
-      --focus:rgba(47,111,94,.16);
-    }
+  /* Accent (ink green) */
+  --ink:#2f6f5e;
+  --ink2:#245a4c;
+  --focus:rgba(47,111,94,.16);
+}
 
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, "Apple SD Gothic Neo","Noto Sans KR", Segoe UI, Roboto, Arial, sans-serif;
-      color:var(--text);
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-      overflow-x:hidden;
-      background: var(--paper);
-    }
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family: ui-sans-serif, system-ui, -apple-system, "Apple SD Gothic Neo","Noto Sans KR", Segoe UI, Roboto, Arial, sans-serif;
+  color:var(--text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x:hidden;
+  background: var(--paper);
+}
 
-    .page-bg{
-      position:fixed;
-      inset:0;
-      z-index:0;
-      pointer-events:none;
-      background: var(--paper);
-    }
-    .page-bg::before{
-      content:"";
-      position:absolute;
-      inset:0;
-      background:
-        radial-gradient(1200px 800px at 20% 10%, rgba(0,0,0,.03), transparent 60%),
-        radial-gradient(900px 650px at 80% 20%, rgba(0,0,0,.02), transparent 55%),
-        radial-gradient(1100px 760px at 50% 95%, rgba(0,0,0,.02), transparent 60%);
-      opacity:.55;
-    }
-    .page-bg::after{
-      content:"";
-      position:absolute;
-      inset:0;
-      background-image:
-        repeating-linear-gradient(
-          0deg,
-          rgba(0,0,0,0.010),
-          rgba(0,0,0,0.010) 1px,
-          transparent 1px,
-          transparent 2px
-        ),
-        repeating-linear-gradient(
-          90deg,
-          rgba(0,0,0,0.008),
-          rgba(0,0,0,0.008) 1px,
-          transparent 1px,
-          transparent 3px
-        );
-      opacity:.32;
-      mix-blend-mode:multiply;
-    }
+/* ✅ 종이 질감 배경 (단색 + 미세 텍스처) */
+.page-bg{
+  position:fixed;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+  background: var(--paper);
+}
+.page-bg::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  /* 아주 약한 종이 얼룩/결 느낌 */
+  background:
+    radial-gradient(1200px 800px at 20% 10%, rgba(0,0,0,.03), transparent 60%),
+    radial-gradient(900px 650px at 80% 20%, rgba(0,0,0,.02), transparent 55%),
+    radial-gradient(1100px 760px at 50% 95%, rgba(0,0,0,.02), transparent 60%);
+  opacity:.55;
+}
+.page-bg::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  /* 미세 섬유(프린트 종이 느낌) */
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      rgba(0,0,0,0.010),
+      rgba(0,0,0,0.010) 1px,
+      transparent 1px,
+      transparent 2px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(0,0,0,0.008),
+      rgba(0,0,0,0.008) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+  opacity:.32;
+  mix-blend-mode:multiply;
+}
 
-    .hero{
-      position:relative;
-      z-index:1;
-      width:100%;
-      height:min(48vh, 240px);
-      min-height:220px;
-      display:flex;
-      align-items:flex-end;
-      justify-content:center;
-      padding: 22px 16px 16px;
-      overflow:hidden;
-      background: var(--paper);
-    }
-    .hero::before{
-      content:"";
-      position:absolute;
-      inset:0;
-      background:url("https://highway7017.github.io/car-quote/bg_g.png") center / cover no-repeat;
-      filter:saturate(1.02) contrast(1.02);
-    }
-    .hero::after{
-      content:"";
-      position:absolute;
-      inset:0;
-      background: linear-gradient(
-        to bottom,
-        rgba(244,243,239,0) 55%,
-        rgba(244,243,239,.70) 82%,
-        rgba(244,243,239,1) 100%
-      );
-    }
-    .hero-title{
-      position:relative;
-      z-index:2;
-      text-align:center;
-      width:min(980px, 100%);
-      padding: 0 10px 6px;
-      color: rgba(15,15,18,.92);
-    }
-    .hero-title h1{
-      margin:30px;
-      font-weight:900;
-      color: #485527;
-      letter-spacing:-1px;
-      font-size: clamp(22px, 5.2vw, 34px);
-      text-shadow: 0 2px 18px rgba(255,255,255,.45);
-    }
+/* ✅ 상단 히어로도 동일 종이 배경으로 이어지게 */
+.hero{
+  position:relative;
+  z-index:1;
+  width:100%;
+  height:min(48vh, 240px);
+  min-height:220px;
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+  padding: 22px 16px 16px;
+  overflow:hidden;
+  background: var(--paper);
+}
+.hero::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:url("https://highway7017.github.io/car-quote/bg_g.png") center / cover no-repeat;
+  filter:saturate(1.02) contrast(1.02);
+}
+.hero::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  /* 이미지가 종이로 자연스럽게 녹는 그라데이션 (배경은 단색이지만, 사진만 자연스럽게) */
+  background: linear-gradient(
+    to bottom,
+    rgba(244,243,239,0) 55%,
+    rgba(244,243,239,.70) 82%,
+    rgba(244,243,239,1) 100%
+  );
+}
+.hero-title{
+  position:relative;
+  z-index:2;
+  text-align:center;
+  width:min(980px, 100%);
+  padding: 0 10px 6px;
+  color: rgba(15,15,18,.92);
+}
+.hero-title h1{
+  margin:30px;
+  font-weight:900;
+  color: #485527;
+  letter-spacing:-1px;
+  font-size: clamp(22px, 5.2vw, 34px);
+  text-shadow: 0 2px 18px rgba(255,255,255,.45);
+}
 
-    .wrap{
-      position:relative;
-      z-index:2;
-      width:min(980px, 100%);
-      margin:-18px auto 32px;
-      padding: 0 16px 24px;
-    }
+.wrap{
+  position:relative;
+  z-index:2;
+  width:min(980px, 100%);
+  margin:-18px auto 32px;
+  padding: 0 16px 24px;
+}
 
-    .card{
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow1), var(--shadow2);
-      overflow:hidden;
-    }
-    .card + .card{ margin-top: 14px; }
-    .card-inner{ padding: 18px; }
+/* ✅ 유리 느낌 제거 -> 종이 카드 */
+.card{
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow1), var(--shadow2);
+  overflow:hidden;
+}
+.card + .card{ margin-top: 14px; }
+.card-inner{ padding: 18px; }
 
-    .sec-title{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      margin:0 0 14px;
-      font-weight:900;
-      letter-spacing:-0.6px;
-      font-size:18px;
-    }
+.sec-title{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin:0 0 14px;
+  font-weight:900;
+  letter-spacing:-0.6px;
+  font-size:18px;
+}
 
-    .badge{
-      margin-left: 6px;
-      font-size: 12px;
-      font-weight: 900;
-      padding: 4px 10px;
-      border-radius: 999px;
-      color: rgba(47,111,94,.95);
-      background: rgba(47,111,94,.10);
-      border: 1px solid rgba(47,111,94,.16);
-      white-space:nowrap;
-    }
+/* ✅ 배지: 종이 위 잉크 하이라이트 느낌 */
+.badge{
+  margin-left: 6px;
+  font-size: 12px;
+  font-weight: 900;
+  padding: 4px 10px;
+  border-radius: 999px;
+  color: rgba(47,111,94,.95);
+  background: rgba(47,111,94,.10);
+  border: 1px solid rgba(47,111,94,.16);
+  white-space:nowrap;
+}
 
-    label{
-      display:block;
-      font-weight: 850;
-      margin-top: 12px;
-      letter-spacing: -.2px;
-    }
-    .help{
-      margin: 8px 0 0;
-      font-size: 13px;
-      color: var(--muted);
-      font-weight: 700;
-    }
+label{
+  display:block;
+  font-weight: 850;
+  margin-top: 12px;
+  letter-spacing: -.2px;
+}
+.help{
+  margin: 8px 0 0;
+  font-size: 13px;
+  color: var(--muted);
+  font-weight: 700;
+}
 
-    input, select{
-      width:100%;
-      margin-top:8px;
-      padding:14px 14px;
-      border-radius:16px;
-      border:1px solid var(--field-border);
-      background: var(--field);
-      outline:none;
-      font-size:15px;
-      font-weight:800;
-      color: rgba(18,18,22,.92);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.65);
-    }
-    input::placeholder{ color: rgba(0,0,0,.34); font-weight:800; }
-    select:disabled, input:disabled{
-      opacity:.55;
-      background: rgba(245,245,246,.85);
-    }
-    input:focus, select:focus{
-      border-color: rgba(47,111,94,.40);
-      box-shadow: 0 0 0 4px var(--focus);
-    }
+/* ✅ 입력 필드: 매트 종이톤 */
+input, select{
+  width:100%;
+  margin-top:8px;
+  padding:14px 14px;
+  border-radius:16px;
+  border:1px solid var(--field-border);
+  background: var(--field);
+  outline:none;
+  font-size:15px;
+  font-weight:800;
+  color: rgba(18,18,22,.92);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.65);
+}
+input::placeholder{ color: rgba(0,0,0,.34); font-weight:800; }
+select:disabled, input:disabled{
+  opacity:.55;
+  background: rgba(245,245,246,.85);
+}
+input:focus, select:focus{
+  border-color: rgba(47,111,94,.40);
+  box-shadow: 0 0 0 4px var(--focus);
+}
 
-    .radio-row{
-      display:flex;
-      gap:6px;
-      margin-top:10px;
-      flex-wrap:nowrap;
-      font-size: 11px;
-    }
-    .radio-pill{
-      flex:1 1 auto;
-      min-width: 70px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      gap:6px;
-      padding: 10px 10px;
-      border-radius:999px;
-      border:1px solid rgba(0,0,0,.10);
-      background: var(--paper-2);
-      font-weight: 800;
-      cursor:pointer;
-      user-select:none;
-      white-space:nowrap;
-    }
-    .radio-pill input{
-      width:18px; height:18px; margin:0; padding:0;
-      border-radius:999px;
-      box-shadow:none;
-    }
+/* ✅ 라디오: 종이 칩 */
+.radio-row{
+  display:flex;
+  gap:6px;
+  margin-top:10px;
+  flex-wrap:nowrap;
+  font-size: 11px;
+}
+.radio-pill{
+  flex:1 1 auto;
+  min-width: 70px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  padding: 10px 10px;
+  border-radius:999px;
+  border:1px solid rgba(0,0,0,.10);
+  background: var(--paper-2);
+  font-weight: 800;
+  cursor:pointer;
+  user-select:none;
+  white-space:nowrap;
+}
+.radio-pill input{
+  width:18px; height:18px; margin:0; padding:0;
+  border-radius:999px;
+  box-shadow:none;
+}
 
-    .options-box{
-      margin-top: 10px;
-      padding: 10px 12px;
-      border-radius: 18px;
-      background: var(--paper-2);
-      border: 1px solid rgba(0,0,0,.08);
-    }
-    .opt-grid{
-      display:flex;
-      flex-direction:column;
-      gap:2px;
-      margin-top: 6px;
-    }
-    .opt-chip{
-      display:flex;
-      align-items:center;
-      gap:8px;
-      padding: 2px 0;
-      border:none;
-      background: transparent;
-      font-size: 12px;
-      font-weight: 700;
-      cursor:pointer;
-      user-select:none;
-      line-height:1.2;
-    }
-    .opt-chip input{
-      width:18px; height:18px; margin:0; padding:0; box-shadow:none;
-    }
+/* ✅ 옵션 박스: 종이 박스 */
+.options-box{
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 18px;
+  background: var(--paper-2);
+  border: 1px solid rgba(0,0,0,.08);
+}
+.opt-grid{
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+  margin-top: 6px;
+}
+.opt-chip{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding: 2px 0;
+  border:none;
+  background: transparent;
+  font-size: 12px;
+  font-weight: 700;
+  cursor:pointer;
+  user-select:none;
+  line-height:1.2;
+}
+.opt-chip input{
+  width:18px; height:18px; margin:0; padding:0; box-shadow:none;
+}
 
-    .manual-box{
-      margin-top: 10px;
-      padding: 12px;
-      border-radius: 18px;
-      background: var(--paper-2);
-      border: 1px solid rgba(0,0,0,.08);
-    }
-    .manual-box .help{ margin-top: 0; }
+/* ✅ 수입차/기타 입력 박스 */
+.manual-box{
+  margin-top: 10px;
+  padding: 12px;
+  border-radius: 18px;
+  background: var(--paper-2);
+  border: 1px solid rgba(0,0,0,.08);
+}
+.manual-box .help{ margin-top: 0; }
 
-    .consent{
-      margin-top: 14px;
-      padding: 14px;
-      border-radius: 18px;
-      background: var(--paper-2);
-      border: 1px solid rgba(0,0,0,.08);
-    }
-    .consent-row{
-      display:flex;
-      align-items:flex-start;
-      gap:10px;
-      cursor:pointer;
-      user-select:none;
-    }
-    .consent-row input{
-      width:20px;
-      height:20px;
-      margin: 2px 0 0;
-      padding:0;
-      box-shadow:none;
-    }
-    .consent strong{
-      display:block;
-      font-weight:950;
-      letter-spacing:-.3px;
-      margin-bottom:6px;
-    }
-    .consent small{
-      display:block;
-      color: var(--muted);
-      font-weight:750;
-      line-height:1.35;
-    }
+/* ✅ 동의 박스 */
+.consent{
+  margin-top: 14px;
+  padding: 14px;
+  border-radius: 18px;
+  background: var(--paper-2);
+  border: 1px solid rgba(0,0,0,.08);
+}
+.consent-row{
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+  cursor:pointer;
+  user-select:none;
+}
+.consent-row input{
+  width:20px;
+  height:20px;
+  margin: 2px 0 0;
+  padding:0;
+  box-shadow:none;
+}
+.consent strong{
+  display:block;
+  font-weight:950;
+  letter-spacing:-.3px;
+  margin-bottom:6px;
+}
+.consent small{
+  display:block;
+  color: var(--muted);
+  font-weight:750;
+  line-height:1.35;
+}
 
-    .cta{
-      margin-top:14px;
-      padding: 18px 16px 20px;
-      text-align:center;
-    }
-    .btn{
-      width:100%;
-      border:0;
-      border-radius:999px;
-      padding:18px 18px;
-      font-size:18px;
-      font-weight:950;
-      letter-spacing:-0.4px;
-      color:#fff;
-      cursor:pointer;
-      background: var(--ink);
-      box-shadow:
-        inset 0 -2px 0 rgba(0,0,0,.18),
-        0 10px 22px rgba(0,0,0,.18);
-      position:relative;
-      overflow:hidden;
-    }
-    .btn::after{
-      content:"";
-      position:absolute;
-      inset:0;
-      background: radial-gradient(700px 140px at 30% 0%, rgba(255,255,255,.18) 0%, rgba(255,255,255,0) 60%);
-      opacity:.65;
-      pointer-events:none;
-    }
-    .btn:hover{ background: var(--ink2); }
-    .btn:active{
-      transform: translateY(1px);
-      box-shadow:
-        inset 0 -1px 0 rgba(0,0,0,.25),
-        0 6px 14px rgba(0,0,0,.18);
-    }
-    .btn:disabled{
-      cursor:not-allowed;
-      opacity:.45;
-      box-shadow:none;
-      transform:none;
-    }
+/* ✅ CTA / 버튼: 잉크 + 살짝 눌리는 종이 도장 느낌 */
+.cta{
+  margin-top:14px;
+  padding: 18px 16px 20px;
+  text-align:center;
+}
+.btn{
+  width:100%;
+  border:0;
+  border-radius:999px;
+  padding:18px 18px;
+  font-size:18px;
+  font-weight:950;
+  letter-spacing:-0.4px;
+  color:#fff;
+  cursor:pointer;
+  background: var(--ink);
+  box-shadow:
+    inset 0 -2px 0 rgba(0,0,0,.18),
+    0 10px 22px rgba(0,0,0,.18);
+  position:relative;
+  overflow:hidden;
+}
+.btn::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  /* 아주 약한 하이라이트 (광택 아닌, 종이 위 잉크 농도 차이 느낌) */
+  background: radial-gradient(700px 140px at 30% 0%, rgba(255,255,255,.18) 0%, rgba(255,255,255,0) 60%);
+  opacity:.65;
+  pointer-events:none;
+}
+.btn:hover{
+  background: var(--ink2);
+}
+.btn:active{
+  transform: translateY(1px);
+  box-shadow:
+    inset 0 -1px 0 rgba(0,0,0,.25),
+    0 6px 14px rgba(0,0,0,.18);
+}
+.btn:disabled{
+  cursor:not-allowed;
+  opacity:.45;
+  box-shadow:none;
+  transform:none;
+}
 
-    .footer-note{
-      margin-top: 10px;
-      color: rgba(0,0,0,.45);
-      font-weight: 800;
-      font-size: 13px;
-      line-height: 1.35;
-    }
+.footer-note{
+  margin-top: 10px;
+  color: rgba(0,0,0,.45);
+  font-weight: 800;
+  font-size: 13px;
+  line-height: 1.35;
+}
 
-    .toast{
-      position: fixed;
-      left: 50%;
-      bottom: 18px;
-      transform: translateX(-50%);
-      background: rgba(20,20,22,.92);
-      color: #fff;
-      padding: 10px 14px;
-      border-radius: 999px;
-      font-weight: 850;
-      font-size: 13px;
-      opacity: 0;
-      pointer-events: none;
-      transition: .18s ease;
-      z-index: 50;
-      max-width: min(92vw, 720px);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .toast.show{ opacity: 1; transform: translateX(-50%) translateY(-6px); }
+/* ✅ 토스트 */
+.toast{
+  position: fixed;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  background: rgba(20,20,22,.92);
+  color: #fff;
+  padding: 10px 14px;
+  border-radius: 999px;
+  font-weight: 850;
+  font-size: 13px;
+  opacity: 0;
+  pointer-events: none;
+  transition: .18s ease;
+  z-index: 50;
+  max-width: min(92vw, 720px);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.toast.show{ opacity: 1; transform: translateX(-50%) translateY(-6px); }
 
-    .hidden{ display:none !important; }
+.hidden{ display:none !important; }
 
-    @media (max-width: 420px){
-      .card-inner{ padding: 16px; }
-      .radio-row{ font-size: 10px; }
-      .radio-pill{ min-width: 62px; padding: 9px 9px; }
-    }
+@media (max-width: 420px){
+  .card-inner{ padding: 16px; }
+  .radio-row{ font-size: 10px; }
+  .radio-pill{ min-width: 62px; padding: 9px 9px; }
+}
   </style>
 </head>
 
@@ -529,7 +550,7 @@
   /***************************************************************
    * ✅ 웹앱 URL
    ***************************************************************/
-  const API_BASE = "https://script.google.com/macros/s/AKfycbxz3HEQ1njJveQyxwUWA1OO0Ba-fVbZ_7bSpTmV25HjR7F4EdTt4EFWOV9QqGqvO5syUg/exec";
+  const API_BASE = "https://script.google.com/macros/s/AKfycbxXDq1_wRQLBAIE1mR03LmIlGFG51jrARzgYh3310665LDqVFfKNMAhBcaR-nL5OvCYJQ/exec";
 
   /***************************************************************
    * ✅ DOM
@@ -562,31 +583,12 @@
    * ✅ 상태(카탈로그)
    ***************************************************************/
   let catalogRows = []; // { maker, model, grade, option }
+  const modelsByMaker = new Map();       // maker -> Set(model)
+  const gradesByMM = new Map();          // maker||model -> Set(grade)
+  const optionsByMMG = new Map();        // maker||model||grade -> Set(option)
 
-  // ✅ maker -> { displayName, models:Set }
-  const modelsByMaker = new Map();  // makerKey -> Set(model)
-  const gradesByMM = new Map();     // makerKey||model -> Set(grade)
-  const optionsByMMG = new Map();   // makerKey||model||grade -> Set(option)
-
-  // ✅ "수입차/기타"는 수동 입력
+  const MAKER_ORDER = ["기아","현대","르노","테슬라","수입차","기타"];
   const SPECIAL_MAKERS = new Set(["수입차","기타"]);
-
-  // ✅ 제조사 표준화(스프레드시트 값이 달라도 매칭되게)
-  const MAKER_ALIAS = {
-    "현대자동차":"현대",
-    "기아자동차":"기아",
-    "제네시스자동차":"제네시스",
-    "GENESIS":"제네시스",
-    "HYUNDAI":"현대",
-    "KIA":"기아",
-    "르노코리아":"르노",
-    "르노코리아자동차":"르노",
-    "RENAULT":"르노",
-    "TESLA":"테슬라"
-  };
-
-  // ✅ 화면 표시 순서(원하면 여기만 수정)
-  const MAKER_ORDER = ["기아","현대","제네시스","르노","테슬라","수입차","기타"];
 
   /***************************************************************
    * ✅ 유틸
@@ -601,16 +603,6 @@
 
   function norm(s){
     return (s ?? "").toString().trim().replace(/\s+/g, " ");
-  }
-
-  function normMaker(s){
-    let m = norm(s);
-    if (!m) return "";
-    // 대소문자 차이 흡수(영문일 때)
-    const upper = m.toUpperCase();
-    if (MAKER_ALIAS[upper]) return MAKER_ALIAS[upper];
-    if (MAKER_ALIAS[m]) return MAKER_ALIAS[m];
-    return m;
   }
 
   function key2(a,b){ return `${a}||${b}`; }
@@ -731,7 +723,7 @@
    * ✅ 검증
    ***************************************************************/
   function validate(){
-    const maker = normMaker(elMaker.value);
+    const maker = norm(elMaker.value);
     const isSpecial = SPECIAL_MAKERS.has(maker);
 
     let carOk = false;
@@ -755,7 +747,7 @@
   }
 
   /***************************************************************
-   * ✅ 인덱스 구축
+   * ✅ 카탈로그 인덱스
    ***************************************************************/
   function buildIndexes(){
     modelsByMaker.clear();
@@ -763,52 +755,33 @@
     optionsByMMG.clear();
 
     for (const r of catalogRows){
-      const makerKey = normMaker(r.maker);
-      const model = norm(r.model);
-      const grade = norm(r.grade);
-      const option = norm(r.option);
+      if (!modelsByMaker.has(r.maker)) modelsByMaker.set(r.maker, new Set());
+      modelsByMaker.get(r.maker).add(r.model);
 
-      if (!makerKey || !model || !grade) continue;
-
-      if (!modelsByMaker.has(makerKey)) modelsByMaker.set(makerKey, new Set());
-      modelsByMaker.get(makerKey).add(model);
-
-      const k2 = key2(makerKey, model);
+      const k2 = key2(r.maker, r.model);
       if (!gradesByMM.has(k2)) gradesByMM.set(k2, new Set());
-      gradesByMM.get(k2).add(grade);
+      gradesByMM.get(k2).add(r.grade);
 
-      const k3 = key3(makerKey, model, grade);
+      const k3 = key3(r.maker, r.model, r.grade);
       if (!optionsByMMG.has(k3)) optionsByMMG.set(k3, new Set());
-      if (option) optionsByMMG.get(k3).add(option);
+      if (r.option) optionsByMMG.get(k3).add(r.option);
     }
   }
 
   /***************************************************************
-   * ✅ 제조사 셀렉트 세팅
-   *  - 1) 기본 순서(MAKER_ORDER)를 먼저 채움
-   *  - 2) 카탈로그에서 발견된 추가 제조사가 있으면 뒤에 붙임
+   * ✅ 제조사 기본 세팅(카탈로그 실패해도 동작)
    ***************************************************************/
-  function hydrateMakerSelect(){
-    const fromCatalog = [...new Set([...modelsByMaker.keys()].map(normMaker).filter(Boolean))];
+  function hydrateMakerBase(){
+    fillSelect(elMaker, MAKER_ORDER, "제조사를 선택해주세요");
 
-    const ordered = [];
-    for (const m of MAKER_ORDER){
-      if (!ordered.includes(m)) ordered.push(m);
-    }
-    // 카탈로그에 있는데 ORDER에 없는 제조사는 뒤에 자동 추가
-    for (const m of fromCatalog){
-      if (!ordered.includes(m)) ordered.push(m);
-    }
-
-    fillSelect(elMaker, ordered, "제조사를 선택해주세요");
-  }
-
-  function resetDomesticChain(){
     fillSelect(elModel, [], "차종을 선택해주세요");
     fillSelect(elGrade, [], "트림을 선택해주세요");
     setDisabled(elModel, true);
     setDisabled(elGrade, true);
     renderOptions(null);
+
+    setModeSpecial(false);
+    validate();
   }
 
   /***************************************************************
@@ -853,21 +826,19 @@
       });
     }
 
-    // ✅ 컬럼명 변형까지 흡수
     catalogRows = objRows.map(r => ({
-      maker:  normMaker(r.maker ?? r.제조사 ?? r.Maker ?? r.제조사명),
-      model:  norm(r.model ?? r.차종 ?? r.Model ?? r.차량명),
-      grade:  norm(r.grade ?? r.트림 ?? r.등급 ?? r.Trim ?? r.세부등급),
-      option: norm(r.option ?? r.options ?? r.옵션 ?? r.Option ?? r.선택옵션)
+      maker:  norm(r.maker ?? r.제조사 ?? r.Maker),
+      model:  norm(r.model ?? r.차종 ?? r.Model),
+      grade:  norm(r.grade ?? r.트림 ?? r.등급 ?? r.Trim),
+      option: norm(r.option ?? r.options ?? r.옵션 ?? r.Option)
     })).filter(x => x.maker && x.model && x.grade);
 
     if (catalogRows.length === 0){
-      toast("Models 컬럼명이 안 맞아요 (maker/model/grade/option 또는 한글 컬럼)");
+      toast("Models 컬럼명이 안 맞아요 (maker/model/grade/option)");
       return false;
     }
 
     buildIndexes();
-    hydrateMakerSelect();   // ✅ maker 셀렉트를 카탈로그 기반으로 보강
     toast("차량 목록 로드 완료");
     return true;
   }
@@ -876,12 +847,10 @@
    * ✅ 선택 체인
    ***************************************************************/
   elMaker.addEventListener("change", ()=>{
-    const maker = normMaker(elMaker.value);
+    const maker = norm(elMaker.value);
     const isSpecial = SPECIAL_MAKERS.has(maker);
 
     setModeSpecial(isSpecial);
-
-    resetDomesticChain();
 
     if (!maker || isSpecial){
       validate();
@@ -895,11 +864,15 @@
     fillSelect(elModel, models, "차종을 선택해주세요");
     setDisabled(elModel, false);
 
+    fillSelect(elGrade, [], "트림을 선택해주세요");
+    setDisabled(elGrade, true);
+    renderOptions(null);
+
     validate();
   });
 
   elModel.addEventListener("change", ()=>{
-    const maker = normMaker(elMaker.value);
+    const maker = norm(elMaker.value);
     const model = norm(elModel.value);
 
     fillSelect(elGrade, [], "트림을 선택해주세요");
@@ -922,7 +895,7 @@
   });
 
   elGrade.addEventListener("change", ()=>{
-    const maker = normMaker(elMaker.value);
+    const maker = norm(elMaker.value);
     const model = norm(elModel.value);
     const grade = norm(elGrade.value);
 
@@ -986,7 +959,7 @@
     elSubmit.disabled = true;
     elSubmit.textContent = "전송 중…";
 
-    const maker = normMaker(elMaker.value);
+    const maker = norm(elMaker.value);
     const isSpecial = SPECIAL_MAKERS.has(maker);
 
     let model = "", grade = "", option = "";
@@ -1060,7 +1033,7 @@
 
       // 옵션 초기화
       if (!isSpecial){
-        const maker2 = normMaker(elMaker.value);
+        const maker2 = norm(elMaker.value);
         const model2 = norm(elModel.value);
         const grade2 = norm(elGrade.value);
         const opts = [...(optionsByMMG.get(key3(maker2, model2, grade2)) ?? new Set())]
@@ -1093,14 +1066,8 @@
    ***************************************************************/
   window.addEventListener("DOMContentLoaded", async ()=>{
     try{
-      // 1) 먼저 기본 제조사 표시(오프라인 상태라도 폼은 동작)
-      fillSelect(elMaker, MAKER_ORDER, "제조사를 선택해주세요");
-      resetDomesticChain();
-      setModeSpecial(false);
-      validate();
-
-      // 2) 카탈로그 로드 성공 시: 제조사 목록도 보강 + 체인 활성
-      await fetchCatalog();
+      hydrateMakerBase();        // ✅ 제조사 고정순서로 먼저 채움(항상 동작)
+      await fetchCatalog();      // ✅ 성공하면 국내차 체인까지 활성
       validate();
     }catch(err){
       console.error(err);
