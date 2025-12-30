@@ -27,6 +27,8 @@
       overflow-x:hidden;
     }
 
+    .hidden{ display:none !important; }
+
     .page-bg{
       position:fixed; inset:0; z-index:0; pointer-events:none;
       background:
@@ -127,12 +129,11 @@
       background: rgba(255,255,255,.78);
       border: 1px solid rgba(0,0,0,.08);
     }
-    .options-box.is-hidden{ display:none; }
 
     .opt-grid{
       display:flex;
-      flex-direction:column;      /* 한 줄에 하나 */
-      gap:2px;                    /* ✅ 간격 줄임 */
+      flex-direction:column;
+      gap:2px;
       margin-top: 6px;
     }
     .opt-chip{
@@ -140,7 +141,7 @@
       display:flex;
       align-items:center;
       gap:8px;
-      padding: 2px 0;            /* ✅ 위아래 간격 더 줄임 */
+      padding: 2px 0;
       border:none;
       background: transparent;
       font-size: 10pt;
@@ -244,24 +245,38 @@
           <option value="">제조사를 선택해주세요</option>
         </select>
 
-       <label for="model">차종</label>
-<select id="model" disabled>
-  <option value="">차종을 선택해주세요</option>
-</select>
-        
-        <label for="grade">차량 등급(트림)</label>
-        <select id="grade" disabled>
-          <option value="">차량 등급을 선택해주세요</option>
-        </select>
+        <div id="domesticMode">
+          <label for="model">차종</label>
+          <select id="model" disabled>
+            <option value="">차종을 선택해주세요</option>
+          </select>
 
- 
-        <div id="optionsBox" class="options-box is-hidden">
-                  <label>옵션 (복수 선택 가능)</label>
-          <div class="help" id="optionsHint" style="margin:0">트림을 선택하면 옵션이 표시됩니다.</div>
-          <div id="optionsGrid" class="opt-grid"></div>
+          <label for="grade">차량 등급(트림)</label>
+          <select id="grade" disabled>
+            <option value="">차량 등급을 선택해주세요</option>
+          </select>
+
+          <div id="optionsBox" class="options-box hidden">
+            <label>옵션 (복수 선택 가능)</label>
+            <div class="help" id="optionsHint" style="margin:0">트림을 선택하면 옵션이 표시됩니다.</div>
+            <div id="optionsGrid" class="opt-grid"></div>
+          </div>
+
+          <p class="help">※ 제조사 → 차종 → 트림 → 옵션 순서로 선택됩니다.</p>
         </div>
 
-        <p class="help">※ 제조사 → 차종 → 트림 → 옵션 순서로 선택됩니다.</p>
+        <div id="manualMode" class="hidden" style="margin-top:12px;">
+          <p class="help" style="margin-top:0">수입차/기타 선택 시 아래에 차량 정보를 직접 입력해주세요.</p>
+
+          <label for="manualModel">차종(직접입력)</label>
+          <input id="manualModel" placeholder="예) BMW 520i / Model Y" />
+
+          <label for="manualGrade">트림(직접입력)</label>
+          <input id="manualGrade" placeholder="예) M Sport / Long Range" />
+
+          <label for="manualOption">옵션(직접입력, 선택)</label>
+          <input id="manualOption" placeholder="예) HUD / 파노라마 선루프" />
+        </div>
       </div>
     </div>
 
@@ -312,7 +327,6 @@
               </small>
             </div>
           </label>
-          <input type="hidden" id="soruce" value="">
         </div>
 
         <div class="cta">
@@ -328,7 +342,7 @@
 
   <div id="toast" class="toast" aria-live="polite"></div>
 
- <script>
+  <script>
     /***************************************************************
      * ✅ 웹앱 URL
      ***************************************************************/
@@ -356,7 +370,7 @@
     const elDeliveryTime = document.getElementById("deliveryTime");
     const elDeliveryArea = document.getElementById("deliveryArea");
     const elKakaoId = document.getElementById("kakaoId");
-    const elAgree = document.getElementById("agree");
+    const elAgree = document.getElementById("consent");
 
     const elSubmit = document.getElementById("submitBtn");
     const elToast = document.getElementById("toast");
@@ -434,7 +448,6 @@
     function renderOptions(optionsArr){
       clearOptionsUI();
 
-      // 트림 선택 전에는 숨김
       if (!optionsArr){
         hide(elOptionsBox);
         return;
@@ -496,7 +509,7 @@
         elModel.value = "";
         elGrade.value = "";
         fillSelect(elModel, [], "차종을 선택해주세요");
-        fillSelect(elGrade, [], "트림을 선택해주세요");
+        fillSelect(elGrade, [], "차량 등급을 선택해주세요");
         setDisabled(elModel, true);
         setDisabled(elGrade, true);
         renderOptions(null);
@@ -535,7 +548,7 @@
     }
 
     /***************************************************************
-     * ✅ 카탈로그 불러오기
+     * ✅ 카탈로그 불러오기 (⚠️ CORS 이슈가 있으면 JSONP로 바꿔야 함)
      ***************************************************************/
     async function fetchCatalog(){
       const url = `${API_BASE}?action=catalog&_=${Date.now()}`;
@@ -546,7 +559,7 @@
         text = await res.text();
       }catch(e){
         console.error(e);
-        toast("카탈로그 호출 실패(네트워크/권한)");
+        toast("카탈로그 호출 실패(네트워크/권한/CORS)");
         return;
       }
 
@@ -616,7 +629,7 @@
       fillSelect(elMaker, MAKER_ORDER, "제조사를 선택해주세요");
 
       fillSelect(elModel, [], "차종을 선택해주세요");
-      fillSelect(elGrade, [], "트림을 선택해주세요");
+      fillSelect(elGrade, [], "차량 등급을 선택해주세요");
       setDisabled(elModel, true);
       setDisabled(elGrade, true);
       renderOptions(null);
@@ -645,7 +658,7 @@
       fillSelect(elModel, models, "차종을 선택해주세요");
       setDisabled(elModel, false);
 
-      fillSelect(elGrade, [], "트림을 선택해주세요");
+      fillSelect(elGrade, [], "차량 등급을 선택해주세요");
       setDisabled(elGrade, true);
       renderOptions(null);
 
@@ -656,7 +669,7 @@
       const maker = norm(elMaker.value);
       const model = norm(elModel.value);
 
-      fillSelect(elGrade, [], "트림을 선택해주세요");
+      fillSelect(elGrade, [], "차량 등급을 선택해주세요");
       setDisabled(elGrade, true);
       renderOptions(null);
 
@@ -669,7 +682,7 @@
         .map(norm).filter(Boolean)
         .sort((a,b)=>a.localeCompare(b,"ko"));
 
-      fillSelect(elGrade, grades, "트림을 선택해주세요");
+      fillSelect(elGrade, grades, "차량 등급을 선택해주세요");
       setDisabled(elGrade, false);
 
       validate();
@@ -713,7 +726,7 @@
       validate();
     });
 
-    document.querySelectorAll('input[name="productType"], input[name="customerType"]').forEach(el=>{
+    document.querySelectorAll('input[name="dealType"], input[name="customerType"]').forEach(el=>{
       el.addEventListener("change", validate);
     });
 
@@ -761,7 +774,7 @@
       const payload = {
         action: "apply",
         source,
-        productType: getCheckedValue("productType", "렌트"),
+        productType: getCheckedValue("dealType", "렌트"),
         maker,
         model,
         grade,
@@ -815,14 +828,7 @@
         elAgree.checked = false;
 
         if (!isSpecial){
-          // 체크 해제: 옵션 다시 렌더로 리셋
-          const maker2 = norm(elMaker.value);
-          const model2 = norm(elModel.value);
-          const grade2 = norm(elGrade.value);
-          const opts = [...(optionsByMMG.get(key3(maker2, model2, grade2)) ?? new Set())]
-            .map(norm).filter(Boolean)
-            .sort((a,b)=>a.localeCompare(b,"ko"));
-          renderOptions(opts);
+          document.querySelectorAll('input[name="optionsChk"]').forEach(ch => ch.checked = false);
         } else {
           elManualOption.value = "";
         }
@@ -830,8 +836,8 @@
         const ct = document.querySelector('input[name="customerType"][value="개인"]');
         if (ct) ct.checked = true;
 
-        const pt = document.querySelector('input[name="productType"][value="렌트"]');
-        if (pt) pt.checked = true;
+        const dt = document.querySelector('input[name="dealType"][value="렌트"]');
+        if (dt) dt.checked = true;
 
       }else{
         toast("전송 실패. 웹앱 배포/권한/응답(JSON) 확인해주세요.");
