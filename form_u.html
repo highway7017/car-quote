@@ -990,5 +990,55 @@
       await fetchCatalog();
     })();
   </script>
+  <!-- 기존 form_u.html 코드 -->
+<form id="applyForm">
+  ...
+</form>
+
+<!-- ⬇️ 여기 맨 아래에 추가 -->
+<script>
+  const GAS_URL = "https://script.google.com/macros/s/AKfycbxrpExl_VU-axcCt0N1z_dkrqpCNI9O5ungUKC3r6q0LPYEpkGdzwtgvWByYwO4IM16tg/exec";
+
+  function getSourceCode() {
+    const params = new URLSearchParams(location.search);
+    return params.get("action") || "web";
+  }
+
+  async function submitApply(formDataObj) {
+    formDataObj.action = "apply";
+    formDataObj.source = getSourceCode();
+
+    const body = new URLSearchParams(formDataObj).toString();
+
+    const res = await fetch(GAS_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
+      },
+      body
+    });
+
+    const text = await res.text();
+    try {
+      return JSON.parse(text);
+    } catch (e) {
+      return { ok: false, raw: text };
+    }
+  }
+
+  document.getElementById("applyForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const fd = new FormData(e.target);
+    const obj = {};
+    fd.forEach((v, k) => obj[k] = v);
+
+    const result = await submitApply(obj);
+    console.log(result);
+
+    alert(result.ok ? result.message : "접수 실패");
+  });
+</script>
+
 </body>
 </html>
