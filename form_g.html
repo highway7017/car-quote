@@ -167,6 +167,7 @@
       margin-top: 10px;
       flex-wrap: wrap;     /* 좁은 화면에서 줄바꿈 허용 */
       align-items: center;
+      justify-content: center;
     }
     .radio-pill{
       display:inline-flex; /* ✅ 컨텐츠 너비 기반 */
@@ -182,6 +183,7 @@
       white-space: nowrap;
       transition: .15s ease;
       line-height: 1;
+      font-size: 14px;
     }
     .radio-pill input{
       width: 18px;
@@ -196,6 +198,17 @@
       border-color: var(--pillBorderOn);
       box-shadow: 0 10px 24px rgba(0,0,0,.35);
     }
+  
+  /* ✅ 상품유형에만: 라디오 버튼 가운데 + 균등폭 */
+.radio-row.radio-center-equal{
+  justify-content: center;
+  gap: 12px;
+}
+
+.radio-row.radio-center-equal .radio-pill{
+  flex: 0 0 140px;     /* 동일 너비 */
+  justify-content: center;
+}
 
     /* 옵션 박스 */
     .options-box{
@@ -372,7 +385,7 @@
     <div class="card">
       <div class="card-inner">
         <div class="sec-title">상품 유형 <span class="badge">필수</span></div>
-        <div class="radio-row" role="radiogroup" aria-label="상품 유형">
+        <div class="radio-row radio-center-equal" role="radiogroup" aria-label="상품 유형">
           <label class="radio-pill">
             <input type="radio" name="productType" value="렌트" checked />
             렌트
