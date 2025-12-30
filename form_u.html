@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>비대면 차량 견적 상담</title>
+  <title>렌트/리스 견적 신청</title>
 
   <style>
     :root{
@@ -131,8 +131,8 @@
 
     .opt-grid{
       display:flex;
-      flex-direction:column;      /* 한 줄에 하나 */
-      gap:2px;                    /* ✅ 간격 줄임 */
+      flex-direction:column;
+      gap:2px;
       margin-top: 6px;
     }
     .opt-chip{
@@ -140,7 +140,7 @@
       display:flex;
       align-items:center;
       gap:8px;
-      padding: 2px 0;            /* ✅ 위아래 간격 더 줄임 */
+      padding: 2px 0;
       border:none;
       background: transparent;
       font-size: 10pt;
@@ -198,12 +198,6 @@
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
     .toast.show{ opacity: 1; transform: translateX(-50%) translateY(-6px); }
-
-    @media (max-width: 420px){
-      .card-inner{ padding: 16px; }
-      .radio-row{ font-size: 10px; }
-      .radio-pill{ min-width: 62px; padding: 9px 9px; }
-    }
   </style>
 </head>
 
@@ -217,7 +211,6 @@
   </header>
 
   <main class="wrap">
-    <!-- 상품 유형 -->
     <div class="card">
       <div class="card-inner">
         <div class="sec-title">상품 유형 <span class="badge">필수</span></div>
@@ -234,7 +227,6 @@
       </div>
     </div>
 
-    <!-- 차량 선택 -->
     <div class="card">
       <div class="card-inner">
         <div class="sec-title">차량 선택 <span class="badge">필수</span></div>
@@ -244,19 +236,18 @@
           <option value="">제조사를 선택해주세요</option>
         </select>
 
-       <label for="model">차종</label>
-<select id="model" disabled>
-  <option value="">차종을 선택해주세요</option>
-</select>
-        
+        <label for="model">차종</label>
+        <select id="model" disabled>
+          <option value="">차종을 선택해주세요</option>
+        </select>
+
         <label for="grade">차량 등급(트림)</label>
         <select id="grade" disabled>
           <option value="">차량 등급을 선택해주세요</option>
         </select>
 
- 
         <div id="optionsBox" class="options-box is-hidden">
-                  <label>옵션 (복수 선택 가능)</label>
+          <label>옵션 (복수 선택 가능)</label>
           <div class="help" id="optionsHint" style="margin:0">트림을 선택하면 옵션이 표시됩니다.</div>
           <div id="optionsGrid" class="opt-grid"></div>
         </div>
@@ -265,7 +256,6 @@
       </div>
     </div>
 
-    <!-- 신청 정보 -->
     <div class="card">
       <div class="card-inner">
         <div class="sec-title">신청 정보 <span class="badge">필수</span></div>
@@ -330,24 +320,20 @@
 
   <script>
 /***************************************************************
- * ✅ 최종 JS (드롭다운 방식: 제조사 > 차종 > 트림 > 옵션)
- * - 옵션은 체크박스 복수선택, 저장은 "/" 구분 (예: "선루프/드라이브와이즈")
- * - 아무것도 선택 안 하면 "무옵션"으로 저장
- * - 옵션박스는 CSS에서 숨겨둬도 됨 (#optionsBox {display:none}) → 트림 선택 시 표시
- * - source 파라미터로 유입경로 저장: ?source=tistory123  (없으면 "web")
- * - 카카오ID: 한글 불가, 영문/숫자/언더바/_/마침표(.) 허용
+ * ✅ 제조사 드롭다운 순서 고정: 기아, 현대, 르노, 테슬라, 수입차, 기타
  ***************************************************************/
+const MAKER_ORDER = ["기아", "현대", "르노", "테슬라", "수입차", "기타"];
 
 const API_BASE = "https://script.google.com/macros/s/AKfycbxXDq1_wRQLBAIE1mR03LmIlGFG51jrARzgYh3310665LDqVFfKNMAhBcaR-nL5OvCYJQ/exec";
 
 /***************************************************************
- * ✅ DOM (id는 HTML과 동일해야 함)
+ * ✅ DOM
  ***************************************************************/
-const elMaker       = document.getElementById("maker");        // <select>
-const elModel       = document.getElementById("model");        // <select>  ✅ 드롭다운
-const elGrade       = document.getElementById("grade");        // <select>
-const elOptionsBox  = document.getElementById("optionsBox");   // 옵션 전체 박스(숨김/표시)
-const elOptionsGrid = document.getElementById("optionsGrid");  // 체크박스 컨테이너
+const elMaker       = document.getElementById("maker");
+const elModel       = document.getElementById("model");
+const elGrade       = document.getElementById("grade");
+const elOptionsBox  = document.getElementById("optionsBox");
+const elOptionsGrid = document.getElementById("optionsGrid");
 
 const elName        = document.getElementById("name");
 const elPhone       = document.getElementById("phone");
@@ -362,12 +348,12 @@ const elToast       = document.getElementById("toast");
 /***************************************************************
  * ✅ 상태
  ***************************************************************/
-let catalogRows = []; // { maker, model, grade, option }
+let catalogRows = [];
 let makers = [];
 
-const modelsByMaker       = new Map(); // maker -> Set(model)
-const gradesByMakerModel  = new Map(); // maker||model -> Set(grade)
-const optionsByTriple     = new Map(); // maker||model||grade -> Set(option)
+const modelsByMaker       = new Map();
+const gradesByMakerModel  = new Map();
+const optionsByTriple     = new Map();
 
 /***************************************************************
  * ✅ 유틸
@@ -442,31 +428,19 @@ function getSourceFromUrl(){
   return norm(sp.get("source")) || "web";
 }
 
-/** 카카오 아이디: 영문/숫자/_/. 만 허용 (한글/공백/기타 불가) */
 function isValidKakaoId(v){
   const s = norm(v);
-  if (!s) return true; // 선택항목
+  if (!s) return true;
   return /^[A-Za-z0-9_.]+$/.test(s);
 }
 
 /***************************************************************
- * ✅ 옵션 렌더 (체크박스, 한 줄에 하나씩)
+ * ✅ 옵션 렌더
  ***************************************************************/
 function renderOptions(optionsArr){
   clearOptionsUI();
-
-  // 트림 선택 후에만 옵션박스를 보여줄 거라,
-  // 여기서는 "무옵션"을 포함한 최종 목록만 만들면 됨
   const raw = (optionsArr ?? []).map(norm).filter(Boolean);
 
-  // 시트에 "무옵션"이 있든 없든, 선택 안 하면 저장은 무옵션이므로
-  // UI에는 '무옵션' 체크박스를 "보여줄지" 선택 가능:
-  // ✅ 요청사항: "아무것도 선택 안했는데 무옵션 보이는거 별로"
-  // => UI에는 '무옵션'을 기본적으로 표시하지 않음.
-  // 대신 사용자가 옵션을 하나도 선택하지 않으면 저장할 때 무옵션 처리.
-
-  // 단, 시트에 옵션이 아예 없는 트림(무옵션 트림)이라면
-  // 사용자에게 "선택할 옵션이 없습니다" 정도 표시만 해주자.
   if (raw.length === 0 || (raw.length === 1 && raw[0] === "무옵션")){
     const div = document.createElement("div");
     div.className = "help";
@@ -480,7 +454,6 @@ function renderOptions(optionsArr){
 
   for (const optName of uniq){
     const id = `opt_${Math.random().toString(16).slice(2)}`;
-
     const label = document.createElement("label");
     label.className = "opt-chip";
     label.setAttribute("for", id);
@@ -505,18 +478,12 @@ function getSelectedOptionString(){
   const checked = [...document.querySelectorAll('input[name="optionsChk"]:checked')]
     .map(x => norm(x.value))
     .filter(Boolean);
-
-  // 아무것도 선택 안 했으면 무옵션
   if (checked.length === 0) return "무옵션";
-
-  // "/" 구분 저장
   return checked.join("/");
 }
 
 /***************************************************************
  * ✅ 검증
- * - 옵션은 필수 아님
- * - 카카오ID는 선택항목이지만 규칙 위반이면 비활성 + 토스트
  ***************************************************************/
 function validate(){
   const maker = norm(elMaker?.value);
@@ -571,21 +538,16 @@ async function fetchCatalog(){
 
   const rows = Array.isArray(data) ? data : (data?.data ?? data?.rows ?? []);
   if (!Array.isArray(rows) || rows.length === 0){
-    console.warn("EMPTY payload:", data);
-    toast("카탈로그가 비어있어요 (Models 시트/데이터/시트명 확인)");
-    alert(JSON.stringify(data).slice(0, 600));
+    toast("카탈로그가 비어있어요 (Models 시트 확인)");
     return;
   }
 
-  // ✅ 헤더 매핑 방어 (maker/model/grade/option)
   catalogRows = rows.map(r => ({
     maker: norm(r.maker ?? r.제조사 ?? r.Maker),
     model: norm(r.model ?? r.차종 ?? r.Model),
     grade: norm(r.grade ?? r.트림 ?? r.등급 ?? r.Trim),
     option: norm(r.option ?? r.options ?? r.옵션 ?? r.Option)
   }))
-  // ✅ option은 "빈칸"도 있을 수 있는데, 그건 무옵션으로 간주하려면 여기서 살려야 함
-  // -> 대신 option이 비면 "무옵션"으로 넣어서 저장
   .map(x => ({...x, option: x.option || "무옵션"}))
   .filter(x => x.maker && x.model && x.grade);
 
@@ -606,7 +568,6 @@ function buildIndexes(){
   optionsByTriple.clear();
 
   const makerSet = new Set();
-
   for (const r of catalogRows){
     makerSet.add(r.maker);
 
@@ -619,10 +580,18 @@ function buildIndexes(){
 
     const k3 = key3(r.maker, r.model, r.grade);
     if (!optionsByTriple.has(k3)) optionsByTriple.set(k3, new Set());
-    optionsByTriple.get(k3).add(r.option); // "무옵션" 포함 가능
+    optionsByTriple.get(k3).add(r.option);
   }
 
-  makers = [...makerSet].sort((a,b)=>a.localeCompare(b,"ko"));
+  // ✅ 드롭다운에 표시할 제조사 목록을 "우선순위 + 나머지"로 구성
+  const existing = new Set([...makerSet].map(norm));
+
+  const prioritized = MAKER_ORDER.filter(m => existing.has(m));
+  const rest = [...existing]
+    .filter(m => !MAKER_ORDER.includes(m))
+    .sort((a,b)=>a.localeCompare(b,"ko"));
+
+  makers = [...prioritized, ...rest];
 }
 
 function hydrateMaker(){
@@ -631,7 +600,6 @@ function hydrateMaker(){
   resetSelect(elModel, "차종을 선택해주세요");
   resetSelect(elGrade, "차량 등급을 선택해주세요");
 
-  // ✅ 옵션은 트림 선택 전에는 숨김
   showOptionsBox(false);
   clearOptionsUI();
 
@@ -639,15 +607,13 @@ function hydrateMaker(){
 }
 
 /***************************************************************
- * ✅ 선택 체인 (드롭다운)
- * maker -> model -> grade -> options
+ * ✅ 선택 체인
  ***************************************************************/
 elMaker?.addEventListener("change", ()=>{
   const maker = norm(elMaker.value);
 
   resetSelect(elModel, "차종을 선택해주세요");
   resetSelect(elGrade, "차량 등급을 선택해주세요");
-
   showOptionsBox(false);
   clearOptionsUI();
 
@@ -668,7 +634,6 @@ elModel?.addEventListener("change", ()=>{
   const model = norm(elModel.value);
 
   resetSelect(elGrade, "차량 등급을 선택해주세요");
-
   showOptionsBox(false);
   clearOptionsUI();
 
@@ -700,7 +665,6 @@ elGrade?.addEventListener("change", ()=>{
   const opts = [...(optionsByTriple.get(key3(maker, model, grade)) ?? new Set())]
     .map(norm).filter(Boolean);
 
-  // ✅ 트림 선택하면 옵션 박스 표시 (CSS에서 숨겼어도 여기서 강제 표시)
   showOptionsBox(true);
   renderOptions(opts);
 
@@ -715,8 +679,6 @@ elNeedTime?.addEventListener("input", validate);
 elArea?.addEventListener("input", validate);
 
 elKakao?.addEventListener("input", ()=>{
-  // 입력 중 한글 들어오면 바로 제거(원하면)
-  // 한글 포함 제거:
   const v = elKakao.value || "";
   const cleaned = v.replace(/[ㄱ-ㅎㅏ-ㅣ가-힣]/g, "");
   if (cleaned !== v) elKakao.value = cleaned;
@@ -735,9 +697,7 @@ document.querySelectorAll('input[name="dealType"], input[name="customerType"]').
 });
 
 /***************************************************************
- * ✅ 제출 (헤더 맞춤)
- * submittedAt, source, dealType, maker, model, grade, option,
- * customerType, name, phone, deliveryTime, deliveryArea, kakaoId, consent
+ * ✅ 제출
  ***************************************************************/
 async function fetchJsonLoose(url, options){
   const res = await fetch(url, options);
@@ -761,12 +721,12 @@ async function submitApplication(){
   const payload = {
     action: "apply",
     submittedAt: new Date().toISOString(),
-    source: getSourceFromUrl(), // ✅ ?source=tistory123
+    source: getSourceFromUrl(),
     dealType: getCheckedValue("dealType", "렌트"),
     maker: norm(elMaker.value),
     model: norm(elModel.value),
     grade: norm(elGrade.value),
-    option: getSelectedOptionString(), // ✅ "/" 구분, 없으면 무옵션
+    option: getSelectedOptionString(),
     customerType: getCheckedValue("customerType", "개인"),
     name: norm(elName.value),
     phone: norm(elPhone.value),
@@ -779,7 +739,6 @@ async function submitApplication(){
   let ok = false;
   let message = "접수 완료! 곧 안내드릴게요.";
 
-  // 1) POST(JSON)
   try{
     const r = await fetchJsonLoose(`${API_BASE}?action=apply`, {
       method: "POST",
@@ -789,19 +748,16 @@ async function submitApplication(){
     if (r.data && (r.data.ok !== false)){
       ok = true;
       if (r.data.message) message = r.data.message;
-    } else {
+    }else{
       throw new Error("POST failed");
     }
   }catch(e){
-    // 2) GET fallback
     try{
       const qs = new URLSearchParams(payload).toString();
       const r2 = await fetchJsonLoose(`${API_BASE}?${qs}`, { method:"GET", cache:"no-store" });
       if (r2.data && (r2.data.ok !== false)){
         ok = true;
         if (r2.data.message) message = r2.data.message;
-      } else {
-        throw new Error("GET failed");
       }
     }catch(e2){
       console.error(e2);
@@ -813,7 +769,6 @@ async function submitApplication(){
   if (ok){
     toast(message);
 
-    // ✅ 개인정보만 리셋(차량 선택 유지)
     elName.value = "";
     elPhone.value = "";
     elNeedTime.value = "";
@@ -821,10 +776,8 @@ async function submitApplication(){
     elKakao.value = "";
     elConsent.checked = false;
 
-    // 옵션 체크 해제 (UI는 유지하되 체크만 초기화)
     document.querySelectorAll('input[name="optionsChk"]').forEach(ch => ch.checked = false);
 
-    // 라디오 기본값
     const ct = document.querySelector('input[name="customerType"][value="개인"]');
     if (ct) ct.checked = true;
 
@@ -835,7 +788,7 @@ async function submitApplication(){
     toast("전송 실패. 웹앱 배포/권한/응답(JSON) 확인해주세요.");
   }
 
-  elSubmit.textContent = "간단 견적 요청하기";
+  elSubmit.textContent = "견적 요청하기";
   validate();
 }
 
@@ -845,11 +798,10 @@ elSubmit?.addEventListener("click", submitApplication);
  * ✅ 시작
  ***************************************************************/
 (async function init(){
-  // 옵션박스는 트림 선택 전 숨김(요청사항 반영)
   showOptionsBox(false);
   validate();
   await fetchCatalog();
 })();
-</script>
+  </script>
 </body>
 </html>
