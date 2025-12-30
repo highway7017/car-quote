@@ -167,7 +167,6 @@
       margin-top: 10px;
       flex-wrap: wrap;     /* 좁은 화면에서 줄바꿈 허용 */
       align-items: center;
-      justify-content: center;
     }
     .radio-pill{
       display:inline-flex; /* ✅ 컨텐츠 너비 기반 */
@@ -183,7 +182,6 @@
       white-space: nowrap;
       transition: .15s ease;
       line-height: 1;
-      font-size: 10pt;
     }
     .radio-pill input{
       width: 18px;
@@ -198,17 +196,6 @@
       border-color: var(--pillBorderOn);
       box-shadow: 0 10px 24px rgba(0,0,0,.35);
     }
-  
-  /* ✅ 상품유형에만: 라디오 버튼 가운데 + 균등폭 */
-.radio-row.radio-center-equal{
-  justify-content: center;
-  gap: 12px;
-}
-
-.radio-row.radio-center-equal .radio-pill{
-  flex: 0 0 140px;     /* 동일 너비 */
-  justify-content: center;
-}
 
     /* 옵션 박스 */
     .options-box{
@@ -377,14 +364,15 @@
 
   <main class="wrap">
     <section class="hero">
-      <h1>렌트/리스 견적 신청</h1>
+      <h1>렌트/리스 간단 견적 신청</h1>
+      <p>빠르고 간편하게 추천 견적을 받아보세요</p>
     </section>
 
     <!-- 상품 유형 -->
     <div class="card">
       <div class="card-inner">
         <div class="sec-title">상품 유형 <span class="badge">필수</span></div>
-        <div class="radio-row radio-center-equal role="radiogroup" aria-label="상품 유형">
+        <div class="radio-row" role="radiogroup" aria-label="상품 유형">
           <label class="radio-pill">
             <input type="radio" name="productType" value="렌트" checked />
             렌트
@@ -487,7 +475,7 @@
               <strong>[필수] 개인정보 수집·이용에 동의합니다.</strong>
               <small>
                 수집: 성명, 연락처, 카카오톡 ID(선택), 차량 선택 정보 / 목적: 견적·상담 안내 /
-                보유: 상담 완료 후 60일
+                보유: 상담 완료 후 1년
               </small>
             </div>
           </label>
@@ -510,7 +498,7 @@
     /***************************************************************
      * ✅ 웹앱 URL
      ***************************************************************/
-    const API_BASE = "https://script.google.com/macros/s/AKfycbyacD2VYHugR3Cqbp9QpMzPU1tIPpA0CH72AaWnwWsSZw_Fz_eB8bBNaBP8ZgkdHcU-/exec";
+    const API_BASE = "https://script.google.com/macros/s/AKfycbzbgjngZY2UPb5qO-GbdMLfi1PsHh15F0VlSXKpmsti2lkfppOxpdDAlAUlP-V6dQ1WGA/exec";
 
     /***************************************************************
      * ✅ DOM
