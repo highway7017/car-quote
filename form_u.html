@@ -1040,5 +1040,66 @@
   });
 </script>
 
+  <script>
+(() => {
+  const GAS_URL = "https://script.google.com/macros/s/AKfycbxrpExl_VU-axcCt0N1z_dkrqpCNI9O5ungUKC3r6q0LPYEpkGdzwtgvWByYwO4IM16tg/exec";
+
+  function getSourceCode() {
+    const params = new URLSearchParams(window.location.search);
+
+    // ✅ form_u.html?action=U135 를 유입코드로 사용
+    // (action이 apply/catalog가 아닌 경우만 유입으로 취급)
+    const a = (params.get("action") || "").trim();
+    if (a && a !== "apply" && a !== "catalog") return a;
+
+    // 혹시 기존에 ?source=U135 / ?src=U135 로도 올 수 있게 보완
+    return (params.get("source") || params.get("src") || "web").trim();
+  }
+
+  async function postApply(formEl) {
+    const fd = new FormData(formEl);
+    const body = new URLSearchParams();
+
+    // 폼 값들 전부 복사
+    fd.forEach((v, k) => body.append(k, v));
+
+    // ✅ 라우팅은 apply로 고정
+    body.set("action", "apply");
+
+    // ✅ 유입은 U135로 고정
+    body.set("source", getSourceCode());
+
+    // 디버그: 실제로 뭐가 보내지는지 확인
+    console.log("SEND source =", body.get("source"));
+
+    const res = await fetch(GAS_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
+      body: body.toString()
+    });
+
+    const text = await res.text();
+    try { return JSON.parse(text); }
+    catch (e) { return { ok: false, raw: text }; }
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const form = document.querySelector("form"); // 필요하면 #applyForm 로 바꾸기
+    if (!form) return;
+
+    // ✅ submit 한 곳에서만 처리되게!
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const result = await postApply(form);
+      console.log("RESULT:", result);
+
+      alert(result.ok ? `접수완료 (source=${result.source || ""})` : "접수 실패");
+    });
+  });
+})();
+</script>
+
+
 </body>
 </html>
