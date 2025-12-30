@@ -622,7 +622,27 @@ function buildIndexes(){
     optionsByTriple.get(k3).add(r.option); // "무옵션" 포함 가능
   }
 
-  makers = [...makerSet].sort((a,b)=>a.localeCompare(b,"ko"));
+  // ✅ 제조사 표시 순서 고정 (없는 항목은 뒤로)
+const MAKER_ORDER = ["기아","현대","르노","테슬라","수입차","기타"];
+
+makers = [...makerSet].sort((a, b) => {
+  const A = norm(a);
+  const B = norm(b);
+
+  const ia = MAKER_ORDER.indexOf(A);
+  const ib = MAKER_ORDER.indexOf(B);
+
+  // 둘 다 우선순위 목록에 있으면 그 순서대로
+  if (ia !== -1 && ib !== -1) return ia - ib;
+
+  // 하나만 있으면, 우선순위 목록에 있는 쪽이 먼저
+  if (ia !== -1) return -1;
+  if (ib !== -1) return 1;
+
+  // 둘 다 없으면 가나다순
+  return A.localeCompare(B, "ko");
+});
+
 }
 
 function hydrateMaker(){
