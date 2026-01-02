@@ -6,7 +6,7 @@
 
   <meta name="google-site-verification" content="SQPhEkFe-uHcIZcwZ-EcFA-833Q_NYj7jLmOJyjoFTU" />
   <meta name="naver-site-verification" content="0d3e86159ccb6fe4ac887bb2f13fe21563a62589" />
-  
+
   <!-- SEO -->
   <title>장기렌트 가이드 모음 | 2025 장기렌트·할부·리스 비교 정리</title>
   <meta name="description" content="2025년 기준 장기렌트·할부·리스 차이를 유지비·세금·보험 중심으로 정리한 가이드 모음입니다." />
@@ -99,26 +99,16 @@
       line-height:1.15;
       letter-spacing:-0.02em;
     }
-    .subtitle{
-      margin:0;
-      color:var(--muted);
-      font-size:15px;
-    }
 
-    /* ✅ 2개(상단) + 3개(하단) 레이아웃 */
+    /* ✅ 1행 2열 / 2행 3열 / 3행 2열
+       6칸 그리드로 깔고 span으로 맞추기 */
     .grid{
       display:grid;
-      grid-template-columns: repeat(3, 1fr);
-      grid-template-areas:
-        "top1 top1 top2"
-        "bot1 bot2 bot3";
+      grid-template-columns: repeat(6, 1fr);
       gap:14px;
     }
-    .top1{ grid-area: top1; }
-    .top2{ grid-area: top2; }
-    .bot1{ grid-area: bot1; }
-    .bot2{ grid-area: bot2; }
-    .bot3{ grid-area: bot3; }
+    .span3{ grid-column: span 3; } /* 2열용 */
+    .span2{ grid-column: span 2; } /* 3열용 */
 
     .tile{
       border-radius:18px;
@@ -149,8 +139,6 @@
       object-fit:cover;
       display:block;
     }
-
-   
 
     .body{
       display:flex;
@@ -202,77 +190,64 @@
       color:#9aa0aa;
     }
 
-    /* 모바일: 일렬 */
+    /* 모바일: 1열 + 카드 가로형(네 기존 유지) */
     @media (max-width: 900px){
-  .paper{padding:24px 16px}
+      .paper{padding:24px 16px}
 
-  .grid{
-    grid-template-columns: 1fr;
-    grid-template-areas: none;
-    gap:10px;
-  }
+      .grid{
+        grid-template-columns: 1fr;
+        gap:10px;
+      }
+      .span3,.span2{ grid-column: auto; }
 
-  /* ✅ 겹침 방지: PC용 grid-area 해제 */
-  .top1, .top2, .bot1, .bot2, .bot3{
-    grid-area: auto !important;
-    grid-column: auto !important;
-    grid-row: auto !important;
-  }
+      .tile{
+        display:flex;
+        flex-direction:row;
+        align-items:stretch;
+        gap:14px;
+        padding:14px;
+      }
 
- /* 카드: 가로형 */
-  .tile{
-    display:flex;
-    flex-direction:row;
-    align-items:stretch;   /* ⭐ 중요: 자식이 카드 높이를 따라가게 */
-    gap:14px;
-    padding:14px;
-  }
+      .thumb{
+        flex:0 0 110px;
+        width:110px;
+        height:auto;
+        align-self:stretch;
+        border-radius:14px;
+        overflow:hidden;
+        background:#dfe6ef;
+      }
 
-  /* 썸네일: 카드 높이만큼 세로로 늘어남 */
-  .thumb{
-    flex:0 0 110px;        /* 가로 폭만 고정 */
-    width:110px;
-    height:auto;           /* ❌ 고정 높이 제거 */
-    align-self:stretch;    /* ⭐ 카드 높이 꽉 채우기 */
-    border-radius:14px;
-    overflow:hidden;
-    background:#dfe6ef;
-  }
+      .thumb img{
+        width:100%;
+        height:100%;
+        object-fit:cover;
+        display:block;
+      }
 
-  /* 이미지: 박스를 가득 채움 */
-  .thumb img{
-    width:100%;
-    height:100%;
-    object-fit:cover;      /* 세로 남으면 잘라서 채움 */
-    display:block;
-  }
-      
-  .body{ flex:1; min-width:0; }
+      .body{ flex:1; min-width:0; }
 
-  .kicker{font-size:11px}
-  .title{font-size:16px; line-height:1.3}
-  .desc{
-    font-size:13px;
-    line-height:1.45;
-    display:-webkit-box;
-    -webkit-line-clamp:2;
-    -webkit-box-orient:vertical;
-    overflow:hidden;
-  }
+      .kicker{font-size:11px}
+      .title{font-size:16px; line-height:1.3}
+      .desc{
+        font-size:13px;
+        line-height:1.45;
+        -webkit-line-clamp:2;
+      }
 
-  .hint{
-    display:inline-flex;
-    align-items:center;
-    width:fit-content;
-    padding:5px 10px;
-    border-radius:999px;
-    border:1px solid rgba(0,0,0,.08);
-    background:rgba(255,255,255,.7);
-    font-size:11px;
-    opacity:.95;
-    margin-top:6px;
-  }
-}
+      .hint{
+        display:inline-flex;
+        align-items:center;
+        width:fit-content;
+        padding:5px 10px;
+        border-radius:999px;
+        border:1px solid rgba(0,0,0,.08);
+        background:rgba(255,255,255,.7);
+        font-size:11px;
+        opacity:.95;
+        margin-top:6px;
+      }
+    }
   </style>
 </head>
 
@@ -285,8 +260,8 @@
 
       <section class="grid" aria-label="장기렌트 가이드 목록">
 
-        <!-- 1) 상단 왼쪽(큰 타일) -->
-        <a class="tile yellow top1" href="./contents_134.html" aria-label="장기렌트 vs 할부 vs 리스 차이 정리">
+        <!-- ✅ 1행(2열): span3 + span3 -->
+        <a class="tile yellow span3" href="./contents_134.html" aria-label="장기렌트 vs 할부 vs 리스 차이 정리">
           <div class="thumb">
             <img src="./hero_1.png" alt="주차장에 자동차들이 질서정연하게 주차되어 있는 이미지">
           </div>
@@ -298,53 +273,76 @@
           </div>
         </a>
 
-        <!-- 2) 상단 오른쪽 -->
-        <a class="tile blue top2" href="./contents_261.html" aria-label="자동차 금융 설계 · 월 납입료를 좌우하는 3가지 변수">
+        <a class="tile blue span3" href="./contents_261.html" aria-label="자동차 장기렌트 월 납입료를 좌우하는 3가지 변수">
           <div class="thumb">
             <img src="./hero_2.png" alt="자동차 금융 설계와 합리적인 견적 비교를 상징하는 이미지">
           </div>
           <div class="body">
             <p class="kicker">실전</p>
             <h2 class="title">자동차 장기렌트 월 납입료를 좌우하는 3가지 변수</h2>
-            <p class="desc">장기렌트와 리스 견적 산출 시 월 납입료를 결정짓는 핵심 변수를 분석하고, 최적의 금융사를 매칭하는 전략을 소개합니다.</p>
+            <p class="desc">장기렌트와 리스 견적 산출 시 월 납입료를 결정짓는 핵심 변수를 분석합니다.</p>
             <p class="hint">열기 →</p>
           </div>
         </a>
 
-        <!-- 3) 하단 3개 -->
-        <a class="tile cream bot1" href="./contents_327.html" aria-label="사업자 절세 · 업무용 승용차 비용 처리 핵심 요약">
+        <!-- ✅ 2행(3열): span2 + span2 + span2 -->
+        <a class="tile cream span2" href="./contents_327.html" aria-label="사업자 절세 · 업무용 승용차 비용 처리 핵심 요약">
           <div class="thumb">
             <img src="./hero_3.png" alt="사업자가 사무실에서 업무용 승용차 관련 서류를 정리하며 비용 처리를 검토하는 장면">
           </div>
           <div class="body">
             <p class="kicker">대상별</p>
             <h2 class="title">사업자 절세 · 업무용 승용차 비용 처리 핵심 요약</h2>
-            <p class="desc">개인 및 법인 사업자를 위한 업무용 승용차 비용 처리 한도와 운행일지 작성 의무, 절세 전략을 정리합니다.</p>
+            <p class="desc">업무용 승용차 비용 처리 한도, 운행일지 의무, 절세 포인트를 정리합니다.</p>
             <p class="hint">열기 →</p>
           </div>
         </a>
 
-        <a class="tile mint bot2" href="./contents_482.html" aria-label="장기렌트 및 리스 비용 최적화">
+        <a class="tile mint span2" href="./contents_482.html" aria-label="장기렌트 및 리스 비용 최적화">
           <div class="thumb">
-            <img src="./hero_4.png" alt="장기렌트와 리스 비용 최적화를 위한 전략적 견적 설계를 상징하는 이미지"">
+            <img src="./hero_4.png" alt="장기렌트와 리스 비용 최적화를 위한 전략적 견적 설계를 상징하는 이미지">
           </div>
           <div class="body">
             <p class="kicker">실전</p>
-            <h2 class="title">장기렌트 및 리스 비용 최적화: 최저가 매칭을 위한 전략적 접근
-</h2>
-            <p class="desc">신차 장기렌트 및 리스 이용 시 금융사별 조건 분석을 통해 월 납입료를 최소화하는 실무 노하우를 공개합니다.</p>
+            <h2 class="title">장기렌트 및 리스 비용 최적화: 최저가 매칭 전략</h2>
+            <p class="desc">금융사별 조건 분석으로 월 납입료를 최소화하는 실무 노하우를 공개합니다.</p>
             <p class="hint">열기 →</p>
           </div>
         </a>
 
-        <a class="tile lav bot3" href="./contents_543.html" aria-label="연두색 번호판 부착 기준과 사업자별 차이점 분석">
+        <a class="tile lav span2" href="./contents_543.html" aria-label="연두색 번호판 부착 기준과 사업자별 차이점 분석">
           <div class="thumb">
             <img src="./hero_5.png" alt="연두색 번호판 부착 기준을 설명하는 콘텐츠에 어울리는 밝은 주차장에 주차된 고급 승용차 이미지">
           </div>
           <div class="body">
             <p class="kicker">대상별</p>
             <h2 class="title">연두색 번호판 부착 기준과 사업자별 차이점 분석</h2>
-            <p class="desc">법인 차량 전용 번호판(연두색) 부착 기준가액, 대상 제외 조건, 개인사업자와의 차이점을 상세히 분석합니다.</p>
+            <p class="desc">부착 기준가액, 제외 조건, 개인사업자/법인 차이를 상세히 정리합니다.</p>
+            <p class="hint">열기 →</p>
+          </div>
+        </a>
+
+        <!-- ✅ 3행(2열): span3 + span3 (추가 2개) -->
+        <a class="tile blue span3" href="./contents_601.html" aria-label="신차 장기렌트 재고와 납기 구조 이해">
+          <div class="thumb">
+            <img src="./hero_6.png" alt="신차 장기렌트 재고 차량과 출고 대기 상황을 표현한 이미지">
+          </div>
+          <div class="body">
+            <p class="kicker">구조 이해</p>
+            <h2 class="title">신차 장기렌트 재고·납기 구조 한 번에 정리</h2>
+            <p class="desc">인기 차종의 장기 대기 문제와 금융사 선구매 재고가 중요한 이유를 설명합니다.</p>
+            <p class="hint">열기 →</p>
+          </div>
+        </a>
+
+        <a class="tile cream span3" href="./contents_742.html" aria-label="장기렌트 계약 전 반드시 확인할 체크리스트">
+          <div class="thumb">
+            <img src="./hero_7.png" alt="장기렌트 계약 전 체크리스트를 검토하는 장면">
+          </div>
+          <div class="body">
+            <p class="kicker">체크리스트</p>
+            <h2 class="title">장기렌트 계약 전 반드시 확인할 체크포인트</h2>
+            <p class="desc">중도해지, 만기 옵션, 숨은 조건까지 계약 전 반드시 확인할 항목을 정리합니다.</p>
             <p class="hint">열기 →</p>
           </div>
         </a>
