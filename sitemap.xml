@@ -9,8 +9,6 @@
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
-  <url>
-
   <url> <loc>https://highway7017.github.io/car-quote/contents_261.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
@@ -30,5 +28,14 @@
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
+  <url>
+    <loc>https://highway7017.github.io/car-quote/contents_601.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://highway7017.github.io/car-quote/contents_742.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
 </urlset>
-</xml>
