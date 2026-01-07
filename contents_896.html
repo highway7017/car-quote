@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- SEO -->
+  <title>장기렌트 총액은 왜 차량가보다 높게 보일까?</title>
+  <meta name="description" content="장기렌트 비용 구조와 총액 계산 방식, 세금·보험·잔존가치에 대한 오해를 구조적으로 정리합니다." />
+  <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+  <link rel="canonical" href="https://highway7017.github.io/car-quote/contents_896.html" />
+
+  <!-- 다크모드 강제 방지 (모바일 크롬) -->
+  <meta name="color-scheme" content="light only">
+  <meta name="supported-color-schemes" content="light">
+  <style>html{color-scheme:light}</style>
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="장기렌트 가이드" />
+  <meta property="og:title" content="장기렌트 총액은 왜 차량가보다 높게 보일까?" />
+  <meta property="og:description" content="장기렌트 비용 구조와 총액 계산 방식, 세금·보험·잔존가치에 대한 오해를 구조적으로 정리합니다." />
+  <meta property="og:url" content="https://highway7017.github.io/car-quote/contents_896.html" />
+  <meta property="og:image" content="https://highway7017.github.io/car-quote/hero_8.png" />
+  <meta property="og:locale" content="ko_KR" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="장기렌트 총액, 왜 차량가보다 커 보일까?" />
+  <meta name="twitter:description" content="총액 계산식·세금/보험 포함 구조·잔존가치 오해를 한 번에 정리" />
+  <meta name="twitter:image" content="https://highway7017.github.io/car-quote/hero_8.png" />
+
+  <!-- Font -->
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/variable/pretendardvariable.css" />
+
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"Article",
+    "headline":"장기렌트 총액은 왜 차량가보다 높게 보일까?",
+    "description":"장기렌트 비용 구조와 총액 계산 방식, 세금·보험·잔존가치에 대한 오해를 구조적으로 정리합니다.",
+    "inLanguage":"ko-KR",
+    "datePublished":"2026-01-07",
+    "dateModified":"2026-01-07",
+    "author":{"@type":"Person","name":"장기렌트 가이드"},
+    "mainEntityOfPage":{"@type":"WebPage","@id":"https://highway7017.github.io/car-quote/contents_896.html"},
+    "image":"https://highway7017.github.io/car-quote/hero_8.png",
+    "keywords":["장기렌트","자동차렌트","비용구조","잔존가치"]
+  }
+  </script>
+
+  <style>
+    :root{
+      --bg:#f7f8f6;
+      --paper:#fff;
+      --text:#1f2a44;
+      --muted:#6b7280;
+      --line:#e5e7eb;
+      --shadow:0 12px 28px rgba(0,0,0,.08);
+      --radius:18px;
+      --link:#1f4aa8;
+      --linkHover:#163b84;
+      --maxw:980px;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans KR",sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      line-height:1.65;
+    }
+    a{color:var(--link);text-decoration:none}
+    a:hover{color:var(--linkHover);text-decoration:underline}
+
+    .shell{padding:48px 16px 80px;display:flex;justify-content:center}
+    .paper{
+      width:min(var(--maxw),100%);
+      background:var(--paper);
+      border:1px solid var(--line);
+      border-radius:22px;
+      box-shadow:var(--shadow);
+      padding:36px 40px 32px;
+    }
+
+    /* breadcrumb */
+    .crumb{
+      display:flex;
+      flex-direction:column;
+      align-items:flex-start;
+      gap:6px;
+      font-size:14px;
+      margin-bottom:8px;
+    }
+    .crumb .back{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:6px 12px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:#fff;
+      color:var(--muted);
+      white-space:nowrap;
+    }
+    .crumb .current{
+      font-size:13px;
+      color:#7a8393;
+    }
+
+    h1{
+      margin:12px 0 8px;
+      font-size:clamp(28px,3vw,42px);
+      line-height:1.15;
+      letter-spacing:-0.02em;
+    }
+    .subtitle{margin:0 0 8px;color:var(--muted)}
+    .meta{font-size:13px;color:#9aa0aa;margin-bottom:16px}
+
+    .hero{
+      margin:16px 0 20px;
+      border-radius:var(--radius);
+      overflow:hidden;
+      border:1px solid var(--line);
+      background:#eef2f7;
+    }
+    .hero img{
+      width:100%;
+      display:block;
+      aspect-ratio:16/8;
+      object-fit:cover;
+    }
+
+    /* callout */
+    .callout{
+      display:block;
+      padding:14px 16px;
+      border-radius:14px;
+      background:#eef5ff;
+      border:1px solid #d9e2ee;
+      margin-bottom:18px;
+      font-weight:650;
+      word-break: keep-all;
+      overflow-wrap: anywhere;
+      white-space: normal;
+    }
+
+    /* content */
+    .content{margin-top:4px}
+    .content .intro{margin:0 0 16px;color:var(--muted)}
+    .content h2{margin:22px 0 10px;font-size:22px}
+    .content .para{margin:0 0 10px}
+    .content ul{margin:10px 0 0; padding-left:18px}
+    .content li{margin:6px 0}
+    .content strong{font-weight:800}
+    .content code{
+      padding:2px 6px;
+      border-radius:8px;
+      background:#f3f4f6;
+      border:1px solid #e5e7eb;
+      font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size:.95em;
+    }
+
+    .divider{height:1px;background:var(--line);margin:24px 0}
+    .bottomNav{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      font-size:14px;
+    }
+    .bottomNav a{
+      padding:8px 12px;
+      border:1px solid var(--line);
+      border-radius:12px;
+      background:#fff;
+      color:var(--muted);
+    }
+
+    .cta-box{
+      margin-top:26px;
+      padding:22px;
+      border-radius:16px;
+      background:#eef5ff;
+      border:1px solid #d9e2ee;
+      text-align:left;
+    }
+    .cta-title{
+      margin:0 0 8px;
+      font-size:18px;
+      font-weight:800;
+    }
+    .cta-desc{
+      margin:0 0 14px;
+      color:#445064;
+      font-size:14px;
+      line-height:1.6;
+    }
+    .cta-btn{
+      display:block;
+      width: fit-content;
+      margin: 0 auto;
+      padding:10px 14px;
+      border-radius:12px;
+      background:#1f4aa8;
+      color:#fff;
+      font-size:14px;
+      font-weight:700;
+      text-align:center;
+    }
+    .cta-btn:hover{background:#163b84;text-decoration:none}
+
+    @media(max-width:860px){
+      .paper{padding:28px 20px}
+    }
+  </style>
+</head>
+
+<body>
+<main class="shell">
+<article class="paper">
+
+<nav class="crumb">
+  <a class="back" href="./index.html">← 장기렌트 가이드 모음</a>
+  <span class="current">장기렌트 비용구조 · 총액 계산 · 잔존가치 오해 정리</span>
+</nav>
+
+<header>
+  <h1>장기렌트 총액은 왜 차량가보다 높게 보일까?</h1>
+  <p class="subtitle">장기렌트 비용 구조와 총액 계산 방식, 세금·보험·잔존가치에 대한 오해를 구조적으로 정리합니다.</p>
+  <p class="meta">2026.01 업데이트</p>
+</header>
+
+<figure class="hero">
+  <img src="./hero_8.png"
+       alt="장기렌트 총액이 차량가보다 높게 보이는 이유(비용 구조·잔존가치)를 설명하는 대표 이미지">
+</figure>
+
+<section class="callout" aria-label="핵심 요약">
+  장기렌트 총액이 차량가보다 커 보이는 핵심 이유는 <strong>월 렌트료에 세금·보험 등 운용비용이 포함</strong>되고,
+  여기에 계약 종료 시점의 <strong>잔존가치</strong>가 더해지는 구조이기 때문입니다.
+</section>
+
+<section class="content" aria-label="본문">
+  <p class="intro">
+    장기렌트 견적을 검토할 때 가장 흔한 오해는
+    렌트 총액이 차량가보다 크다는 이유만으로 비싸다고 판단하는 것입니다.
+    이는 장기렌트의 성격과 비용 계산 구조를 혼동한 결과입니다.
+  </p>
+
+  <h2>1. 장기렌트는 금융상품이 아니다</h2>
+  <p class="para">
+    장기렌트는 돈을 빌려주고 이자를 받는 금융상품이 아닙니다.
+    차량을 소유한 렌트사가 일정 기간 동안 차량 사용권과 관리 서비스를 제공하고,
+    그에 대한 <strong>이용료를 받는 서비스 상품</strong>입니다.
+  </p>
+  <p class="para">
+    따라서 장기렌트에는 원금·이자 개념이 존재하지 않습니다.
+  </p>
+
+  <h2>2. 장기렌트 총액의 정확한 계산식</h2>
+  <p class="para">장기렌트의 총 비용은 다음과 같이 계산됩니다.</p>
+  <p class="para"><strong>렌트 총액 = (월 렌트료 × 약정기간) + 잔존가치</strong></p>
+  <ul>
+    <li><strong>월 렌트료:</strong> 차량 사용료, 세금, 보험, 관리 비용(옵션) 등이 포함된 최종 이용료</li>
+    <li><strong>잔존가치:</strong> 계약 종료 시점에 차량이 중고차로 거래될 것으로 예상되는 가격</li>
+  </ul>
+
+  <h2>3. 세금과 보험은 고객에게 전가되는 비용이 아니다</h2>
+  <p class="para">
+    취득세, 자동차세, 자동차 보험료는
+    차량을 구매하거나 소유하는 순간 개인·법인·렌트사 구분 없이 반드시 발생하는 비용입니다.
+  </p>
+  <p class="para">장기렌트 구조에서는:</p>
+  <ul>
+    <li>렌트사가 해당 비용을 먼저 납부하고</li>
+    <li>이를 월 렌트료에 포함시켜 나누어 받는 방식입니다</li>
+  </ul>
+  <p class="para">
+    이는 비용 전가가 아니라,
+    <strong>차량 사용자가 부담해야 할 비용을 렌트사가 대신 처리하는 구조</strong>입니다.
+  </p>
+
+  <h2>4. 렌트료는 원가 공개가 아닌 최종 가격이다</h2>
+  <p class="para">
+    장기렌트 월 렌트료는 개별 비용 항목을 분해해 공개하는 방식이 아닙니다.
+    차량 운용에 필요한 모든 비용과 리스크, 그리고 사업자의 이익이
+    하나의 <strong>최종 이용료</strong>로 산정되어 제시됩니다.
+  </p>
+  <p class="para">
+    이는 소매 상품이 원가를 공개하지 않고 소비자가만 제시하는 구조와 동일합니다.
+  </p>
+
+  <h2>5. 구매 방식과 비교할 때의 올바른 기준</h2>
+  <p class="para">
+    렌트와 구매의 경제성을 비교하려면 다음 기준으로 판단해야 합니다.
+  </p>
+  <ul>
+    <li><strong>구매 방식</strong>
+      <ul>
+        <li>차량가</li>
+        <li>취득세</li>
+        <li>보험료</li>
+        <li>자동차세</li>
+        <li>금융 이용 시 이자</li>
+      </ul>
+    </li>
+    <li><strong>렌트 방식</strong>
+      <ul>
+        <li>(월 렌트료 × 약정기간) + 잔존가치</li>
+      </ul>
+    </li>
+  </ul>
+  <p class="para">
+    차량가와 렌트 총액을 단순 비교하는 것은 올바른 기준이 아닙니다.
+  </p>
+
+  <h2>6. 결론</h2>
+  <p class="para">
+    장기렌트 총액이 차량가보다 높게 보이는 이유는
+    차량 운용에 필요한 모든 비용을 하나의 가격으로 묶어 보여주기 때문입니다.
+  </p>
+  <p class="para">
+    장기렌트는 차량을 구매하는 방식이 아니라,
+    <strong>차량 운용 비용을 정액화한 이용 서비스</strong>로 이해해야 정확한 판단이 가능합니다.
+  </p>
+</section>
+
+<section class="cta-box">
+  <p class="cta-title">내 상황에서는 렌트가 유리할까요, 구매가 유리할까요?</p>
+  <p class="cta-desc">
+    차종·운행거리·약정기간 기준으로<br>
+    장기렌트 총액 구조를 포함해 합리적으로 비교해드립니다.
+  </p>
+  <a href="https://buly.kr/BTQt5lY"
+     class="cta-btn"
+     target="_blank"
+     rel="noopener noreferrer">
+    👉 내 상황에 맞는 렌트 비교 상담하기(클릭) →
+  </a>
+</section>
+
+<div class="divider"></div>
+
+<nav class="bottomNav">
+  <a href="./contents_742.html">← 이전 글</a>
+  <a href="./contents_912.html">다음 글 →</a>
+  <a href="./index.html">목록으로</a>
+</nav>
+
+</article>
+</main>
+</body>
+</html>
